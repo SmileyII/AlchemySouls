@@ -1,8 +1,13 @@
-let discoveredItems = ["Вода", "Огонь", "Земля", "Воздух"];
+// Базовые элементы теперь тоже объекты с названиями картинок
+let discoveredItems = [
+    { name: "Вода", img: "вода.png" },
+    { name: "Огонь", img: "огонь.png" },
+    { name: "Земля", img: "земля.png" },
+    { name: "Воздух", img: "воздух.png" }
+];
 let selectedItems = [];
 let recipes = [];
 
-// Загружаем ваши рецепты из файла конфигурации
 fetch('recipes.json')
     .then(response => response.json())
     .then(data => {
@@ -13,17 +18,31 @@ fetch('recipes.json')
 function renderItems() {
     const container = document.getElementById('inventory');
     container.innerHTML = '<h3>Открытые элементы</h3>';
+    
     discoveredItems.forEach(item => {
         const div = document.createElement('div');
         div.className = 'item';
-        div.innerText = item;
+        
+        // Создаем картинку для элемента
+        const img = document.createElement('img');
+        // Путь ведет в папку images, которую мы создадим позже
+        img.src = `images/${item.img}`; 
+        // Если картинка еще не загружена или её нет, покажется пустая заглушка, игра не сломается
+        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
+        
+        const text = document.createElement('span');
+        text.innerText = item.name;
+        
+        div.appendChild(img);
+        div.appendChild(text);
+        
         div.onclick = () => selectItem(item, div);
         container.appendChild(div);
     });
 }
 
 function selectItem(item, element) {
-    if (selectedItems.includes(item)) return;
+    if (selectedItems.some(i => i.name === item.name)) return;
     
     selectedItems.push(item);
     element.classList.add('selected');
@@ -35,18 +54,22 @@ function selectItem(item, element) {
 
 function checkCombination() {
     const [i1, i2] = selectedItems;
-    // Ищем рецепт в обе стороны (А+Б или Б+А)
+    
     const match = recipes.find(r => 
-        (r.item1 === i1 && r.item2 === i2) || (r.item1 === i2 && r.item2 === i1)
+        (r.item1 === i1.name && r.item2 === i2.name) || (r.item1 === i2.name && r.item2 === i1.name)
     );
 
-    if (match && !discoveredItems.includes(match.result)) {
-        discoveredItems.push(match.result);
-        alert(`Поздравляю! Вы открыли: ${match.result}`);
-    } else if (match) {
-        alert('Элемент уже открыт!');
+    if (match) {
+        const alreadyOpened = discoveredItems.some(i => i.name === match.result);
+        if (!alreadyOpened) {
+            // Добавляем новый элемент и прописываем ему имя картинки из рецепта
+            discoveredItems.push({ name: match.result, img: match.result_img });
+            alert(`Успех! Вы создали: ${match.result}`);
+        } else {
+            alert('Этот элемент вы уже открывали!');
+        }
     } else {
-        alert('Ничего не происходит...');
+        alert('Ничего не произошло...');
     }
 
     selectedItems = [];
