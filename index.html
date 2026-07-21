@@ -2,17 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Алхимия Душ</title>
+    <title>Alchemy Souls</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
-        .container { display: flex; justify-content: space-around; margin-top: 20px; }
-        .panel { width: 45%; background: white; padding: 20px; border-radius: 8px; min-height: 300px; }
-        .item { display: inline-block; padding: 10px; margin: 5px; background: #007bff; color: white; border-radius: 5px; cursor: pointer; }
-        .item.selected { background: #ffc107; color: black; }
+        body { font-family: sans-serif; text-align: center; background: #1a1a1a; color: #ffffff; margin: 0; padding: 20px; }
+        .container { display: flex; justify-content: center; margin-top: 20px; }
+        .panel { width: 80%; background: #2a2a2a; padding: 20px; border-radius: 12px; min-height: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .item { 
+            display: inline-flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            width: 100px;
+            height: 120px;
+            margin: 10px; 
+            background: #3a3a3a; 
+            border: 2px solid #555;
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .item:hover { transform: scale(1.05); background: #4a4a4a; }
+        .item.selected { background: #ffc107; color: black; border-color: #ff9800; }
+        .item img { 
+            width: 64px; 
+            height: 64px; 
+            object-fit: contain; 
+            margin-bottom: 8px; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        .item span { font-size: 14px; font-weight: bold; text-align: center; padding: 0 4px; }
     </style>
 </head>
 <body>
-    <h1>Алхимия: Свои Элементы</h1>
+    <h1>Alchemy Souls</h1>
     <p>Выберите два элемента для соединения:</p>
     <div class="container">
         <div class="panel" id="inventory"><h3>Открытые элементы</h3></div>
