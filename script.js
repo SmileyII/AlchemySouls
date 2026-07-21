@@ -81,7 +81,6 @@ function spawnItemOnDesk(e, itemData) {
     clone.className = 'item on-desk';
     clone.dataset.name = itemData.name;
     clone.dataset.img = itemData.img;
-    // Передаем данные ссылки и описания в элемент на столе
     if(itemData.url) clone.dataset.url = itemData.url;
     if(itemData.desc) clone.dataset.desc = itemData.desc;
     
@@ -97,13 +96,14 @@ function spawnItemOnDesk(e, itemData) {
     workspace.appendChild(clone);
     
     const rect = workspace.getBoundingClientRect();
-    startDragProcess(e, clone, e.clientX - rect.left - parseFloat(clone.style.left || x), e.clientY - rect.top - parseFloat(clone.style.top || y));
     
+    // Сначала точно рассчитываем координаты появления элемента на столе
     let x = e.clientX - rect.left - 50;
     let y = e.clientY - rect.top - 55;
     clone.style.left = `${x}px`;
     clone.style.top = `${y}px`;
     
+    // И только ПОСЛЕ этого запускаем процесс движения
     startDragProcess(e, clone, 50, 55);
 }
 
