@@ -4,43 +4,61 @@
     <meta charset="UTF-8">
     <title>Alchemy Souls</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #1a1a1a; color: #ffffff; margin: 0; padding: 20px; }
-        .container { display: flex; justify-content: center; margin-top: 20px; }
-        .panel { width: 80%; background: #2a2a2a; padding: 20px; border-radius: 12px; min-height: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        body { font-family: sans-serif; background: #1a1a1a; color: #ffffff; margin: 0; padding: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        h1 { margin: 10px 0 5px 0; text-align: center; font-size: 24px; }
+        p { margin: 0 0 10px 0; text-align: center; color: #aaa; font-size: 14px; }
+        
+        /* Главный экран: стол и панель */
+        .game-container { display: flex; flex: 1; height: calc(100vh - 60px); position: relative; }
+        
+        /* Рабочий стол слева */
+        #workspace { flex: 1; background: #222; position: relative; overflow: hidden; border-right: 3px solid #333; }
+        #workspace::before { content: "Перетащите элементы сюда"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #444; font-size: 24px; font-weight: bold; pointer-events: none; z-index: 0; }
+        
+        /* Боковая панель справа */
+        #sidebar { width: 280px; background: #2a2a2a; display: flex; flex-direction: column; box-shadow: -4px 0 15px rgba(0,0,0,0.5); }
+        #sidebar h3 { text-align: center; margin: 15px 0; border-bottom: 2px solid #3a3a3a; padding-bottom: 10px; }
+        #inventory { flex: 1; overflow-y: auto; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: start; }
+        
+        /* Стили самих элементов */
         .item { 
             display: inline-flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center;
             width: 100px;
-            height: 120px;
-            margin: 10px; 
+            height: 110px;
             background: #3a3a3a; 
             border: 2px solid #555;
             border-radius: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
+            cursor: grab; 
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
             user-select: none;
+            z-index: 1;
         }
-        .item:hover { transform: scale(1.05); background: #4a4a4a; }
-        .item.selected { background: #ffc107; color: black; border-color: #ff9800; }
-        .item img { 
-            width: 64px; 
-            height: 64px; 
-            object-fit: contain; 
-            margin-bottom: 8px; 
-            background: rgba(0,0,0,0.2);
-            border-radius: 4px;
-        }
-        .item span { font-size: 14px; font-weight: bold; text-align: center; padding: 0 4px; }
+        .item:active { cursor: grabbing; }
+        .item img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 6px; pointer-events: none; background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .item span { font-size: 12px; font-weight: bold; text-align: center; padding: 0 4px; pointer-events: none; word-break: break-word; }
+        
+        /* Стили для элементов, которые уже перетащили на стол */
+        .item.on-desk { position: absolute; z-index: 10; margin: 0; }
     </style>
 </head>
 <body>
     <h1>Alchemy Souls</h1>
-    <p>Выберите два элемента для соединения:</p>
-    <div class="container">
-        <div class="panel" id="inventory"><h3>Открытые элементы</h3></div>
+    <p>Перетаскивайте элементы из панели на стол и совмещайте их для крафта!</p>
+    
+    <div class="game-container">
+        <!-- Рабочий стол -->
+        <div id="workspace"></div>
+        
+        <!-- Боковая панель -->
+        <div id="sidebar">
+            <h3>Элементы</h3>
+            <div id="inventory"></div>
+        </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
