@@ -5,7 +5,8 @@ let discoveredItems = [
     { name: "Воздух", img: "воздух.png" }
 ];
 let recipes = [];
-let isDraggingNow = false; // Блокировка: занята ли рука игрока прямо сейчас
+let isDraggingNow = false; // Блокировка: занята ли рука игрока
+let currentMoveHandler = null; // Храним текущую функцию движения для безопасного удаления
 const workspace = document.getElementById('workspace');
 
 // Загрузка рецептов
@@ -35,9 +36,8 @@ function renderInventory() {
         div.appendChild(img);
         div.appendChild(text);
         
-        // Зажимаем мышь в меню — активируется вытягивание элемента на стол
         div.onmousedown = (e) => {
-            if (isDraggingNow) return; // Если уже что-то тащим, игнорируем
+            if (isDraggingNow) return; 
             spawnItemOnDesk(e, item);
         };
         
@@ -48,7 +48,7 @@ function renderInventory() {
 // Создание копии элемента на рабочем столе и мгновенный захват
 function spawnItemOnDesk(e, itemData) {
     e.preventDefault();
-    isDraggingNow = true; // Занимаем руку
+    isDraggingNow = true; 
     
     const clone = document.createElement('div');
     clone.className = 'item on-desk';
@@ -67,15 +67,12 @@ function spawnItemOnDesk(e, itemData) {
     workspace.appendChild(clone);
     
     const rect = workspace.getBoundingClientRect();
-    
-    // Сдвиг, чтобы элемент создался ровно центром под курсором
     let x = e.clientX - rect.left - 50;
     let y = e.clientY - rect.top - 55;
     
     clone.style.left = `${x}px`;
     clone.style.top = `${y}px`;
     
-    // Запускаем перетаскивание с фиксированным сдвигом ровно по центру
     startDragProcess(e, clone, 50, 55);
 }
 
@@ -83,64 +80,74 @@ function spawnItemOnDesk(e, itemData) {
 function startDragProcess(e, element, shiftX, shiftY) {
     const rect = workspace.getBoundingClientRect();
     
+    // Безопасно удаляем старый обработчик, если он почему-то завис
+    if (currentMoveHandler) {
+        document.removeEventListener('mousemove', currentMoveHandler);
+    }
+    
     function moveAt(clientX, clientY) {
         let x = clientX - rect.left - shiftX;
         let y = clientY - rect.top - shiftY;
         
-        // Ограничиваем рамками стола
         x = Math.max(0, Math.min(x, workspace.clientWidth - element.clientWidth));
         y = Math.max(0, Math.min(y, workspace.clientHeight - element.clientHeight));
         
         element.style.left = `${x}px`;
         element.style.top = `${y}px`;
-    }
-    
-    function onMouseMove(event) {
-        moveAt(event.clientX, event.clientY);
-    }
-    
-    document.addEventListener('mousemove', onMouseMove);
-    
-    element.onmouseup = function() {
-        document.removeEventListener('mousemove', onMouseMove);
-        element.onmouseup = null;
-        isDraggingNow = false; // Освобождаем руку после отпускания кнопки
         
+        // Проверяем столкновения ПРЯМО ВО ВРЕМЯ движения, чтобы соединять элементы на лету
         checkCollisions(element);
+    }
+    
+    currentMoveHandler = function(event) {
+        moveAt(event.clientX, event.clientY);
     };
+    
+    document.addEventListener('mousemove', currentMoveHandler);
+    
+    // Отпускание мыши в любом месте экрана (чтобы элемент не "прилипал", если вылетел за стол)
+    window.onmouseup = function() {
+        if (currentMoveHandler) {
+            document.removeEventListener('mousemove', currentMoveHandler);
+            currentMoveHandler = null;
+        }
+        window.onmouseup = null;
+        element.onmouseup = null;
+        isDraggingNow = false; 
+    };
+    
+    element.onmouseup = window.onmouseup;
 }
 
-// Включение перетаскивания для элементов, которые УЖЕ лежат на столе
+// Включение перетаскивания для элементов на столе
 workspace.onmousedown = function(e) {
-    if (isDraggingNow) return; // Защита от мульти-хвата
+    if (isDraggingNow) return; 
     
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
     
     e.preventDefault();
-    isDraggingNow = true; // Занимаем руку
+    isDraggingNow = true; 
     
-    // Вычисляем точную точку клика внутри элемента, чтобы он не прыгал при переносе
     let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
     let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
     
     startDragProcess(e, targetItem, shiftX, shiftY);
 };
 
-// Проверка столкновения элементов (с увеличенным радиусом)
+// Проверка столкновения элементов
 function checkCollisions(draggedElement) {
+    // Если элемент уже удален при прошлом столкновении, ничего не делаем
+    if (!draggedElement.parentNode) return;
+
     const deskItems = document.querySelectorAll('.item.on-desk');
     const r1 = draggedElement.getBoundingClientRect();
-    
-    // На сколько пикселей расширяем зону чувствительности (магнит соединения)
     const padding = 40; 
     
     for (let other of deskItems) {
         if (other === draggedElement) continue;
         
         const r2 = other.getBoundingClientRect();
-        
-        // Проверка пересечения с учетом увеличенной зоны чувствительности
         const isOverlapping = !(
             (r1.right + padding) < r2.left || 
             (r1.left - padding) > r2.right || 
@@ -165,7 +172,14 @@ function combineElements(el1, el2) {
     );
     
     if (match) {
-        // Создаем новый элемент ровно посередине между двумя старыми
+        // Принудительно отвязываем мышь и сбрасываем статус перетаскивания перед удалением
+        if (currentMoveHandler) {
+            document.removeEventListener('mousemove', currentMoveHandler);
+            currentMoveHandler = null;
+        }
+        window.onmouseup = null;
+        isDraggingNow = false;
+
         const x = (parseFloat(el1.style.left) + parseFloat(el2.style.left)) / 2;
         const y = (parseFloat(el1.style.top) + parseFloat(el2.style.top)) / 2;
         
@@ -194,7 +208,6 @@ function combineElements(el1, el2) {
         
         workspace.appendChild(resultEl);
         
-        // Проверяем, открыт ли он в книге рецептов
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
