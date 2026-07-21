@@ -1,5 +1,5 @@
 [
-  { "item1": "Огонь", "item2": "Вода", "result": "Пар" },
-  { "item1": "Земля", "item2": "Вода", "result": "Грязь" },
-  { "item1": "Огонь", "item2": "Земля", "result": "Лава" }
+  { "item1": "Огонь", "item2": "Вода", "result": "Пар", "result_img": "пар.png" },
+  { "item1": "Земля", "item2": "Вода", "result": "Грязь", "result_img": "грязь.png" },
+  { "item1": "Огонь", "item2": "Земля", "result": "Лава", "result_img": "лава.png" }
 ]
