@@ -1,5 +1,22 @@
 [
-  { "item1": "Огонь", "item2": "Вода", "result": "Пар", "result_img": "пар.png" },
-  { "item1": "Земля", "item2": "Вода", "result": "Грязь", "result_img": "грязь.png" },
-  { "item1": "Огонь", "item2": "Земля", "result": "Лава", "result_img": "лава.png" }
+  { 
+    "item1": "Огонь", 
+    "item2": "Вода", 
+    "result": "Пар", 
+    "result_img": "пар.png" 
+  },
+  { 
+    "item1": "Земля", 
+    "item2": "Вода", 
+    "result": "Грязь", 
+    "result_img": "грязь.png" 
+  },
+  { 
+    "item1": "Огонь", 
+    "item2": "Земля", 
+    "result": "Waneella (Пример)", 
+    "result_img": "waneella.png",
+    "artist_url": "https://t.me",
+    "artist_desc": "Потрясающий пиксель-арт художник, создающий живые, атмосферные городские пейзажи с неоновым светом и каплями дождя."
+  }
 ]
