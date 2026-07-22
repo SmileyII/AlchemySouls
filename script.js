@@ -9,13 +9,11 @@ let discoveredItems = [];
 let recipes = [];
 let isDraggingNow = false;
 let currentMoveHandler = null;
-const workspace = document.getElementById('workspace');
 
 // Инициализация игры
 initGame();
 
 function initGame() {
-    // Загрузка сохранения из LocalStorage
     const saved = localStorage.getItem('alchemy_souls_progress');
     if (saved) {
         discoveredItems = JSON.parse(saved);
@@ -23,7 +21,6 @@ function initGame() {
         discoveredItems = [...BASE_ITEMS];
     }
 
-    // Загрузка базы рецептов
     fetch('recipes.json')
         .then(response => response.json())
         .then(data => {
@@ -31,18 +28,15 @@ function initGame() {
             renderInventory();
         });
 
-    // Слушатель для строки поиска
     document.getElementById('search-box').oninput = renderInventory;
 }
 
-// Отрисовка инвентаря с учетом поиска
 function renderInventory() {
     const inventory = document.getElementById('inventory');
     const searchQuery = document.getElementById('search-box').value.toLowerCase();
     inventory.innerHTML = '';
     
     discoveredItems.forEach(item => {
-        // Если есть поисковый запрос и он не совпадает с именем, пропускаем элемент
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return;
 
         const div = document.createElement('div');
@@ -58,13 +52,11 @@ function renderInventory() {
         div.appendChild(img);
         div.appendChild(text);
         
-        // По зажатию — тянем на стол
         div.onmousedown = (e) => {
             if (isDraggingNow) return; 
             spawnItemOnDesk(e, item);
         };
         
-        // По обычному клику на уже открытого художника — показываем его карточку повторно
         div.onclick = () => {
             if (item.url) showArtistModal(item);
         };
@@ -77,6 +69,7 @@ function spawnItemOnDesk(e, itemData) {
     e.preventDefault();
     isDraggingNow = true; 
     
+    const workspace = document.getElementById('workspace');
     const clone = document.createElement('div');
     clone.className = 'item on-desk';
     clone.dataset.name = itemData.name;
@@ -96,18 +89,16 @@ function spawnItemOnDesk(e, itemData) {
     workspace.appendChild(clone);
     
     const rect = workspace.getBoundingClientRect();
-    
-    // Сначала точно рассчитываем координаты появления элемента на столе
     let x = e.clientX - rect.left - 50;
     let y = e.clientY - rect.top - 55;
     clone.style.left = `${x}px`;
     clone.style.top = `${y}px`;
     
-    // И только ПОСЛЕ этого запускаем процесс движения
     startDragProcess(e, clone, 50, 55);
 }
 
 function startDragProcess(e, element, shiftX, shiftY) {
+    const workspace = document.getElementById('workspace');
     const rect = workspace.getBoundingClientRect();
     if (currentMoveHandler) document.removeEventListener('mousemove', currentMoveHandler);
     
@@ -118,20 +109,28 @@ function startDragProcess(e, element, shiftX, shiftY) {
         y = Math.max(0, Math.min(y, workspace.clientHeight - element.clientHeight));
         element.style.left = `${x}px`;
         element.style.top = `${y}px`;
-        checkCollisions(element);
+        // Убрали проверку столкновений отсюда, чтобы элементы не магнитились сами при движении!
     }
     
     currentMoveHandler = function(event) { moveAt(event.clientX, event.clientY); };
     document.addEventListener('mousemove', currentMoveHandler);
     
     window.onmouseup = function() {
-        if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
-        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false; 
+        if (currentMoveHandler) { 
+            document.removeEventListener('mousemove', currentMoveHandler); 
+            currentMoveHandler = null; 
+        }
+        window.onmouseup = null; 
+        element.onmouseup = null; 
+        isDraggingNow = false; 
+        
+        // ПРОВЕРКА ПРОИСХОДИТ СТРОГО ЗДЕСЬ: только когда игрок отпустил мышь!
+        checkCollisions(element);
     };
     element.onmouseup = window.onmouseup;
 }
 
-workspace.onmousedown = function(e) {
+document.getElementById('workspace').onmousedown = function(e) {
     if (isDraggingNow) return; 
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
@@ -146,7 +145,9 @@ function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const r1 = draggedElement.getBoundingClientRect();
-    const padding = 40; 
+    
+    // Снизили радиус чувствительности до 15 пикселей для точечного сброса "один на другой"
+    const padding = 15; 
     
     for (let other of deskItems) {
         if (other === draggedElement) continue;
@@ -172,14 +173,14 @@ function combineElements(el1, el2) {
         
         el1.remove(); el2.remove();
         
-        // Создаем объект данных нового элемента/художника
         const newItemData = { 
             name: match.result, 
             img: match.result_img,
-            url: match.artist_url || "", // Ссылка на портфолио
-            desc: match.artist_desc || "Потрясающий автор PortfolioDay!" // Описание
+            url: match.artist_url || "", 
+            desc: match.artist_desc || "Потрясающий автор PortfolioDay!" 
         };
         
+        const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
         resultEl.className = 'item on-desk';
         resultEl.dataset.name = newItemData.name;
@@ -201,11 +202,9 @@ function combineElements(el1, el2) {
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
-            // Сохраняем обновленный список в браузер
             localStorage.setItem('alchemy_souls_progress', JSON.stringify(discoveredItems));
             renderInventory(); 
             
-            // Если это именно художник (есть ссылка), сразу красиво показываем карточку!
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -213,7 +212,6 @@ function combineElements(el1, el2) {
     }
 }
 
-// Показ карточки художника
 function showArtistModal(item) {
     document.getElementById('m-name').innerText = item.name;
     document.getElementById('m-desc').innerText = item.desc;
@@ -226,24 +224,21 @@ function showArtistModal(item) {
     document.getElementById('artist-modal').classList.add('active');
 }
 
-// Закрытие модалки при клике на темную область вокруг
 function closeModal(e) {
     if (e.target.id === 'artist-modal') {
         document.getElementById('artist-modal').classList.remove('active');
     }
 }
 
-// Функция сброса прогресса для тестов
 function resetGame() {
     if (confirm("Вы уверены, что хотите сбросить весь прогресс игры?")) {
         localStorage.removeItem('alchemy_souls_progress');
         discoveredItems = [...BASE_ITEMS];
-        workspace.innerHTML = '';
+        document.getElementById('workspace').innerHTML = '';
         renderInventory();
     }
-function clearDesk() {
-    document.getElementById('workspace').innerHTML = ''; // Исправлено: теперь браузер точно знает, какой стол очищать
 }
 
-}
+function clearDesk() {
+    document.getElementById('workspace').innerHTML = ''; 
 }
