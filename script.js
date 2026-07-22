@@ -241,4 +241,7 @@ function resetGame() {
         workspace.innerHTML = '';
         renderInventory();
     }
+function clearDesk() {
+workspace.innerHTML = ''; // Полностью стирает все элементы, лежащие на столе
+}
 }
