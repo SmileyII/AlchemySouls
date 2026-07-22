@@ -242,6 +242,8 @@ function resetGame() {
         renderInventory();
     }
 function clearDesk() {
-workspace.innerHTML = ''; // Полностью стирает все элементы, лежащие на столе
+    document.getElementById('workspace').innerHTML = ''; // Исправлено: теперь браузер точно знает, какой стол очищать
+}
+
 }
 }
