@@ -1,8 +1,8 @@
 const BASE_ITEMS = [
-    { name: "Вода", img: "вода.png" },
-    { name: "Огонь", img: "огонь.png" },
-    { name: "Земля", img: "земля.png" },
-    { name: "Воздух", img: "воздух.png" }
+    { name: "Идея", img: "идея.png" },
+    { name: "Форма", img: "форма.png" },
+    { name: "Цвет", img: "цвет.png" },
+    { name: "Материал", img: "материал.png" }
 ];
 
 let discoveredItems = [];
@@ -10,7 +10,6 @@ let recipes = [];
 let isDraggingNow = false;
 let currentMoveHandler = null;
 
-// Инициализация игры
 initGame();
 
 function initGame() {
@@ -109,7 +108,6 @@ function startDragProcess(e, element, shiftX, shiftY) {
         y = Math.max(0, Math.min(y, workspace.clientHeight - element.clientHeight));
         element.style.left = `${x}px`;
         element.style.top = `${y}px`;
-        // Убрали проверку столкновений отсюда, чтобы элементы не магнитились сами при движении!
     }
     
     currentMoveHandler = function(event) { moveAt(event.clientX, event.clientY); };
@@ -124,7 +122,6 @@ function startDragProcess(e, element, shiftX, shiftY) {
         element.onmouseup = null; 
         isDraggingNow = false; 
         
-        // ПРОВЕРКА ПРОИСХОДИТ СТРОГО ЗДЕСЬ: только когда игрок отпустил мышь!
         checkCollisions(element);
     };
     element.onmouseup = window.onmouseup;
@@ -145,8 +142,6 @@ function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const r1 = draggedElement.getBoundingClientRect();
-    
-    // Снизили радиус чувствительности до 15 пикселей для точечного сброса "один на другой"
     const padding = 15; 
     
     for (let other of deskItems) {
@@ -177,7 +172,7 @@ function combineElements(el1, el2) {
             name: match.result, 
             img: match.result_img,
             url: match.artist_url || "", 
-            desc: match.artist_desc || "Потрясающий автор PortfolioDay!" 
+            desc: match.artist_desc || "" 
         };
         
         const workspace = document.getElementById('workspace');
@@ -205,6 +200,7 @@ function combineElements(el1, el2) {
             localStorage.setItem('alchemy_souls_progress', JSON.stringify(discoveredItems));
             renderInventory(); 
             
+            // Модалка открывается ТОЛЬКО если у элемента прописана ссылка на художника
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -240,5 +236,6 @@ function resetGame() {
 }
 
 function clearDesk() {
-    document.getElementById('workspace').innerHTML = ''; 
+    const ws = document.getElementById('workspace');
+    if (ws) ws.innerHTML = ''; 
 }
