@@ -5,7 +5,6 @@ const BASE_ITEMS = [
     { name: "Материал", img: "материал.png" }
 ];
 
-// Список всех существующих в игре достижений (для отрисовки списка)
 const ALL_ACHIEVEMENTS = [
     { id: "first_craft", title: "Первый шаг", desc: "Сделать один успешный крафт", reward: "Опыт", img: "опыт.png" },
     { id: "cleaner", title: "Чистый холст", desc: "Нажать кнопку 'Очистить стол' 3 раза", reward: "Перфекционизм", img: "перфекционизм.png" },
@@ -19,7 +18,7 @@ let discoveredItems = [];
 let recipes = [];
 let isDraggingNow = false;
 let currentMoveHandler = null;
-let currentActiveTab = "items"; // Текущая открытая вкладка
+let currentActiveTab = "items"; 
 
 let stats = {
     totalCrafts: 0,
@@ -61,18 +60,12 @@ function initGame() {
     };
 }
 
-// Переключение вкладок меню
 function switchTab(tabName) {
     currentActiveTab = tabName;
-    
-    // Переключаем активные кнопки в HTML
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
-    
-    // Переключаем активные списки
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     document.getElementById(`${tabName}-tab`).classList.add('active');
-    
     renderCurrentTab();
 }
 
@@ -88,7 +81,12 @@ function renderCurrentTab() {
     if (currentActiveTab === "achievements") renderAchievementsTab();
 }
 
-// Отрисовка вкладки Элементов
+function isElementDeadEnd(item) {
+    if (BASE_ITEMS.some(b => b.name === item.name) || item.url) return false;
+    const usedInRecipes = recipes.some(r => r.item1 === item.name || r.item2 === item.name);
+    return !usedInRecipes;
+}
+
 function renderItemsTab() {
     const container = document.getElementById('items-tab');
     const searchQuery = document.getElementById('search-box').value.toLowerCase();
@@ -107,7 +105,7 @@ function renderItemsTab() {
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
-        text.innerText = item.name + (isDead ? " •" : ""); // Маленькая точка для тупиковых
+        text.innerText = item.name + (isDead ? " •" : "");
         
         div.appendChild(img); div.appendChild(text);
         div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
@@ -116,8 +114,7 @@ function renderItemsTab() {
     });
 }
 
-// Отрисовка вкладки Художников
-function renderArtistsTab() { 
+function renderArtistsTab() {
     const container = document.getElementById('artists-tab');
     const searchQuery = document.getElementById('search-box').value.toLowerCase();
     container.innerHTML = '';
@@ -145,14 +142,12 @@ function renderArtistsTab() {
     });
 }
 
-// Отрисовка списка достижений
 function renderAchievementsTab() {
     const container = document.getElementById('achievements-tab');
     container.innerHTML = '';
     
     ALL_ACHIEVEMENTS.forEach(ach => {
         const isUnlocked = stats.unlockedQuests.includes(ach.id);
-        
         const card = document.createElement('div');
         card.className = `ach-card ${isUnlocked ? 'unlocked' : ''}`;
         
@@ -177,7 +172,6 @@ function renderAchievementsTab() {
         
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
         card.appendChild(icon); card.appendChild(info);
-        
         container.appendChild(card);
     });
 }
@@ -265,30 +259,28 @@ function checkCollisions(draggedElement) {
     }
 }
 
-// ВОССТАНОВЛЕННЫЙ БЛОК СКРЕЩИВАНИЯ, СТАТИСТИКИ И МОДАЛОК
 function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
     
     const match = recipes.find(r => (r.item1 === name1 && r.item2 === name2) || (r.item1 === name2 && r.item2 === name1));
     
-    if (match) {
+if (match) {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
         window.onmouseup = null; isDraggingNow = false;
         stats.totalCrafts++;
 
         const x = (parseFloat(el1.style.left) + parseFloat(el2.style.left)) / 2;
         const y = (parseFloat(el1.style.top) + parseFloat(el2.style.top)) / 2;
-        
         el1.remove(); el2.remove();
-        
+
         const newItemData = {
             name: match.result,
             img: match.result_img,
             url: match.artist_url || "",
             desc: match.artist_desc || ""
         };
-        
+
         const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
         const isDead = isElementDeadEnd(newItemData);
@@ -297,23 +289,25 @@ function combineElements(el1, el2) {
         resultEl.dataset.img = newItemData.img;
         if(newItemData.url) resultEl.dataset.url = newItemData.url;
         if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
-        
+
         const img = document.createElement('img');
+        // Исправлено: добавлены обратные кавычки
         img.src = `images/${newItemData.img}`;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
-        
+
         const text = document.createElement('span');
         text.innerText = newItemData.name;
-        
+
         resultEl.appendChild(img); resultEl.appendChild(text);
+        // Исправлено: добавлены обратные кавычки
         resultEl.style.left = `${x}px`; resultEl.style.top = `${y}px`;
         workspace.appendChild(resultEl);
-        
+
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
             saveGame();
-            renderAllTabs(); 
+            renderAllTabs();
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -324,28 +318,24 @@ function combineElements(el1, el2) {
     checkQuests();
 }
 
-// СИСТЕМА ПРОВЕРКИ УГЛОВ И КВЕСТОВ
 function checkQuests() {
     const ws = document.getElementById('workspace');
     const deskItems = document.querySelectorAll('.item.on-desk');
     let cornersFilled = false;
-    
+
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
         const margin = 40;
-        
         deskItems.forEach(el => {
             let x = parseFloat(el.style.left || 0);
             let y = parseFloat(el.style.top || 0);
             let maxW = ws.clientWidth - el.clientWidth;
             let maxH = ws.clientHeight - el.clientHeight;
-            
             if (x <= margin && y <= margin) topLeft = true;
             if (x >= maxW - margin && y <= margin) topRight = true;
             if (x <= margin && y >= maxH - margin) bottomLeft = true;
             if (x >= maxW - margin && y >= maxH - margin) bottomRight = true;
         });
-        
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
@@ -363,7 +353,6 @@ function checkQuests() {
             stats.unlockedQuests.push(q.id);
             const achMeta = ALL_ACHIEVEMENTS.find(a => a.id === q.id);
             const alreadyHas = discoveredItems.some(i => i.name === achMeta.reward);
-            
             if (!alreadyHas) {
                 discoveredItems.push({ name: achMeta.reward, img: achMeta.img, url: "", desc: "" });
                 showAchievementToast(achMeta.reward);
@@ -391,7 +380,7 @@ function showArtistModal(item) {
     document.getElementById('m-desc').innerText = item.desc;
     document.getElementById('m-link').href = item.url;
     const modalArt = document.getElementById('m-art');
-    // Исправлено: добавлены обратные кавычки для пути к арту
+    // Исправлено: добавлены обратные кавычки
     modalArt.src = `images/${item.img}`;
     modalArt.onerror = () => { modalArt.src = 'images/placeholder.png'; };
     document.getElementById('artist-modal').classList.add('active');
@@ -401,7 +390,6 @@ function closeModal(e) {
     if (e.target.id === 'artist-modal') document.getElementById('artist-modal').classList.remove('active');
 }
 
-// ИСПРАВЛЕННАЯ И ВОССТАНОВЛЕННАЯ ФУНКЦИЯ СБРОСА
 function resetGame() {
     if (confirm("Вы уверены, что хотите полностью сбросить прогресс, открытых художников и все достижения?")) {
         localStorage.removeItem('alchemy_souls_progress');
@@ -410,9 +398,9 @@ function resetGame() {
         stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, unlockedQuests: [] };
         document.getElementById('workspace').innerHTML = '';
         currentActiveTab = "items";
-        
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(btn => btn.classList.remove('active'));
+        if (tabs[0]) tabs[0].classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById('items-tab').classList.add('active');
         renderAllTabs();
@@ -424,16 +412,4 @@ function clearDesk() {
     checkQuests();
     const ws = document.getElementById('workspace');
     if (ws) ws.innerHTML = '';
-}
-
-// Функция проверяет, используется ли элемент в крафте дальше
-function isElementDeadEnd(item) {
-    // Если это базовый элемент или реальный художник (есть ссылка) — он никогда не тупиковый
-    if (BASE_ITEMS.some(b => b.name === item.name) || item.url) return false;
-    
-    // Ищем, есть ли этот элемент среди ингредиентов в рецептах (item1 или item2)
-    const usedInRecipes = recipes.some(r => r.item1 === item.name || r.item2 === item.name);
-    
-    // Если в рецептах его нет — значит это тупиковый элемент (Dead End)
-    return !usedInRecipes;
 }
