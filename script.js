@@ -105,7 +105,7 @@ function renderItemsTab() {
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
-        text.innerText = item.name + (isDead ? " •" : "");
+        text.innerText = item.name + (isDead ? " (Конечный элемент)" : "");
         
         div.appendChild(img); div.appendChild(text);
         div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
