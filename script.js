@@ -99,14 +99,15 @@ function renderItemsTab() {
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return;
 
         const div = document.createElement('div');
-        div.className = 'item';
+        const isDead = isElementDeadEnd(item);
+        div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
         img.src = `images/${item.img}`; 
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
-        text.innerText = item.name;
+        text.innerText = item.name + (isDead ? " •" : ""); // Маленькая точка для тупиковых
         
         div.appendChild(img); div.appendChild(text);
         div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
@@ -116,7 +117,7 @@ function renderItemsTab() {
 }
 
 // Отрисовка вкладки Художников
-function renderArtistsTab() {
+function renderArtistsTab() { 
     const container = document.getElementById('artists-tab');
     const searchQuery = document.getElementById('search-box').value.toLowerCase();
     container.innerHTML = '';
@@ -186,8 +187,8 @@ function spawnItemOnDesk(e, itemData) {
     isDraggingNow = true; 
     
     const workspace = document.getElementById('workspace');
-    const clone = document.createElement('div');
-    clone.className = 'item on-desk' + (itemData.url ? ' artist-card' : '');
+    const isDead = isElementDeadEnd(itemData);
+    clone.className = 'item on-desk' + (itemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
     clone.dataset.name = itemData.name;
     clone.dataset.img = itemData.img;
     if(itemData.url) clone.dataset.url = itemData.url;
@@ -290,7 +291,8 @@ if (match) {
         
         const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
-        resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '');
+        const isDead = isElementDeadEnd(newItemData);
+    resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
         resultEl.dataset.name = newItemData.name;
         resultEl.dataset.img = newItemData.img;
         if(newItemData.url) resultEl.dataset.url = newItemData.url;
@@ -424,4 +426,16 @@ function clearDesk() {
     checkQuests();
     const ws = document.getElementById('workspace');
     if (ws) ws.innerHTML = '';
+}
+
+// Функция проверяет, используется ли элемент в крафте дальше
+function isElementDeadEnd(item) {
+    // Если это базовый элемент или реальный художник (есть ссылка) — он никогда не тупиковый
+    if (BASE_ITEMS.some(b => b.name === item.name) || item.url) return false;
+    
+    // Ищем, есть ли этот элемент среди ингредиентов в рецептах (item1 или item2)
+    const usedInRecipes = recipes.some(r => r.item1 === item.name || r.item2 === item.name);
+    
+    // Если в рецептах его нет — значит это тупиковый элемент (Dead End)
+    return !usedInRecipes;
 }
