@@ -187,6 +187,7 @@ function spawnItemOnDesk(e, itemData) {
     isDraggingNow = true; 
     
     const workspace = document.getElementById('workspace');
+    const clone = document.createElement('div');
     const isDead = isElementDeadEnd(itemData);
     clone.className = 'item on-desk' + (itemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
     clone.dataset.name = itemData.name;
@@ -271,10 +272,9 @@ function combineElements(el1, el2) {
     
     const match = recipes.find(r => (r.item1 === name1 && r.item2 === name2) || (r.item1 === name2 && r.item2 === name1));
     
-if (match) {
+    if (match) {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
         window.onmouseup = null; isDraggingNow = false;
-
         stats.totalCrafts++;
 
         const x = (parseFloat(el1.style.left) + parseFloat(el2.style.left)) / 2;
@@ -292,14 +292,13 @@ if (match) {
         const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
         const isDead = isElementDeadEnd(newItemData);
-    resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
+        resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
         resultEl.dataset.name = newItemData.name;
         resultEl.dataset.img = newItemData.img;
         if(newItemData.url) resultEl.dataset.url = newItemData.url;
         if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
         
         const img = document.createElement('img');
-        // Исправлено: добавлены обратные кавычки для генерации пути
         img.src = `images/${newItemData.img}`;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
         
@@ -307,7 +306,6 @@ if (match) {
         text.innerText = newItemData.name;
         
         resultEl.appendChild(img); resultEl.appendChild(text);
-        // Исправлено: добавлены обратные кавычки для стилей позиционирования
         resultEl.style.left = `${x}px`; resultEl.style.top = `${y}px`;
         workspace.appendChild(resultEl);
         
@@ -315,7 +313,7 @@ if (match) {
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
             saveGame();
-            renderAllTabs();
+            renderAllTabs(); 
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
