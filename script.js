@@ -143,6 +143,10 @@ function renderArtistsTab() {
         div.onclick = () => showArtistModal(item);
         
         container.appendChild(div);
+        
+        const totalArtists = discoveredItems.filter(i => i.url).length;
+        const counterEl = document.getElementById('artists-count');
+        if (counterEl) counterEl.innerText = totalArtists;
     });
 }
 
