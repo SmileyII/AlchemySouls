@@ -6,7 +6,7 @@ const BASE_ITEMS = [
     { name: "Хаос", img: "хаос.png" },
     { name: "Порядок", img: "порядок.png" },
     { name: "Вдохновение", img: "вдохновение.png" },
-    { name: "Одиночество", img: "одиночество.png" }
+    { name: "Меланхолия", img: "меланхолия.png" }
 ];
 
 const ALL_ACHIEVEMENTS = [
