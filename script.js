@@ -412,6 +412,10 @@ function resetGame() {
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         document.getElementById('items-tab').classList.add('active');
         renderAllTabs();
+        // Обновление счетчика прогресса на экране
+        const totalArtists = discoveredItems.filter(i => i.url).length;
+        const counterEl = document.getElementById('artists-count');
+        if (counterEl) counterEl.innerText = totalArtists;
     }
 }
 
