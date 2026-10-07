@@ -403,20 +403,29 @@ function combineElements(el1, el2) {
                 showArtistModal(newItemData);
             }
         }
-    } else {
-        stats.failedCrafts++;
-        
-        // Визуальный эффект ошибки и отскока (красное свечение и тряска на 4 сек)
-        el1.classList.add('craft-error');
-        el2.classList.add('craft-error');
-        setTimeout(() => {
-            el1.classList.remove('craft-error');
-            el2.classList.remove('craft-error');
-        }, 4000);
+        } else {
+        // Защита от спама: засчитываем ошибку только если элементы уже не находятся в процессе отскока
+        if (!el1.classList.contains('craft-error')) {
+            stats.failedCrafts++;
+            
+            el1.classList.add('craft-error');
+            el2.classList.add('craft-error');
+            setTimeout(() => {
+                el1.classList.remove('craft-error');
+                el2.classList.remove('craft-error');
+            }, 4000); 
+        }
+
+        // Проверка 1.21 gigawatts! (Вспышка + Конструкт при 10 конструктах на столе)
+        if ((name1 === "Вспышка" && name2 === "Конструкт") || (name2 === "Вспышка" && name1 === "Конструкт")) {
+            const currentConstructs = document.querySelectorAll('.item.on-desk[data-name="Конструкт"]').length;
+            if (currentConstructs >= 10) {
+                checkQuests("bttf_fail");
+            }
+        }
 
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
-        if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
-        if ((name1 === "Вспышка" && name2 === "Конструкт") || (name2 === "Вспышка" && name1 === "Конструкт")) checkQuests("bttf_fail");
+        if ((name1 === "Хаос" && name2 === "Судьбу") || (name2 === "Хаос" && name1 === "Судьбу")) checkQuests("slime_fail");
         if ((name1 === "Будущее" && name2 === "Прошлое") || (name2 === "Будущее" && name1 === "Прошлое")) checkQuests("year_fail");
     }
     checkQuests();
@@ -427,7 +436,16 @@ function checkQuests(triggerType) {
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     
-    // 1. Геометрия стола (углы)
+    // Собираем массив имён всех элементов, которые сейчас лежат на столе
+    const currentDeskNames = Array.from(deskItems).map(el => el.dataset.name);
+    
+    // Проверка ачивки ЗВЕЗДец (одновременно на столе Тепло, Холод и Затмение)
+    let hasZvezdecSet = currentDeskNames.includes("Тепло") && currentDeskNames.includes("Холод") && currentDeskNames.includes("Затмение");
+    
+    // Проверка ачивки Космоstars (одновременно на столе Тепло, Холод, Затмение, Закат и Рассвет)
+    let hasCosmostarsSet = currentDeskNames.includes("Тепло") && currentDeskNames.includes("Холод") && currentDeskNames.includes("Затмение") && currentDeskNames.includes("Закат") && currentDeskNames.includes("Рассвет");
+
+    // Геометрия стола (углы)
     let cornersFilled = false;
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
@@ -445,7 +463,7 @@ function checkQuests(triggerType) {
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
-    // 2. Вертикальная башня с защитой от наслоения (минимум 60px расстояния по Y)
+    // Вертикальная башня (Архитектор) с защитой от наслоения
     let towerBuilt = false;
     if (deskItems.length >= 3) {
         let arrY = Array.from(deskItems).map(el => ({
@@ -458,26 +476,6 @@ function checkQuests(triggerType) {
             let sameColumn = Math.abs(i1.x - i2.x) <= 20 && Math.abs(i2.x - i3.x) <= 20;
             let separatedByY = (i2.y - i1.y >= 60) && (i3.y - i2.y >= 60);
             if (sameColumn && separatedByY) { towerBuilt = true; break; }
-        }
-    }
-
-    // 3. Проверка горизонтальных цепочек (БЕЗ удаления элементов со стола)
-    let zvezdecRow = false;
-    let cosmostarsRow = false;
-    if (deskItems.length >= 3) {
-        let arr = Array.from(deskItems).map(el => ({
-            name: el.dataset.name,
-            x: parseFloat(el.style.left || 0),
-            y: parseFloat(el.style.top || 0)
-        })).sort((a, b) => a.x - b.x);
-
-        for (let i = 0; i < arr.length - 2; i++) {
-            let i1 = arr[i], i2 = arr[i+1], i3 = arr[i+2];
-            let isLine = Math.abs(i1.y - i2.y) <= 30 && Math.abs(i2.y - i3.y) <= 30;
-            if (isLine) {
-                if ((i1.name === "Тепло" || i1.name === "Холод") && i2.name === "Затмение" && (i3.name === "Холод" || i3.name === "Тепло") && i1.name !== i3.name) zvezdecRow = true;
-                if ((i1.name === "Рассвет" || i1.name === "Закат") && i2.name === "Затмение" && (i3.name === "Закат" || i3.name === "Рассвет") && i1.name !== i3.name) cosmostarsRow = true;
-            }
         }
     }
 
@@ -502,8 +500,8 @@ function checkQuests(triggerType) {
         { id: "gates_of_s", condition: artists.includes("umikirameki") },
         { id: "graduation", condition: artists.includes("sasagichh") && artists.includes("svknon") },
         { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
-        { id: "zvezdec", condition: zvezdecRow },
-        { id: "cosmostars", condition: cosmostarsRow },
+        { id: "zvezdec", condition: hasZvezdecSet }, 
+        { id: "cosmostars", condition: hasCosmostarsSet },
         { id: "slime_attack", condition: triggerType === "slime_fail" },
         { id: "gigawatts", condition: triggerType === "bttf_fail" },
         { id: "what_year", condition: triggerType === "year_fail" }
