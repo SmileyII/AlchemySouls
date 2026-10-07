@@ -35,6 +35,19 @@ const ALL_ACHIEVEMENTS = [
     { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть Призрачность и 10 Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
     { id: "moon_on_water", title: "MOON ON THE WATER", desc: "Очистить стол, когда на нём есть Закат, Тишина и Любовь", reward: "Луна, Ночь", img: "луна.png" },
     { id: "escanor_proud", title: "Эсканор будет доволен...", desc: "Очистить стол, когда на нём есть Рассвет, Тепло и Звёзды", reward: "Солнце, День", img: "солнце.png" }
+    { id: "circus_time", title: "Кажется это цирк", desc: "Попробовать соединить Хаос и Порядок, пока на столе находится хотя бы 6 разных художников", reward: "Память, Вязкость, Хрупкость", img: "цирк.png" },
+    { id: "dice_roll", title: "Бросок Дайсов", desc: "Открыть художника K'hath", reward: "Приключения", img: "дайсы.png" },
+    { id: "legend_speed", title: "...за моей легендой?", desc: "Открыть художника shakunetsu", reward: "Скорость, Молния", img: "скорость.png" },
+    { id: "wait_and_see", title: "Подождем и увидим", desc: "Оставить Вдохновение и Чистоту на столе на 30 секунд без движения", reward: "Кисть, Краски", img: "кисть.png" },
+    { id: "live_and_learn", title: "Поживём и узнаем", desc: "Оставить Кисть и Краски на столе на 30 секунд без движения", reward: "Чувства, Эмоции", img: "чувства.png" },
+    { id: "pride_sin", title: "Грех Гордыни", desc: "Открыть художника Akasakiii", reward: "Кровь", img: "кровь.png" },
+    { id: "walter_fly", title: "Муха...", desc: "Набрать в поисковике фразу: 'You got damn right'", reward: "Кристаллизация", img: "муха.png" },
+    { id: "chaos_era", title: "Эпоха хаоса", desc: "Вытащить 50 элементов на стол одновременно", reward: "Коллапс", img: "коллапс.png" },
+    { id: "void_era", title: "А это что? Эпоха пустоты?", desc: "Очистить стол, когда на нём будет ровно или больше 50 элементов", reward: "Пустота", img: "пустота.png" },
+    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'Красная и Синяя'", reward: "Огонь, Вода", img: "пилюли.png" },
+    { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
+    { id: "geometry_smash", title: "Geometry Smash", desc: "Расставить 4 элемента Порядок плотно по четырём стенкам (краям) стола", reward: "Геометрия", img: "геометрия.png" },
+    { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" }
 ];
 
 let discoveredItems = [];
@@ -82,6 +95,12 @@ function initGame() {
     if (searchBox) {
         searchBox.oninput = () => {
             resetActivityTimer();
+            
+            // Проверка текстовых пасхалок в поиске
+            const currentSearch = searchBox.value.trim().toLowerCase();
+            if (currentSearch === "you got damn right") checkQuests("walter_text");
+            if (currentSearch === "красная и синяя") checkQuests("matrix_text");
+
             if (!stats.searchUsed && searchBox.value.length > 0) {
                 stats.searchUsed = true;
                 checkQuests();
@@ -90,11 +109,39 @@ function initGame() {
         };
     }
 
+
+        // Таймер бездействия и медитации над элементами
     setInterval(() => {
-        if (Date.now() - lastInputTime >= 180000) { 
+        const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
+        const deskNames = deskItems.map(el => el.dataset.name);
+        
+        // Считаем время статичности стола (если мышка не двигается)
+        let idleTime = Date.now() - lastInputTime;
+
+        if (idleTime >= 30000) { // 30 секунд покоя
+            let hasInspiration = deskNames.includes("Вдохновение");
+            let hasPurity = deskNames.includes("Чистота");
+            if (hasInspiration && hasPurity) checkQuests("wait_see_trigger");
+
+            let hasBrush = deskNames.includes("Кисть");
+            let hasPaints = deskNames.includes("Краски");
+            if (hasBrush && hasPaints) checkQuests("live_learn_trigger");
+        }
+
+        if (idleTime >= 60000) { // 1 минута покоя для квеста Гуля
+            let hasFeelings = deskNames.includes("Чувства");
+            let hasEmotions = deskNames.includes("Эмоции");
+            let hasHeat = deskNames.includes("Тепло");
+            let totalVoid = deskNames.filter(name => name === "Пустота").length;
+            if (hasFeelings && hasEmotions && hasHeat && totalVoid >= 10) {
+                checkQuests("ghoul_trigger");
+            }
+        }
+
+        if (idleTime >= 180000) { // 3 минуты полного АФК
             checkQuests("idle_timeout");
         }
-    }, 10000);
+    }, 5000);
 
     window.onmousemove = resetActivityTimer;
     window.onmousedown = resetActivityTimer;
@@ -404,7 +451,7 @@ function combineElements(el1, el2) {
             }
         }
         } else {
-        // Защита от спама: засчитываем ошибку только если элементы уже не находятся в процессе отскока
+        // Защита от спама: 10 честных отскоков
         if (!el1.classList.contains('craft-error')) {
             stats.failedCrafts++;
             
@@ -416,6 +463,12 @@ function combineElements(el1, el2) {
             }, 4000); 
         }
 
+        // Ачивка "Кажется это цирк" (Хаос + Порядок при 6 художниках на столе)
+        if ((name1 === "Хаос" && name2 === "Порядок") || (name2 === "Хаос" && name1 === "Порядок")) {
+            const artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
+            if (artistCount >= 6) checkQuests("circus_trigger");
+        }
+
         // Проверка 1.21 gigawatts! (Вспышка + Конструкт при 10 конструктах на столе)
         if ((name1 === "Вспышка" && name2 === "Конструкт") || (name2 === "Вспышка" && name1 === "Конструкт")) {
             const currentConstructs = document.querySelectorAll('.item.on-desk[data-name="Конструкт"]').length;
@@ -425,7 +478,7 @@ function combineElements(el1, el2) {
         }
 
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
-        if ((name1 === "Хаос" && name2 === "Судьбу") || (name2 === "Хаос" && name1 === "Судьбу")) checkQuests("slime_fail");
+        if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
         if ((name1 === "Будущее" && name2 === "Прошлое") || (name2 === "Будущее" && name1 === "Прошлое")) checkQuests("year_fail");
     }
     checkQuests();
@@ -435,42 +488,51 @@ function checkQuests(triggerType) {
     const ws = document.getElementById('workspace');
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
+    const deskNames = Array.from(deskItems).map(el => el.dataset.name);
     
-    // Собираем массив имён всех элементов, которые сейчас лежат на столе
-    const currentDeskNames = Array.from(deskItems).map(el => el.dataset.name);
+    // Geometry Smash: проверка 4 стенок (краев) стола для элементов "Порядок"
+    let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
+    const padding = 40; // Чувствительность к краям экрана
     
-    // Проверка ачивки ЗВЕЗДец (одновременно на столе Тепло, Холод и Затмение)
-    let hasZvezdecSet = currentDeskNames.includes("Тепло") && currentDeskNames.includes("Холод") && currentDeskNames.includes("Затмение");
-    
-    // Проверка ачивки Космоstars (одновременно на столе Тепло, Холод, Затмение, Закат и Рассвет)
-    let hasCosmostarsSet = currentDeskNames.includes("Тепло") && currentDeskNames.includes("Холод") && currentDeskNames.includes("Затмение") && currentDeskNames.includes("Закат") && currentDeskNames.includes("Рассвет");
+    deskItems.forEach(el => {
+        if (el.dataset.name === "Порядок") {
+            let x = parseFloat(el.style.left || 0);
+            let y = parseFloat(el.style.top || 0);
+            let maxW = ws.clientWidth - el.clientWidth;
+            let maxH = ws.clientHeight - el.clientHeight;
+            
+            if (y <= padding) wallTop = true;
+            if (y >= maxH - padding) wallBottom = true;
+            if (x <= padding) wallLeft = true;
+            if (x >= maxW - padding) wallRight = true;
+        }
+    });
+    let geometrySmashFilled = wallTop && wallBottom && wallLeft && wallRight;
 
-    // Геометрия стола (углы)
+    // Расчет углов стола
     let cornersFilled = false;
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
-        const margin = 50;
         deskItems.forEach(el => {
             let x = parseFloat(el.style.left || 0);
             let y = parseFloat(el.style.top || 0);
             let maxW = ws.clientWidth - el.clientWidth;
             let maxH = ws.clientHeight - el.clientHeight;
-            if (x <= margin && y <= margin) topLeft = true;
-            if (x >= maxW - margin && y <= margin) topRight = true;
-            if (x <= margin && y >= maxH - margin) bottomLeft = true;
-            if (x >= maxW - margin && y >= maxH - margin) bottomRight = true;
+            if (x <= 50 && y <= 50) topLeft = true;
+            if (x >= maxW - 50 && y <= 50) topRight = true;
+            if (x <= 50 && y >= maxH - 50) bottomLeft = true;
+            if (x >= maxW - 50 && y >= maxH - 50) bottomRight = true;
         });
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
-    // Вертикальная башня (Архитектор) с защитой от наслоения
+    // Расчет вертикальной башни
     let towerBuilt = false;
     if (deskItems.length >= 3) {
         let arrY = Array.from(deskItems).map(el => ({
             x: parseFloat(el.style.left || 0),
             y: parseFloat(el.style.top || 0)
         })).sort((a, b) => a.y - b.y);
-
         for (let i = 0; i < arrY.length - 2; i++) {
             let i1 = arrY[i], i2 = arrY[i+1], i3 = arrY[i+2];
             let sameColumn = Math.abs(i1.x - i2.x) <= 20 && Math.abs(i2.x - i3.x) <= 20;
@@ -479,10 +541,17 @@ function checkQuests(triggerType) {
         }
     }
 
+    let zvezdecRow = false;
+    let cosmostarsRow = false;
+    if (deskItems.length >= 3) {
+        if (deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение")) zvezdecRow = true;
+        if (deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет")) cosmostarsRow = true;
+    }
+
     const artists = discoveredItems.filter(i => i.url).map(i => i.name);
     const totalArtists = artists.length;
 
-    const checkList = [
+        const checkList = [
         { id: "first_craft", condition: stats.totalCrafts >= 1 },
         { id: "cleaner", condition: stats.clearDeskClicks >= 3 },
         { id: "searcher", condition: stats.searchUsed === true },
@@ -500,11 +569,21 @@ function checkQuests(triggerType) {
         { id: "gates_of_s", condition: artists.includes("umikirameki") },
         { id: "graduation", condition: artists.includes("sasagichh") && artists.includes("svknon") },
         { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
-        { id: "zvezdec", condition: hasZvezdecSet }, 
-        { id: "cosmostars", condition: hasCosmostarsSet },
+        { id: "zvezdec", condition: zvezdecRow },
+        { id: "cosmostars", condition: cosmostarsRow },
         { id: "slime_attack", condition: triggerType === "slime_fail" },
         { id: "gigawatts", condition: triggerType === "bttf_fail" },
-        { id: "what_year", condition: triggerType === "year_fail" }
+        { id: "what_year", condition: triggerType === "year_fail" },
+        { id: "circus_time", condition: triggerType === "circus_trigger" },
+        { id: "dice_roll", condition: artists.includes("K'hath") || artists.includes("Khath") },
+        { id: "legend_speed", condition: artists.includes("shakunetsu") },
+        { id: "wait_and_see", condition: triggerType === "wait_see_trigger" },
+        { id: "live_and_learn", condition: triggerType === "live_learn_trigger" },
+        { id: "pride_sin", condition: artists.includes("Akasakiii") },
+        { id: "walter_fly", condition: triggerType === "walter_text" },
+        { id: "chaos_era", condition: deskItems.length >= 50 },
+        { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
+        { id: "geometry_smash", condition: geometrySmashFilled }
     ];
 
     checkList.forEach(q => {
@@ -530,15 +609,30 @@ function checkQuests(triggerType) {
 }
 
 function checkClearDeskQuests() {
-    const deskItems = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
+    const wsItems = document.querySelectorAll('.item.on-desk');
+    const deskItems = Array.from(wsItems).map(el => el.dataset.name);
+    
+    // Ачивка "А это что? Эпоха пустоты?" (Очистить 50+ элементов)
+    if (wsItems.length >= 50 && !stats.unlockedQuests.includes("void_era")) {
+        stats.unlockedQuests.push("void_era");
+        unlockClearReward("void_era");
+    }
+
+    // Ачивка "Кусай руку!" (9 художников и 10 Монстроподобий)
+    let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
+    let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
+    if (artistCount >= 9 && monsterCount >= 10 && !stats.unlockedQuests.includes("bite_the_hand")) {
+        stats.unlockedQuests.push("bite_the_hand");
+        unlockClearReward("bite_the_hand");
+    }
+
+    // Старые ритуалы очистки стола
     let hasGhost = deskItems.includes("Призрачность");
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
-    
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
         stats.unlockedQuests.push("project_2501");
         unlockClearReward("project_2501");
     }
-
     let hasSunset = deskItems.includes("Закат");
     let hasSilence = deskItems.includes("Тишина");
     let hasLove = deskItems.includes("Любовь");
@@ -546,7 +640,6 @@ function checkClearDeskQuests() {
         stats.unlockedQuests.push("moon_on_water");
         unlockClearReward("moon_on_water");
     }
-
     let hasDawn = deskItems.includes("Рассвет");
     let hasHeat = deskItems.includes("Тепло");
     let hasStars = deskItems.includes("Звезды");
