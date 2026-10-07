@@ -109,8 +109,6 @@ function initGame() {
         };
     }
 
-
-        // Таймер бездействия и медитации над элементами
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
         const deskNames = deskItems.map(el => el.dataset.name);
