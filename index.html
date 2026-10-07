@@ -83,6 +83,16 @@
         .achievement-toast.show { bottom: 30px; }
         .achievement-toast .icon { font-size: 20px; color: #ff007f; }
         .achievement-toast .reward { color: #00ffd2; }
+
+        /* Анимация ошибки и отскока */
+@keyframes shake-error {
+    0%, 100% { transform: translateX(0); box-shadow: 0 0 10px rgba(255, 74, 74, 0.5); }
+    20%, 60% { transform: translateX(-8px); border-color: #ff4a4a; box-shadow: 0 0 20px #ff4a4a; }
+    40%, 80% { transform: translateX(8px); border-color: #ff4a4a; box-shadow: 0 0 20px #ff4a4a; }
+}
+.item.craft-error {
+    animation: shake-error 0.4s ease-in-out;
+}
     </style>
 </head>
 <body>
