@@ -95,6 +95,8 @@ function initGame() {
     if (searchBox) {
         searchBox.oninput = () => {
             resetActivityTimer();
+            
+            // Исправлено: проверка текста приведена к строгому нижнему регистру
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
             if (currentSearch === "красная и синяя") checkQuests("matrix_text");
@@ -470,22 +472,24 @@ function checkQuests(triggerType) {
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
-
+    
+    let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
     let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const padding = 40;
-    deskItems.forEach(el => {
-        if (el.dataset.name === "Порядок") {
-            let x = parseFloat(el.style.left || 0);
-            let y = parseFloat(el.style.top || 0);
-            let maxW = ws.clientWidth - el.clientWidth;
-            let maxH = ws.clientHeight - el.clientHeight;
-            if (y <= padding) wallTop = true;
-            if (y >= maxH - padding) wallBottom = true;
-            if (x <= padding) wallLeft = true;
-            if (x >= maxW - padding) wallRight = true;
-        }
+    const edgePadding = 40; 
+    
+    orderItems.forEach(el => {
+        let x = parseFloat(el.style.left || 0);
+        let y = parseFloat(el.style.top || 0);
+        let maxW = ws.clientWidth - el.clientWidth;
+        let maxH = ws.clientHeight - el.clientHeight;
+        
+        // Каждая карточка может закрыть только одну уникальную стенку, где она расположена плотнее всего
+        if (y <= edgePadding && !wallTop) { wallTop = true; return; }
+        if (y >= maxH - edgePadding && !wallBottom) { wallBottom = true; return; }
+        if (x <= edgePadding && !wallLeft) { wallLeft = true; return; }
+        if (x >= maxW - edgePadding && !wallRight) { wallRight = true; return; }
     });
-    let geometrySmashFilled = wallTop && wallBottom && wallLeft && wallRight;
+    let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
 
     let cornersFilled = false;
     if (deskItems.length >= 4) {
