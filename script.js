@@ -44,7 +44,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "walter_fly", title: "Муха...", desc: "Набрать в поисковике фразу: 'You got damn right'", reward: "Кристаллизация", img: "муха.png" },
     { id: "chaos_era", title: "Эпоха хаоса", desc: "Вытащить 50 элементов на стол одновременно", reward: "Коллапс", img: "коллапс.png" },
     { id: "void_era", title: "А это что? Эпоха пустоты?", desc: "Очистить стол, когда на нём будет ровно или больше 50 элементов", reward: "Пустота", img: "пустота.png" },
-    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'Красная и Синяя'", reward: "Огонь, Вода", img: "пилюли.png" },
+    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "пилюли.png" },
     { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
     { id: "geometry_smash", title: "Geometry Smash", desc: "Расставить 4 элемента Порядок плотно по четырём стенкам (краям) стола", reward: "Геометрия", img: "геометрия.png" },
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" }
@@ -96,10 +96,9 @@ function initGame() {
         searchBox.oninput = () => {
             resetActivityTimer();
             
-            // Исправлено: проверка текста приведена к строгому нижнему регистру
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
-            if (currentSearch === "красная и синяя") checkQuests("matrix_text");
+            if (currentSearch === "red or blue") checkQuests("matrix_text");
 
             if (!stats.searchUsed && searchBox.value.length > 0) {
                 stats.searchUsed = true;
@@ -108,7 +107,7 @@ function initGame() {
             renderCurrentTab();
         };
     }
-
+    
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
         const deskNames = deskItems.map(el => el.dataset.name);
