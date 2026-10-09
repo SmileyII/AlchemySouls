@@ -493,16 +493,13 @@ function renderAchievementsTab() {
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
         card.appendChild(icon); card.appendChild(info);
         
-            }
-        };
-
         container.appendChild(card);
     });
 }
 
 function spawnItemOnDesk(e, itemData) {
     e.preventDefault();
-    isDraggingNow = true; 
+    isDraggingNow = true;
     
     const workspace = document.getElementById('workspace');
     const clone = document.createElement('div');
@@ -730,7 +727,21 @@ function checkQuests(triggerType) {
             if (closeOrders >= 5) hasGeometrySmash = true;
         });
     }
+    
     let cornersFilled = false;
+    if (deskItems.length >= 4) {
+        let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
+        deskItems.forEach(el => {
+            let x = el.offsetLeft;
+            let y = el.offsetTop;
+            let maxW = ws.clientWidth - el.clientWidth;
+            let maxH = ws.clientHeight - el.clientHeight;
+            if (x <= 50 && y <= 50) topLeft = true;
+            if (x >= maxW - 50 && y <= 50) topRight = true;
+            if (x <= 50 && y >= maxH - 50) bottomLeft = true;
+            if (x >= maxW - 50 && y >= maxH - 50) bottomRight = true;
+        });
+        if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
     let towerBuilt = false;
