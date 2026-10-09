@@ -683,9 +683,12 @@ function combineElements(el1, el2) {
                 showArtistModal(newItemData);
             }
         }
-    } else {
-        if (!el1.classList.contains('craft-error')) {
+        } else {
+        // ИСПРАВЛЕНО: Засчитываем ошибку крафта ТОЛЬКО если игрок сам перемещал элемент по столу,
+        // это полностью блокирует баг со спам-кликами по элементам внутри меню инвентаря!
+        if (!el1.classList.contains('craft-error') && isDraggingNow === false) {
             stats.failedCrafts++;
+            
             el1.classList.add('craft-error');
             el2.classList.add('craft-error');
             setTimeout(() => {
@@ -710,6 +713,7 @@ function combineElements(el1, el2) {
         if ((name1 === "Гнев" && name2 === "Безумие") || (name2 === "Гнев" && name1 === "Безумие")) checkQuests("hulk_fail_trigger");
         if ((name1 === "Судьба" && name2 === "Огонь") || (name2 === "Судьба" && name1 === "Огонь")) checkQuests("lotr_fail_trigger");
         if ((name1 === "Слёзы" && name2 === "Музыка") || (name2 === "Слёзы" && name1 === "Музыка")) checkQuests("april_fail_trigger");
+
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
         if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
     }
