@@ -117,10 +117,11 @@ function initGame() {
             renderAllTabs();
         });
 
-    const searchBox = document.getElementById('search-box');
+        const searchBox = document.getElementById('search-box');
     if (searchBox) {
         searchBox.oninput = () => {
             resetActivityTimer();
+            
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
             if (currentSearch === "red or blue") checkQuests("matrix_text");
@@ -130,6 +131,7 @@ function initGame() {
                 stats.searchUsed = true;
                 checkQuests();
             }
+            // Перерисовываем все вкладки, так как поиск теперь влияет на каждую из них!
             renderCurrentTab();
         };
     }
@@ -321,9 +323,14 @@ function renderArtistsTab() {
 function renderAchievementsTab() {
     const container = document.getElementById('achievements-tab');
     if (!container) return;
+    const searchBox = document.getElementById('search-box');
+    const searchQuery = searchBox ? searchBox.value.toLowerCase() : '';
     container.innerHTML = '';
     
     ALL_ACHIEVEMENTS.forEach(ach => {
+        // Фильтр поиска по названию или описанию достижения
+        if (searchQuery && !ach.title.toLowerCase().includes(searchQuery) && !ach.desc.toLowerCase().includes(searchQuery)) return;
+
         const isUnlocked = stats.unlockedQuests.includes(ach.id);
         const card = document.createElement('div');
         card.className = `ach-card ${isUnlocked ? 'unlocked' : ''}`;
@@ -551,28 +558,32 @@ function checkQuests(triggerType) {
     const deskItems = document.querySelectorAll('.item.on-desk');
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
     
-    // 1. Geometry Smash: Проверка 4 краев стола для 4 РАЗНЫХ элементов "Порядок"
+    // ИСПРАВЛЕНО: Ювелирный расчет 4 стенок стола по внутренним координатам offset
     let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
     let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const wsRect = ws.getBoundingClientRect();
-    const tolerance = 45; 
+    const tolerance = 45; // Чувствительность притяжения к краю (в пикселях)
     
     orderItems.forEach(el => {
-        let r = el.getBoundingClientRect();
-        if (Math.abs(r.top - wsRect.top) <= tolerance && !wallTop) { wallTop = true; return; }
-        if (Math.abs(r.bottom - wsRect.bottom) <= tolerance && !wallBottom) { wallBottom = true; return; }
-        if (Math.abs(r.left - wsRect.left) <= tolerance && !wallLeft) { wallLeft = true; return; }
-        if (Math.abs(r.right - wsRect.right) <= tolerance && !wallRight) { wallRight = true; return; }
+        let x = el.offsetLeft;
+        let y = el.offsetTop;
+        let maxW = ws.clientWidth - el.clientWidth;
+        let maxH = ws.clientHeight - el.clientHeight;
+        
+        // Проверяем, к какому краю карточка прижата вплотную
+        if (y <= tolerance && !wallTop) { wallTop = true; return; }
+        if (y >= maxH - tolerance && !wallBottom) { wallBottom = true; return; }
+        if (x <= tolerance && !wallLeft) { wallLeft = true; return; }
+        if (x >= maxW - tolerance && !wallRight) { wallRight = true; return; }
     });
     let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
 
-    // 2. Расчет четырех углов стола
+    // Расчет четырех углов стола
     let cornersFilled = false;
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
         deskItems.forEach(el => {
-            let x = parseFloat(el.style.left || 0);
-            let y = parseFloat(el.style.top || 0);
+            let x = el.offsetLeft;
+            let y = el.offsetTop;
             let maxW = ws.clientWidth - el.clientWidth;
             let maxH = ws.clientHeight - el.clientHeight;
             if (x <= 50 && y <= 50) topLeft = true;
@@ -583,25 +594,24 @@ function checkQuests(triggerType) {
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
-    // 3. Расчет вертикальной башни (Архитектор) без наслоения
+    // Расчет вертикальной башни (Архитектор) без наслоения
     let towerBuilt = false;
     if (deskItems.length >= 3) {
         let arrY = Array.from(deskItems).map(el => ({
-            x: parseFloat(el.style.left || 0),
-            y: parseFloat(el.style.top || 0)
+            x: el.offsetLeft,
+            y: el.offsetTop
         })).sort((a, b) => a.y - b.y);
 
         for (let i = 0; i < arrY.length - 2; i++) {
             let i1 = arrY[i], i2 = arrY[i+1], i3 = arrY[i+2];
-            let sameColumn = Math.abs(i1.x - i2.x) <= 20 && Math.abs(i2.x - i3.x) <= 20;
+            let sameColumn = Math.abs(i1.x - i2.x) <= 20;
             let separatedByY = (i2.y - i1.y >= 60) && (i3.y - i2.y >= 60);
             if (sameColumn && separatedByY) { towerBuilt = true; break; }
         }
     }
 
-    // 4. Проверка одновременного нахождения сетов на столе
-    let hasZvezdecSet = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
-    let hasCosmostarsSet = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
+    let zvezdecRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
+    let cosmostarsRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
 
     const artists = discoveredItems.filter(i => i.url).map(i => i.name);
     const totalArtists = artists.length;
