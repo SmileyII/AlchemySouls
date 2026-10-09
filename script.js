@@ -41,7 +41,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "void_era", title: "А это что? Эпоха пустоты?", desc: "Очистить стол, когда на нём будет ровно или больше 50 элементов", reward: "Пустота", img: "пустота.png" },
     { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "пилюли.png" },
     { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
-    { id: "geometry_smash", title: "Geometry Smash", desc: "Расставить 4 элемента Порядок плотно по четырём стенкам (краям) стола", reward: "Геометрия", img: "геометрия.png" },
+    { id: "geometry_smash", title: "Geometry Smash", desc: "Собрать в одной точке стола 5 элементов Порядок", reward: "Геометрия", img: "геометрия.png" },
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
     { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
     { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
@@ -88,7 +88,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "metroidvania", title: "Метроидвания или же...", desc: "Положить Элемент на стол и нажать по 5 раз в меню 'Элементы' на Кровь, Луна и Путь", reward: "Готика", img: "кастла.png" },
     { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
     { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
-    { id: "room_302", title: "Квартира 302", desc: "Нажать на это достижение 21 раз", reward: "Туман", img: "рум302.png" },
+    { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
     { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Яд, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
     { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" }
 ];
@@ -493,11 +493,6 @@ function renderAchievementsTab() {
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
         card.appendChild(icon); card.appendChild(info);
         
-        // Клик по ачивке Квартира 302
-        card.onclick = () => {
-            if (ach.id === "room_302") {
-                stats.room302ClicksCount++;
-                if (stats.room302ClicksCount >= 21) checkQuests("room302_trigger");
             }
         };
 
@@ -719,43 +714,23 @@ function combineElements(el1, el2) {
     }
     checkQuests();
 }
-
+    
 function checkQuests(triggerType) {
     const ws = document.getElementById('workspace');
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
-    
-    let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
-    let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const tolerance = 45; 
-    
-    orderItems.forEach(el => {
-        let x = el.offsetLeft;
-        let y = el.offsetTop;
-        let maxW = ws.clientWidth - el.clientWidth;
-        let maxH = ws.clientHeight - el.clientHeight;
-        if (y <= tolerance && !wallTop) { wallTop = true; return; }
-        if (y >= maxH - tolerance && !wallBottom) { wallBottom = true; return; }
-        if (x <= tolerance && !wallLeft) { wallLeft = true; return; }
-        if (x >= maxW - tolerance && !wallRight) { wallRight = true; return; }
-    });
-    let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
-
-    let cornersFilled = false;
-    if (deskItems.length >= 4) {
-        let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
-        deskItems.forEach(el => {
-            let x = el.offsetLeft;
-            let y = el.offsetTop;
-            let maxW = ws.clientWidth - el.clientWidth;
-            let maxH = ws.clientHeight - el.clientHeight;
-            if (x <= 50 && y <= 50) topLeft = true;
-            if (x >= maxW - 50 && y <= 50) topRight = true;
-            if (x <= 50 && y >= maxH - 50) bottomLeft = true;
-            if (x >= maxW - 50 && y >= maxH - 50) bottomRight = true;
+  
+    let hasGeometrySmash = false;
+    let orderItemsOnDesk = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
+    if (orderItemsOnDesk.length >= 5) {
+        orderItemsOnDesk.forEach(item => {
+            let ix = item.offsetLeft; let iy = item.offsetTop;
+            let closeOrders = orderItemsOnDesk.filter(el => Math.abs(el.offsetLeft - ix) <= 35 && Math.abs(el.offsetTop - iy) <= 35).length;
+            if (closeOrders >= 5) hasGeometrySmash = true;
         });
-        if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
+    }
+    let cornersFilled = false;
     }
 
     let towerBuilt = false;
@@ -882,7 +857,7 @@ function checkQuests(triggerType) {
         { id: "walter_fly", condition: triggerType === "walter_text" },
         { id: "chaos_era", condition: deskItems.length >= 50 },
         { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
-        { id: "geometry_smash", condition: geometrySmashFilled },
+        { id: "geometry_smash", condition: hasGeometrySmash },
         { id: "bite_the_hand", condition: triggerType === "bite_hand_success" },
         { id: "big_three", condition: hasBigThree },
         { id: "konami_code", condition: triggerType === "konami_trigger" },
@@ -929,7 +904,7 @@ function checkQuests(triggerType) {
         { id: "metroidvania", condition: triggerType === "metroid_trigger" },
         { id: "ghost_strafe", condition: triggerType === "ghost_strafe_trigger" },
         { id: "frieren_way", condition: triggerType === "frieren_trigger" },
-        { id: "room_302", condition: triggerType === "room302_trigger" },
+        { id: "room_302", condition: stats.clearDeskClicks >= 21 },
         { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
         { id: "no_second_season", condition: stats.tabSwitchCount >= 28 }
     ];
