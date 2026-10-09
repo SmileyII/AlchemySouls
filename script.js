@@ -18,7 +18,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "chaos_desk", title: "Творческий хаос", desc: "Вытащить на рабочий стол одновременно больше 15 элементов", reward: "Блеск, Вспышка", img: "хаос.png" },
     { id: "philosopher", title: "Элемент Экзострайдера", desc: "Открыть 15 любых промежуточных элементов или смыслов", reward: "Элемент", img: "философия.png" },
     { id: "crisis", title: "Я тебя сейчас ЗААРТБЛОЧУ!", desc: "Попробовать соединить неподходящие элементы 10 раз", reward: "Грусть, Апатия", img: "уныние.png" },
-    { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Величие", img: "признание.png" },
+    { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
     { id: "duck_soup", title: "Duck Soup", desc: "Открыть 100 художников выставки", reward: "Душа", img: "душа.png" },
     { id: "madness", title: "Безумно ли?", desc: "Быстро нажать на один и тот же элемент в инвентаре 10 раз", reward: "Безумие", img: "безумие.png" },
     { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
@@ -36,7 +36,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "moon_on_water", title: "MOON ON THE WATER", desc: "Очистить стол, когда на нём есть Закат, Тишина и Любовь", reward: "Луна, Ночь", img: "луна.png" },
     { id: "escanor_proud", title: "Эсканор будет доволен...", desc: "Очистить стол, когда на нём есть Рассвет, Тепло и Звёзды", reward: "Солнце, День", img: "солнце.png" },
     { id: "circus_time", title: "Кажется это цирк", desc: "Попробовать соединить Хаос и Порядок, пока на столе находится хотя бы 6 разных художников", reward: "Память, Вязкость, Хрупкость", img: "цирк.png" },
-    { id: "dice_roll", title: "Бросок Дайсов", desc: "Открыть художника K'hath", reward: "Приключения", img: "дайсы.png" },
+    { id: "dice_roll", title: "Бросок Дайсов", desc: "Открыть художника 'K\'hath'", reward: "Приключения", img: "дайсы.png" },
     { id: "legend_speed", title: "...за моей легендой?", desc: "Открыть художника shakunetsu", reward: "Скорость, Молния", img: "скорость.png" },
     { id: "wait_and_see", title: "Подождем и увидим", desc: "Оставить Вдохновение и Чистоту на столе на 30 секунд без движения", reward: "Кисть, Краски", img: "кисть.png" },
     { id: "live_and_learn", title: "Поживём и узнаем", desc: "Оставить Кисть и Краски на столе на 30 секунд без движения", reward: "Чувства, Эмоции", img: "чувства.png" },
@@ -47,7 +47,29 @@ const ALL_ACHIEVEMENTS = [
     { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "пилюли.png" },
     { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
     { id: "geometry_smash", title: "Geometry Smash", desc: "Расставить 4 элемента Порядок плотно по четырём стенкам (краям) стола", reward: "Геометрия", img: "геометрия.png" },
-    { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" }
+    { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
+    { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
+    { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
+    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать (совместить) в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
+    { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Активировать скрытый звуковой синтезатор внутри игры", reward: "Звук, Танец", img: "мику.png" },
+    { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
+    { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
+    { id: "rero_cherry", title: "Реро-вишенка", desc: "Возьмите элемент Вишенка на столе и быстро потрясите его мышкой", reward: "Энергия, Организм, Хранитель", img: "реро.png" },
+    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Наложить на одну карточку художника одновременно 5 элементов Вселенная и 5 Монстроподобие", reward: "Ужас, Вечность", img: "николь.png" },
+    { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться между вкладками Элементы и Художники 28 раз", reward: "Самоцветы, Стекло, Трещины", img: "сезон.png" },
+    { id: "not_friends", title: "Мы не подруги!!!", desc: "Расположить на столе одновременно Ярость, Огонь, Воду и Тишину", reward: "А́гг҃лъ", img: "подруги.png" },
+    { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
+    { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
+    { id: "orgy_style", title: "Это больше оргия...", desc: "Расставить по четырём углам стола элементы Эротика, Ночь и Вспышка", reward: "Сиси-писи, Жар, Сок, Животноподобие, Тот самый батон", img: "оргия.png" },
+    { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
+    { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
+    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Призрачность, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
+    { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
+    { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
+    { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
+    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Свобода, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
+    { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
+    { id: "elephant_feathers", title: "Слон из перьев", desc: "Открыть художника sapfirachibtelegram", reward: "Перо", img: "перо.png" }
 ];
 
 let discoveredItems = [];
@@ -63,6 +85,10 @@ let stats = {
     searchUsed: false,
     sameMaterialCrafts: 0,
     shadowAttempts: 0,
+    deletedArtistsCount: 0, 
+    tabSwitchCount: 0,       
+    cabbageRemoveCount: 0,   
+    notInPublicCount: 0,     
     unlockedQuests: []
 };
 
@@ -95,10 +121,10 @@ function initGame() {
     if (searchBox) {
         searchBox.oninput = () => {
             resetActivityTimer();
-            
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
             if (currentSearch === "red or blue") checkQuests("matrix_text");
+            if (currentSearch === "love") checkQuests("someday_love_trigger");
 
             if (!stats.searchUsed && searchBox.value.length > 0) {
                 stats.searchUsed = true;
@@ -107,7 +133,24 @@ function initGame() {
             renderCurrentTab();
         };
     }
+
+    // Логика отслеживания Кода KONAMI
+    const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+    let konamiIndex = 0;
     
+    window.addEventListener('keydown', (e) => {
+        if (e.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                checkQuests("konami_trigger");
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    });
+
+    // Интервальный таймер для проверки статичности элементов на столе
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
         const deskNames = deskItems.map(el => el.dataset.name);
@@ -142,6 +185,13 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
+    if (currentActiveTab !== tabName) {
+        if ((currentActiveTab === "items" && tabName === "artists") || (currentActiveTab === "artists" && tabName === "items")) {
+            stats.tabSwitchCount++;
+            if (stats.tabSwitchCount >= 28) checkQuests("season_trigger");
+        }
+    }
+
     currentActiveTab = tabName;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (event && event.target) event.target.classList.add('active');
@@ -165,7 +215,7 @@ function renderCurrentTab() {
 }
 
 function isElementDeadEnd(item) {
-        if (BASE_ITEMS.some(b => b.name === item.name) || item.url) return false;
+    if (BASE_ITEMS.some(b => b.name === item.name) || item.url) return false;
     const usedInRecipes = recipes.some(r => r.item1 === item.name || r.item2 === item.name);
     return !usedInRecipes;
 }
@@ -178,32 +228,32 @@ function renderItemsTab() {
     container.innerHTML = '';
     
     discoveredItems.forEach(item => {
-        if (item.url) return;
+        if (item.url) return; 
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return;
-        
+
         const div = document.createElement('div');
         const isDead = isElementDeadEnd(item);
-        // Исправлено: добавлены обратные кавычки
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // Исправлено: добавлены обратные кавычки
-        img.src = `images/${item.img}`;
-        img.onerror = () => { img.src = 'images/placeholder.png'; };
+        img.src = `images/${item.img}`; 
+        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
         
         div.appendChild(img); div.appendChild(text);
         
-        div.onmousedown = (e) => {
+        div.onmousedown = (e) => { 
             clickCounts[item.name] = (clickCounts[item.name] || 0) + 1;
             if (clickCounts[item.name] >= 10) {
                 checkQuests("spam_click");
             }
             setTimeout(() => { clickCounts[item.name] = 0; }, 2000);
-            if (!isDraggingNow) spawnItemOnDesk(e, item);
+
+            if (!isDraggingNow) spawnItemOnDesk(e, item); 
         };
+        
         container.appendChild(div);
     });
 }
@@ -216,16 +266,15 @@ function renderArtistsTab() {
     container.innerHTML = '';
     
     discoveredItems.forEach(item => {
-        if (!item.url) return;
+        if (!item.url) return; 
         if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return;
-        
+
         const div = document.createElement('div');
         div.className = 'item artist-card';
         
         const img = document.createElement('img');
-        // Исправлено: добавлены обратные кавычки
-        img.src = `images/${item.img}`;
-        img.onerror = () => { img.src = 'images/placeholder.png'; };
+        img.src = `images/${item.img}`; 
+        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
         text.innerText = item.name;
@@ -234,9 +283,10 @@ function renderArtistsTab() {
         
         div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
         div.onclick = () => showArtistModal(item);
+        
         container.appendChild(div);
     });
-    
+
     const totalArtists = discoveredItems.filter(i => i.url).length;
     const counterEl = document.getElementById('artists-count');
     if (counterEl) counterEl.innerText = totalArtists;
@@ -250,7 +300,6 @@ function renderAchievementsTab() {
     ALL_ACHIEVEMENTS.forEach(ach => {
         const isUnlocked = stats.unlockedQuests.includes(ach.id);
         const card = document.createElement('div');
-        // Исправлено: добавлены обратные кавычки
         card.className = `ach-card ${isUnlocked ? 'unlocked' : ''}`;
         
         const icon = document.createElement('div');
@@ -270,7 +319,6 @@ function renderAchievementsTab() {
         
         const reward = document.createElement('span');
         reward.className = 'ach-reward-tag';
-        // Исправлено: добавлены обратные кавычки
         reward.innerText = ach.reward === "Ничего" ? "Награда: Скрытый трофей" : `Награда: + [${ach.reward}]`;
         
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
@@ -281,7 +329,7 @@ function renderAchievementsTab() {
 
 function spawnItemOnDesk(e, itemData) {
     e.preventDefault();
-    isDraggingNow = true;
+    isDraggingNow = true; 
     
     const workspace = document.getElementById('workspace');
     const clone = document.createElement('div');
@@ -293,7 +341,6 @@ function spawnItemOnDesk(e, itemData) {
     if(itemData.desc) clone.dataset.desc = itemData.desc;
     
     const img = document.createElement('img');
-    // Исправлено: добавлены обратные кавычки
     img.src = `images/${itemData.img}`;
     img.onerror = () => { img.src = 'images/placeholder.png'; };
     
@@ -306,7 +353,6 @@ function spawnItemOnDesk(e, itemData) {
     const rect = workspace.getBoundingClientRect();
     let x = e.clientX - rect.left - 50;
     let y = e.clientY - rect.top - 55;
-    // Исправлено: добавлены обратные кавычки
     clone.style.left = `${x}px`; clone.style.top = `${y}px`;
     
     startDragProcess(e, clone, 50, 55);
@@ -317,7 +363,7 @@ function startDragProcess(e, element, shiftX, shiftY) {
     const rect = workspace.getBoundingClientRect();
     if (currentMoveHandler) document.removeEventListener('mousemove', currentMoveHandler);
     
-        let lastX = null;
+    let lastX = null;
     let lastTime = Date.now();
     let shakeScore = 0;
 
@@ -326,16 +372,15 @@ function startDragProcess(e, element, shiftX, shiftY) {
         let y = clientY - rect.top - shiftY;
         x = Math.max(0, Math.min(x, workspace.clientWidth - element.clientWidth));
         y = Math.max(0, Math.min(y, workspace.clientHeight - element.clientHeight));
-        // Восстановлены обратные кавычки
         element.style.left = `${x}px`; element.style.top = `${y}px`;
 
         if (element.dataset.name === "Мрак" || element.dataset.name === "Mрак") {
             let currentTime = Date.now();
             if (lastX !== null && currentTime - lastTime > 40) {
                 let speed = Math.abs(clientX - lastX) / (currentTime - lastTime);
-                if (speed > 1.3) {
+                if (speed > 1.3) { 
                     shakeScore++;
-                    if (shakeScore >= 12) {
+                    if (shakeScore >= 12) { 
                         checkQuests("shake_mrak");
                     }
                 }
@@ -347,10 +392,11 @@ function startDragProcess(e, element, shiftX, shiftY) {
     
     currentMoveHandler = function(event) { moveAt(event.clientX, event.clientY); };
     document.addEventListener('mousemove', currentMoveHandler);
-
+    
     window.onmouseup = function() {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
-        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false;
+        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false; 
+        
         checkCollisions(element);
         checkQuests();
     };
@@ -358,11 +404,11 @@ function startDragProcess(e, element, shiftX, shiftY) {
 }
 
 document.getElementById('workspace').onmousedown = function(e) {
-    if (isDraggingNow) return;
+    if (isDraggingNow) return; 
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
     e.preventDefault();
-    isDraggingNow = true;
+    isDraggingNow = true; 
     let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
     let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
     startDragProcess(e, targetItem, shiftX, shiftY);
@@ -372,11 +418,13 @@ function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const r1 = draggedElement.getBoundingClientRect();
-    const padding = 15;
+    const padding = 15; 
+    
     for (let other of deskItems) {
         if (other === draggedElement) continue;
         const r2 = other.getBoundingClientRect();
         const isOverlapping = !((r1.right + padding) < r2.left || (r1.left - padding) > r2.right || (r1.bottom + padding) < r2.top || (r1.top - padding) > r2.bottom);
+        
         if (isOverlapping) { combineElements(draggedElement, other); return; }
     }
 }
@@ -384,7 +432,7 @@ function checkCollisions(draggedElement) {
 function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
-
+    
     if (((name1 === "Мрак" || name1 === "Холод") && (name2 === "Тепло" || name2 === "Свет")) ||
         ((name2 === "Мрак" || name2 === "Холод") && (name1 === "Тепло" || name1 === "Свет"))) {
         checkQuests("eclipse_trigger");
@@ -395,20 +443,23 @@ function combineElements(el1, el2) {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
         window.onmouseup = null; isDraggingNow = false;
         stats.totalCrafts++;
+
         if (name1 === name2) {
             stats.sameMaterialCrafts++;
         }
+
         const x = (parseFloat(el1.style.left) + parseFloat(el2.style.left)) / 2;
         const y = (parseFloat(el1.style.top) + parseFloat(el2.style.top)) / 2;
+        
         el1.remove(); el2.remove();
-
+        
         const newItemData = {
             name: match.result,
             img: match.result_img,
             url: match.artist_url || "",
             desc: match.artist_desc || ""
         };
-
+        
         const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
         const isDead = isElementDeadEnd(newItemData);
@@ -417,24 +468,23 @@ function combineElements(el1, el2) {
         resultEl.dataset.img = newItemData.img;
         if(newItemData.url) resultEl.dataset.url = newItemData.url;
         if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
-
+        
         const img = document.createElement('img');
-        // Восстановлены обратные кавычки
         img.src = `images/${newItemData.img}`;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
-
+        
         const text = document.createElement('span');
         text.innerText = newItemData.name + (isDead ? " •" : "");
+        
         resultEl.appendChild(img); resultEl.appendChild(text);
-        // Восстановлены обратные кавычки
         resultEl.style.left = `${x}px`; resultEl.style.top = `${y}px`;
         workspace.appendChild(resultEl);
-
+        
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
             saveGame();
-            renderAllTabs();
+            renderAllTabs(); 
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -447,18 +497,21 @@ function combineElements(el1, el2) {
             setTimeout(() => {
                 el1.classList.remove('craft-error');
                 el2.classList.remove('craft-error');
-            }, 4000);
+            }, 4000); 
         }
+
         if ((name1 === "Хаос" && name2 === "Порядок") || (name2 === "Хаос" && name1 === "Порядок")) {
             const artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
             if (artistCount >= 6) checkQuests("circus_trigger");
         }
+
         if ((name1 === "Вспышка" && name2 === "Конструкт") || (name2 === "Вспышка" && name1 === "Конструкт")) {
             const currentConstructs = document.querySelectorAll('.item.on-desk[data-name="Конструкт"]').length;
             if (currentConstructs >= 10) {
                 checkQuests("bttf_fail");
             }
         }
+
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
         if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
         if ((name1 === "Будущее" && name2 === "Прошлое") || (name2 === "Будущее" && name1 === "Прошлое")) checkQuests("year_fail");
@@ -481,8 +534,6 @@ function checkQuests(triggerType) {
         let y = parseFloat(el.style.top || 0);
         let maxW = ws.clientWidth - el.clientWidth;
         let maxH = ws.clientHeight - el.clientHeight;
-        
-        // Каждая карточка может закрыть только одну уникальную стенку, где она расположена плотнее всего
         if (y <= edgePadding && !wallTop) { wallTop = true; return; }
         if (y >= maxH - edgePadding && !wallBottom) { wallBottom = true; return; }
         if (x <= edgePadding && !wallLeft) { wallLeft = true; return; }
@@ -512,6 +563,7 @@ function checkQuests(triggerType) {
             x: parseFloat(el.style.left || 0),
             y: parseFloat(el.style.top || 0)
         })).sort((a, b) => a.y - b.y);
+
         for (let i = 0; i < arrY.length - 2; i++) {
             let i1 = arrY[i], i2 = arrY[i+1], i3 = arrY[i+2];
             let sameColumn = Math.abs(i1.x - i2.x) <= 20 && Math.abs(i2.x - i3.x) <= 20;
@@ -522,6 +574,7 @@ function checkQuests(triggerType) {
 
     let zvezdecRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
     let cosmostarsRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
+
     const artists = discoveredItems.filter(i => i.url).map(i => i.name);
     const totalArtists = artists.length;
 
@@ -557,11 +610,13 @@ function checkQuests(triggerType) {
         { id: "walter_fly", condition: triggerType === "walter_text" },
         { id: "chaos_era", condition: deskItems.length >= 50 },
         { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
-        { id: "geometry_smash", condition: geometrySmashFilled }
+        { id: "geometry_smash", condition: geometrySmashFilled },
+        { id: "konami_code", condition: triggerType === "konami_trigger" },
+        { id: "someday_love", condition: triggerType === "someday_love_trigger" }
     ];
 
     checkList.forEach(q => {
-        if (q.condition && !stats.unlockedQuests.includes(q.id)) {
+                if (q.condition && !stats.unlockedQuests.includes(q.id)) {
             stats.unlockedQuests.push(q.id);
             const achMeta = ALL_ACHIEVEMENTS.find(a => a.id === q.id);
             if (achMeta.reward !== "Ничего") {
@@ -585,16 +640,19 @@ function checkQuests(triggerType) {
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
     const deskItems = Array.from(wsItems).map(el => el.dataset.name);
+    
     if (wsItems.length >= 50 && !stats.unlockedQuests.includes("void_era")) {
         stats.unlockedQuests.push("void_era");
         unlockClearReward("void_era");
     }
+    
     let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
     if (artistCount >= 9 && monsterCount >= 10 && !stats.unlockedQuests.includes("bite_the_hand")) {
         stats.unlockedQuests.push("bite_the_hand");
         unlockClearReward("bite_the_hand");
     }
+    
     let hasGhost = deskItems.includes("Призрачность");
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
@@ -633,7 +691,7 @@ function unlockClearReward(id) {
 function showAchievementToast(ach) {
     const toast = document.getElementById('achievement-popup');
     if (toast) {
-        // Восстановлены обратные кавычки
+        // Восстановлены обратные кавычки для динамического шаблона строки
         toast.innerHTML = `<span class="icon">🏆</span> Достижение: <span style="color:#ff007f;">«${ach.title}»</span>! Получен элемент: <span class="reward">${ach.reward}</span>`;
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 4500);
@@ -651,7 +709,7 @@ function showArtistModal(item) {
     document.getElementById('m-link').href = item.url;
     const modalArt = document.getElementById('m-art');
     if (modalArt) {
-        // Восстановлены обратные кавычки
+        // Восстановлены обратные кавычки для генерации путей к картинкам
         modalArt.src = `images/${item.img}`;
         modalArt.onerror = () => { modalArt.src = 'images/placeholder.png'; };
     }
@@ -667,12 +725,12 @@ function resetGame() {
         localStorage.removeItem('alchemy_souls_progress');
         localStorage.removeItem('alchemy_souls_stats');
         discoveredItems = [...BASE_ITEMS];
-        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, unlockedQuests: [] };
+        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, deletedArtistsCount: 0, tabSwitchCount: 0, cabbageRemoveCount: 0, notInPublicCount: 0, unlockedQuests: [] };
         document.getElementById('workspace').innerHTML = '';
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(btn => btn.classList.remove('active'));
-        if (tabs && tabs[0]) tabs[0].classList.add('active');
+        if (tabs && tabs) tabs.classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
