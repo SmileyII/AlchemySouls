@@ -213,6 +213,7 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
+    // Считаем переключение только если вкладка РЕАЛЬНО изменилась
     if (currentActiveTab !== tabName) {
         if ((currentActiveTab === "items" && tabName === "artists") || (currentActiveTab === "artists" && tabName === "items")) {
             stats.tabSwitchCount++;
@@ -221,12 +222,21 @@ function switchTab(tabName) {
     }
 
     currentActiveTab = tabName;
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (event && event.target) event.target.classList.add('active');
+    
+    // Безопасное переключение классов без использования глобального event
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        // Находим кнопку, у которой onclick содержит имя нашей вкладки
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabName)) {
+            btn.classList.add('active');
+        }
+    });
+    
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     
     const targetContent = document.getElementById(`${tabName}-tab`);
     if (targetContent) targetContent.classList.add('active');
+    
     renderCurrentTab();
 }
 
