@@ -117,11 +117,10 @@ function initGame() {
             renderAllTabs();
         });
 
-        const searchBox = document.getElementById('search-box');
+    const searchBox = document.getElementById('search-box');
     if (searchBox) {
         searchBox.oninput = () => {
             resetActivityTimer();
-            
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
             if (currentSearch === "red or blue") checkQuests("matrix_text");
@@ -131,12 +130,10 @@ function initGame() {
                 stats.searchUsed = true;
                 checkQuests();
             }
-            // Перерисовываем все вкладки, так как поиск теперь влияет на каждую из них!
             renderCurrentTab();
         };
     }
 
-    // Логика отслеживания Кода KONAMI
     const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
     let konamiIndex = 0;
     
@@ -152,32 +149,23 @@ function initGame() {
         }
     });
 
-    // Логика отслеживания ползунка громкости для Вокалоида
     const volumeControl = document.getElementById('volume-control');
     const bgMusic = document.getElementById('bg-music');
-    
     if (volumeControl && bgMusic) {
-        // Устанавливаем начальную громкость
         bgMusic.volume = volumeControl.value;
-        
         volumeControl.oninput = (e) => {
             resetActivityTimer();
             let currentVolume = parseFloat(e.target.value);
             bgMusic.volume = currentVolume;
-            
-            // Если музыка ещё не играет (из-за ограничений браузера), запускаем при движении
             if (bgMusic.paused) {
                 bgMusic.play().catch(() => {});
             }
-            
-            // КЛЮЧЕВОЕ УСЛОВИЕ: если громкость выкручена на максимум (1.0)
             if (currentVolume >= 0.99) {
                 checkQuests("vocaloid_volume_max");
             }
         };
     }
 
-    // Интервальный таймер для проверки статичности элементов на столе
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
         const deskNames = deskItems.map(el => el.dataset.name);
@@ -205,7 +193,6 @@ function initGame() {
 
     window.onmousemove = resetActivityTimer;
     window.onmousedown = resetActivityTimer;
-    
 }
 
 function resetActivityTimer() {
@@ -213,7 +200,6 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
-    // Считаем переключение только если вкладка РЕАЛЬНО изменилась
     if (currentActiveTab !== tabName) {
         if ((currentActiveTab === "items" && tabName === "artists") || (currentActiveTab === "artists" && tabName === "items")) {
             stats.tabSwitchCount++;
@@ -222,21 +208,16 @@ function switchTab(tabName) {
     }
 
     currentActiveTab = tabName;
-    
-    // Безопасное переключение классов без использования глобального event
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
-        // Находим кнопку, у которой onclick содержит имя нашей вкладки
         if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabName)) {
             btn.classList.add('active');
         }
     });
     
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    
     const targetContent = document.getElementById(`${tabName}-tab`);
     if (targetContent) targetContent.classList.add('active');
-    
     renderCurrentTab();
 }
 
@@ -288,10 +269,8 @@ function renderItemsTab() {
                 checkQuests("spam_click");
             }
             setTimeout(() => { clickCounts[item.name] = 0; }, 2000);
-
             if (!isDraggingNow) spawnItemOnDesk(e, item); 
         };
-        
         container.appendChild(div);
     });
 }
@@ -321,7 +300,6 @@ function renderArtistsTab() {
         
         div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
         div.onclick = () => showArtistModal(item);
-        
         container.appendChild(div);
     });
 
@@ -338,11 +316,11 @@ function renderAchievementsTab() {
     container.innerHTML = '';
     
     ALL_ACHIEVEMENTS.forEach(ach => {
-        // Фильтр поиска по названию или описанию достижения
         if (searchQuery && !ach.title.toLowerCase().includes(searchQuery) && !ach.desc.toLowerCase().includes(searchQuery)) return;
-
+        
         const isUnlocked = stats.unlockedQuests.includes(ach.id);
         const card = document.createElement('div');
+        // Восстановлены обратные кавычки
         card.className = `ach-card ${isUnlocked ? 'unlocked' : ''}`;
         
         const icon = document.createElement('div');
@@ -362,6 +340,7 @@ function renderAchievementsTab() {
         
         const reward = document.createElement('span');
         reward.className = 'ach-reward-tag';
+        // Восстановлены обратные кавычки
         reward.innerText = ach.reward === "Ничего" ? "Награда: Скрытый трофей" : `Награда: + [${ach.reward}]`;
         
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
@@ -372,7 +351,7 @@ function renderAchievementsTab() {
 
 function spawnItemOnDesk(e, itemData) {
     e.preventDefault();
-    isDraggingNow = true; 
+    isDraggingNow = true;
     
     const workspace = document.getElementById('workspace');
     const clone = document.createElement('div');
@@ -384,6 +363,7 @@ function spawnItemOnDesk(e, itemData) {
     if(itemData.desc) clone.dataset.desc = itemData.desc;
     
     const img = document.createElement('img');
+    // Восстановлены обратные кавычки
     img.src = `images/${itemData.img}`;
     img.onerror = () => { img.src = 'images/placeholder.png'; };
     
@@ -396,6 +376,7 @@ function spawnItemOnDesk(e, itemData) {
     const rect = workspace.getBoundingClientRect();
     let x = e.clientX - rect.left - 50;
     let y = e.clientY - rect.top - 55;
+    // Восстановлены обратные кавычки
     clone.style.left = `${x}px`; clone.style.top = `${y}px`;
     
     startDragProcess(e, clone, 50, 55);
@@ -409,22 +390,26 @@ function startDragProcess(e, element, shiftX, shiftY) {
     let lastX = null;
     let lastTime = Date.now();
     let shakeScore = 0;
-
+    
     function moveAt(clientX, clientY) {
         let x = clientX - rect.left - shiftX;
         let y = clientY - rect.top - shiftY;
         x = Math.max(0, Math.min(x, workspace.clientWidth - element.clientWidth));
         y = Math.max(0, Math.min(y, workspace.clientHeight - element.clientHeight));
+        // Восстановлены обратные кавычки
         element.style.left = `${x}px`; element.style.top = `${y}px`;
-
-        if (element.dataset.name === "Мрак" || element.dataset.name === "Mрак") {
+        
+        const nameAttr = element.dataset.name;
+        if (nameAttr === "Мрак" || nameAttr === "Mрак" || nameAttr === "Вишенка" || nameAttr === "Сладость") {
             let currentTime = Date.now();
             if (lastX !== null && currentTime - lastTime > 40) {
                 let speed = Math.abs(clientX - lastX) / (currentTime - lastTime);
-                if (speed > 1.3) { 
+                if (speed > 1.3) {
                     shakeScore++;
-                    if (shakeScore >= 12) { 
-                        checkQuests("shake_mrak");
+                    if (shakeScore >= 12) {
+                        if (nameAttr === "Мрак" || nameAttr === "Mрак") checkQuests("shake_mrak");
+                        if (nameAttr === "Вишенка") checkQuests("shake_cherry");
+                        if (nameAttr === "Сладость") checkQuests("shake_sweet");
                     }
                 }
                 lastTime = currentTime;
@@ -438,8 +423,7 @@ function startDragProcess(e, element, shiftX, shiftY) {
     
     window.onmouseup = function() {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
-        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false; 
-        
+        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false;
         checkCollisions(element);
         checkQuests();
     };
@@ -447,11 +431,11 @@ function startDragProcess(e, element, shiftX, shiftY) {
 }
 
 document.getElementById('workspace').onmousedown = function(e) {
-    if (isDraggingNow) return; 
+    if (isDraggingNow) return;
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
     e.preventDefault();
-    isDraggingNow = true; 
+    isDraggingNow = true;
     let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
     let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
     startDragProcess(e, targetItem, shiftX, shiftY);
@@ -461,7 +445,7 @@ function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const r1 = draggedElement.getBoundingClientRect();
-    const padding = 15; 
+    const padding = 15;
     
     for (let other of deskItems) {
         if (other === draggedElement) continue;
@@ -472,37 +456,43 @@ function checkCollisions(draggedElement) {
     }
 }
 
+function checkCollisions(draggedElement) {
+    if (!draggedElement.parentNode) return;
+    const deskItems = document.querySelectorAll('.item.on-desk');
+    const r1 = draggedElement.getBoundingClientRect();
+    const padding = 15;
+    for (let other of deskItems) {
+        if (other === draggedElement) continue;
+        const r2 = other.getBoundingClientRect();
+        const isOverlapping = !((r1.right + padding) < r2.left || (r1.left - padding) > r2.right || (r1.bottom + padding) < r2.top || (r1.top - padding) > r2.bottom);
+        if (isOverlapping) { combineElements(draggedElement, other); return; }
+    }
+}
+
 function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
-    
     if (((name1 === "Мрак" || name1 === "Холод") && (name2 === "Тепло" || name2 === "Свет")) ||
         ((name2 === "Мрак" || name2 === "Холод") && (name1 === "Тепло" || name1 === "Свет"))) {
         checkQuests("eclipse_trigger");
     }
-
     const match = recipes.find(r => (r.item1 === name1 && r.item2 === name2) || (r.item1 === name2 && r.item2 === name1));
     if (match) {
         if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
         window.onmouseup = null; isDraggingNow = false;
         stats.totalCrafts++;
-
         if (name1 === name2) {
             stats.sameMaterialCrafts++;
         }
-
         const x = (parseFloat(el1.style.left) + parseFloat(el2.style.left)) / 2;
         const y = (parseFloat(el1.style.top) + parseFloat(el2.style.top)) / 2;
-        
         el1.remove(); el2.remove();
-        
         const newItemData = {
             name: match.result,
             img: match.result_img,
             url: match.artist_url || "",
             desc: match.artist_desc || ""
         };
-        
         const workspace = document.getElementById('workspace');
         const resultEl = document.createElement('div');
         const isDead = isElementDeadEnd(newItemData);
@@ -511,23 +501,21 @@ function combineElements(el1, el2) {
         resultEl.dataset.img = newItemData.img;
         if(newItemData.url) resultEl.dataset.url = newItemData.url;
         if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
-        
         const img = document.createElement('img');
+        // Восстановлены обратные кавычки
         img.src = `images/${newItemData.img}`;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
-        
         const text = document.createElement('span');
         text.innerText = newItemData.name + (isDead ? " •" : "");
-        
         resultEl.appendChild(img); resultEl.appendChild(text);
+        // Восстановлены обратные кавычки
         resultEl.style.left = `${x}px`; resultEl.style.top = `${y}px`;
         workspace.appendChild(resultEl);
-        
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
             saveGame();
-            renderAllTabs(); 
+            renderAllTabs();
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -540,21 +528,18 @@ function combineElements(el1, el2) {
             setTimeout(() => {
                 el1.classList.remove('craft-error');
                 el2.classList.remove('craft-error');
-            }, 4000); 
+            }, 4000);
         }
-
         if ((name1 === "Хаос" && name2 === "Порядок") || (name2 === "Хаос" && name1 === "Порядок")) {
             const artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
             if (artistCount >= 6) checkQuests("circus_trigger");
         }
-
         if ((name1 === "Вспышка" && name2 === "Конструкт") || (name2 === "Вспышка" && name1 === "Конструкт")) {
             const currentConstructs = document.querySelectorAll('.item.on-desk[data-name="Конструкт"]').length;
             if (currentConstructs >= 10) {
                 checkQuests("bttf_fail");
             }
         }
-
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
         if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
         if ((name1 === "Будущее" && name2 === "Прошлое") || (name2 === "Будущее" && name1 === "Прошлое")) checkQuests("year_fail");
@@ -567,27 +552,20 @@ function checkQuests(triggerType) {
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
-    
-    // ИСПРАВЛЕНО: Ювелирный расчет 4 стенок стола по внутренним координатам offset
     let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
     let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const tolerance = 45; // Чувствительность притяжения к краю (в пикселях)
-    
+    const tolerance = 45;
     orderItems.forEach(el => {
         let x = el.offsetLeft;
         let y = el.offsetTop;
         let maxW = ws.clientWidth - el.clientWidth;
         let maxH = ws.clientHeight - el.clientHeight;
-        
-        // Проверяем, к какому краю карточка прижата вплотную
         if (y <= tolerance && !wallTop) { wallTop = true; return; }
         if (y >= maxH - tolerance && !wallBottom) { wallBottom = true; return; }
         if (x <= tolerance && !wallLeft) { wallLeft = true; return; }
         if (x >= maxW - tolerance && !wallRight) { wallRight = true; return; }
     });
     let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
-
-    // Расчет четырех углов стола
     let cornersFilled = false;
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
@@ -603,15 +581,12 @@ function checkQuests(triggerType) {
         });
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
-
-    // Расчет вертикальной башни (Архитектор) без наслоения
     let towerBuilt = false;
     if (deskItems.length >= 3) {
         let arrY = Array.from(deskItems).map(el => ({
             x: el.offsetLeft,
             y: el.offsetTop
         })).sort((a, b) => a.y - b.y);
-
         for (let i = 0; i < arrY.length - 2; i++) {
             let i1 = arrY[i], i2 = arrY[i+1], i3 = arrY[i+2];
             let sameColumn = Math.abs(i1.x - i2.x) <= 20;
@@ -619,12 +594,73 @@ function checkQuests(triggerType) {
             if (sameColumn && separatedByY) { towerBuilt = true; break; }
         }
     }
-
     let zvezdecRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
     let cosmostarsRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
+    let hasBigThree = deskNames.includes("Богоподобие") && deskNames.includes("Монстроподобие") && deskNames.includes("Животноподобие");
+    let hasNotFriends = deskNames.includes("Ярость") && deskNames.includes("Огонь") && deskNames.includes("Вода") && deskNames.includes("Тишина");
+    let hasPrismPower = false;
+    let hasNicoleDead = false;
+    let hasOrgyStyle = false;
+    let hasLustyMaid = false;
+    let hasBlueEyed = false;
+    let hasLeviPain = false;
+    let hasDeliciousGuro = false;
+    let hasCozyLife = false;
+    let hasTrueLoveExists = false;
+    let tableArtists = Array.from(deskItems).filter(el => el.classList.contains('artist-card'));
+    if (tableArtists.length >= 20) {
+        let first = tableArtists[0];
+        let closeCount = 0;
+        tableArtists.forEach(a => {
+            if (Math.abs(a.offsetLeft - first.offsetLeft) <= 40 && Math.abs(a.offsetTop - first.offsetTop) <= 40) closeCount++;
+        });
+        if (closeCount >= 20) hasPrismPower = true;
+    }
+    let hasMixStyle = false;
+    if (tableArtists.length >= 5) {
+        let tL = false, tR = false, bL = false, bR = false, cN = false;
+        tableArtists.forEach(el => {
+            let x = el.offsetLeft; let y = el.offsetTop;
+            let maxW = ws.clientWidth - el.clientWidth; let maxH = ws.clientHeight - el.clientHeight;
+            if (x <= 70 && y <= 70) tL = true;
+            if (x >= maxW - 70 && y <= 70) tR = true;
+            if (x <= 70 && y >= maxH - 70) bL = true;
+            if (x >= maxW - 70 && y >= maxH - 70) bR = true;
+            if (Math.abs(x - maxW/2) <= 80 && Math.abs(y - maxH/2) <= 80) cN = true;
+        });
+        if (tL && tR && bL && bR && cN) hasMixStyle = true;
+    }
+    tableArtists.forEach(art => {
+        let ax = art.offsetLeft; let ay = art.offsetTop;
+        let stackedItems = Array.from(deskItems).filter(el => Math.abs(el.offsetLeft - ax) <= 30 && Math.abs(el.offsetTop - ay) <= 30);
+        
+        // Исправлено: Фильтрация по реальным именам из dataset
+        let universes = stackedItems.filter(el => el.dataset.name === "Вселенная").length;
+        let monsters = stackedItems.filter(el => el.dataset.name === "Монстроподобие").length;
+        if (universes >= 5 && monsters >= 5) hasNicoleDead = true;
+        
+        let stackedNames = stackedItems.map(el => el.dataset.name);
+        if (stackedNames.includes("Животноподобие") && stackedNames.includes("Сок") && stackedNames.includes("Вкус") && stackedNames.includes("Вишенка") && stackedNames.includes("Тот самый батон")) hasLustyMaid = true;
+        if (stackedNames.includes("Мясо") && stackedNames.includes("Кровь") && stackedNames.includes("Садизм") && stackedNames.includes("Хрупкость") && stackedNames.includes("Эротика") && stackedNames.includes("Мурамаса") && stackedNames.includes("Свобода")) hasDeliciousGuro = true;
+        if (stackedNames.includes("Тепло") && stackedNames.includes("Нежность") && stackedNames.includes("Мягкость") && stackedNames.includes("Гармонию")) hasCozyLife = true;
+        if (stackedNames.includes("Нежность") && stackedNames.includes("Осязание") && stackedNames.includes("Чистота") && stackedNames.includes("Улыбка") && stackedNames.includes("Мгновение")) hasTrueLoveExists = true;
+        if (art.dataset.name === "Sovka" || art.dataset.name === "illusolis_art") {
+            if (stackedNames.includes("Sovka") && stackedNames.includes("illusolis_art") && stackedNames.includes("Душа")) hasLeviPain = true;
+        }
+    });
 
-    const artists = discoveredItems.filter(i => i.url).map(i => i.name);
-    const totalArtists = artists.length;
+    let o1 = deskNames.includes("Эротика"), o2 = deskNames.includes("Ночь"), o3 = deskNames.includes("Вспышка");
+    if (o1 && o2 && o3 && cornersFilled) hasOrgyStyle = true;
+
+    if (hasMixStyle) {
+        let fireOnSides = false;
+        let fireItems = Array.from(deskItems).filter(el => el.dataset.name === "Огонь");
+        if (fireItems.length >= 2) fireOnSides = true;
+        if (fireOnSides) hasBlueEyed = true;
+    }
+
+    const artistsNames = discoveredItems.filter(i => i.url).map(i => i.name);
+    const totalArtistsCount = artistsNames.length;
 
     const checkList = [
         { id: "first_craft", condition: stats.totalCrafts >= 1 },
@@ -635,26 +671,26 @@ function checkQuests(triggerType) {
         { id: "chaos_desk", condition: deskItems.length >= 15 },
         { id: "philosopher", condition: discoveredItems.filter(i => !i.url).length >= 15 },
         { id: "crisis", condition: stats.failedCrafts >= 10 },
-        { id: "collector", condition: totalArtists >= 30 },
-        { id: "duck_soup", condition: totalArtists >= 100 },
+        { id: "collector", condition: totalArtistsCount >= 30 },
+        { id: "duck_soup", condition: totalArtistsCount >= 100 },
         { id: "madness", condition: triggerType === "spam_click" },
         { id: "silence", condition: triggerType === "idle_timeout" },
         { id: "tengen_toppa", condition: stats.sameMaterialCrafts >= 10 },
         { id: "aspect_shadow", condition: triggerType === "shake_mrak" },
-        { id: "gates_of_s", condition: artists.includes("umikirameki") },
-        { id: "graduation", condition: artists.includes("sasagichh") && artists.includes("svknon") },
+        { id: "gates_of_s", condition: artistsNames.includes("umikirameki") },
+        { id: "graduation", condition: artistsNames.includes("sasagichh") && artistsNames.includes("svknon") },
         { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
-        { id: "zvezdec", condition: hasZvezdecSet },
-        { id: "cosmostars", condition: hasCosmostarsSet },
+        { id: "zvezdec", condition: zvezdecRow },
+        { id: "cosmostars", condition: cosmostarsRow },
         { id: "slime_attack", condition: triggerType === "slime_fail" },
         { id: "gigawatts", condition: triggerType === "bttf_fail" },
         { id: "what_year", condition: triggerType === "year_fail" },
         { id: "circus_time", condition: triggerType === "circus_trigger" },
-        { id: "dice_roll", condition: artists.includes("K'hath") || artists.includes("Khath") },
-        { id: "legend_speed", condition: artists.includes("shakunetsu") },
+        { id: "dice_roll", condition: artistsNames.includes("K'hath") || artistsNames.includes("Khath") },
+        { id: "legend_speed", condition: artistsNames.includes("shakunetsu") },
         { id: "wait_and_see", condition: triggerType === "wait_see_trigger" },
         { id: "live_and_learn", condition: triggerType === "live_learn_trigger" },
-        { id: "pride_sin", condition: artists.includes("Akasakiii") },
+        { id: "pride_sin", condition: artistsNames.includes("Akasakiii") },
         { id: "walter_fly", condition: triggerType === "walter_text" },
         { id: "chaos_era", condition: deskItems.length >= 50 },
         { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
@@ -662,7 +698,25 @@ function checkQuests(triggerType) {
         { id: "konami_code", condition: triggerType === "konami_trigger" },
         { id: "vocaloid_sound", condition: triggerType === "vocaloid_volume_max" },
         { id: "matrix_pills", condition: triggerType === "matrix_text" },
-        { id: "someday_love", condition: triggerType === "someday_love_trigger" }
+        { id: "someday_love", condition: triggerType === "someday_love_trigger" },
+        { id: "big_three", condition: hasBigThree },
+        { id: "prism_power", condition: hasPrismPower },
+        { id: "mix_style", condition: hasMixStyle },
+        { id: "nicole_dead", condition: hasNicoleDead },
+        { id: "no_second_season", condition: triggerType === "season_trigger" },
+        { id: "not_friends", condition: hasNotFriends },
+        { id: "cherry_on_cake", condition: triggerType === "shake_sweet" },
+        { id: "rero_cherry", condition: triggerType === "shake_cherry" },
+        { id: "orgy_style", condition: hasOrgyStyle },
+        { id: "lusty_maid", condition: hasLustyMaid },
+        { id: "blue_eyed", condition: hasBlueEyed },
+        { id: "levi_pain", condition: hasLeviPain },
+        { id: "delicious_guro", condition: hasDeliciousGuro },
+        { id: "cozy_life", condition: hasCozyLife },
+        { id: "true_love_exists", condition: hasTrueLoveExists },
+        { id: "kirito_clear", condition: triggerType === "kirito_trigger" },
+        { id: "my_cabbage", condition: triggerType === "cabbage_trigger" },
+        { id: "elephant_feathers", condition: artistsNames.includes("sapfirachibtelegram") }
     ];
 
     checkList.forEach(q => {
@@ -690,19 +744,45 @@ function checkQuests(triggerType) {
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
     const deskItems = Array.from(wsItems).map(el => el.dataset.name);
+    let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
+    
+    // Подсчет стёртых художников для Eryushidēta
+    if (artistCountOnDesk > 0) {
+        stats.deletedArtistsCount += artistCountOnDesk;
+        if (stats.deletedArtistsCount >= 213) checkQuests("kirito_trigger");
+    }
+    
+    // Подсчет Садизма для Капусты
+    let sadismCount = deskItems.filter(name => name === "Садизм").length;
+    if (sadismCount > 0) {
+        stats.cabbageRemoveCount += sadismCount;
+        if (stats.cabbageRemoveCount >= 30) checkQuests("cabbage_trigger");
+    }
+    
+    // Проверка Очистки Фальшивой любви ради истинной
+    let hasFakeLove = deskItems.includes("Фальшивая любовь");
+    let hasLovePack = deskItems.includes("Свобода") && deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
+    if (hasFakeLove && hasLovePack) {
+        checkQuests("true_love_clear_trigger");
+    }
+    
+    // Ну не при всех же!
+    let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
+    if (pubLove && pubV && pubN && pubD) {
+        stats.notInPublicCount++;
+        if (stats.notInPublicCount >= 7) checkQuests("not_public_trigger");
+    }
     
     if (wsItems.length >= 50 && !stats.unlockedQuests.includes("void_era")) {
         stats.unlockedQuests.push("void_era");
         unlockClearReward("void_era");
     }
-    
     let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
     if (artistCount >= 9 && monsterCount >= 10 && !stats.unlockedQuests.includes("bite_the_hand")) {
         stats.unlockedQuests.push("bite_the_hand");
         unlockClearReward("bite_the_hand");
     }
-    
     let hasGhost = deskItems.includes("Призрачность");
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
@@ -741,7 +821,7 @@ function unlockClearReward(id) {
 function showAchievementToast(ach) {
     const toast = document.getElementById('achievement-popup');
     if (toast) {
-        // Восстановлены обратные кавычки для динамического шаблона строки
+        // Восстановлены обратные кавычки для динамической строки шаблона
         toast.innerHTML = `<span class="icon">🏆</span> Достижение: <span style="color:#ff007f;">«${ach.title}»</span>! Получен элемент: <span class="reward">${ach.reward}</span>`;
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 4500);
@@ -759,7 +839,7 @@ function showArtistModal(item) {
     document.getElementById('m-link').href = item.url;
     const modalArt = document.getElementById('m-art');
     if (modalArt) {
-        // Восстановлены обратные кавычки для генерации путей к картинкам
+        // Восстановлены обратные кавычки для пути к картинке авторов
         modalArt.src = `images/${item.img}`;
         modalArt.onerror = () => { modalArt.src = 'images/placeholder.png'; };
     }
@@ -780,7 +860,7 @@ function resetGame() {
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(btn => btn.classList.remove('active'));
-        if (tabs && tabs) tabs.classList.add('active');
+        if (tabs && tabs[0]) tabs[0].classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
