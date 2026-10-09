@@ -144,6 +144,18 @@
         <span class="icon">🏆</span>
         <span>Достижение! Получен элемент: <span class="reward" id="ach-reward">???</span></span>
     </div>
+
+<!-- Музыкальный плеер для ачивки Первый звук будущего -->
+<div id="audio-player-container" style="background: rgba(0, 0, 0, 0.6); border: 1px solid #00ffd2; border-radius: 8px; padding: 10px; margin: 10px auto; max-width: 300px; text-align: center; box-shadow: 0 0 15px rgba(0, 255, 210, 0.2);">
+    <div style="color: #00ffd2; font-size: 12px; font-weight: bold; margin-bottom: 6px; letter-spacing: 1px;">ФОНОВАЯ МУЗЫКА</div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <span style="color: #ff007f; font-size: 14px;">🔈</span>
+        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.3" style="width: 70%; accent-color: #ff007f; cursor: pointer;">
+        <span style="color: #ff007f; font-size: 14px;">🔊</span>
+    </div>
+    <!-- Музыкальный трек (можно заменить на любую прямую ссылку на .mp3 файл в сети) -->
+    <audio id="bg-music" loop src="https://soundhelix.com"></audio>
+</div>
     
     <script src="script.js"></script>
 </body>
