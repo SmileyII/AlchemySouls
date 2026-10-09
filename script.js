@@ -357,19 +357,22 @@ function renderItemsTab() {
         
         div.appendChild(img); div.appendChild(text);
         
-        // Отслеживание скольжения курсора (слизь)
         div.onmouseenter = () => {
             if (!stats.unlockedQuests.includes("slime_touch")) {
                 window.slimeHovers = (window.slimeHovers || 0) + 1;
-                if (window.slimeHovers >= 50) checkQuests("slime_hover_trigger");
-                setTimeout(() => { window.slimeHovers = 0; }, 3000);
+                if (window.slimeHovers >= 50) {
+                    checkQuests("slime_hover_trigger");
+                    window.slimeHovers = 0; // Сбрасываем после успеха
+                }
+                // Продлеваем время на проведение мышкой (даём 4 секунды на весь инвентарь)
+                clearTimeout(window.slimeHoverTimeout);
+                window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
             }
             
-            // Трекер удержания мыши на Затмении (Noob Saibot)
             if (item.name === "Затмение") {
                 window.noobSaibotTimeout = setTimeout(() => {
                     checkQuests("noob_saibot_trigger");
-                }, 60000); // 1 минута наведения
+                }, 60000);
             }
         };
         
@@ -1063,7 +1066,7 @@ function resetGame() {
         localStorage.removeItem('alchemy_souls_progress');
         localStorage.removeItem('alchemy_souls_stats');
         discoveredItems = [...BASE_ITEMS];
-        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, deletedArtistsCount: 0, tabSwitchCount: 0, cabbageRemoveCount: 0, notInPublicCount: 0, unlockedQuests: [] };
+        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, deletedArtistsCount: 0, tabSwitchCount: 0, cabbageRemoveCount: 0, notInPublicCount: 0, cancelResetCount: 0, unlockedQuests: [] };
         document.getElementById('workspace').innerHTML = '';
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
@@ -1073,6 +1076,10 @@ function resetGame() {
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
         renderAllTabs();
+    } else {
+        stats.cancelResetCount = (stats.cancelResetCount || 0) + 1;
+        saveGame(); // Сохраняем промежуточный гринд отмен в LocalStorage
+        checkQuests(); 
     }
 }
 
