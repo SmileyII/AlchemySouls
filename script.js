@@ -150,6 +150,31 @@ function initGame() {
         }
     });
 
+    // Логика отслеживания ползунка громкости для Вокалоида
+    const volumeControl = document.getElementById('volume-control');
+    const bgMusic = document.getElementById('bg-music');
+    
+    if (volumeControl && bgMusic) {
+        // Устанавливаем начальную громкость
+        bgMusic.volume = volumeControl.value;
+        
+        volumeControl.oninput = (e) => {
+            resetActivityTimer();
+            let currentVolume = parseFloat(e.target.value);
+            bgMusic.volume = currentVolume;
+            
+            // Если музыка ещё не играет (из-за ограничений браузера), запускаем при движении
+            if (bgMusic.paused) {
+                bgMusic.play().catch(() => {});
+            }
+            
+            // КЛЮЧЕВОЕ УСЛОВИЕ: если громкость выкручена на максимум (1.0)
+            if (currentVolume >= 0.99) {
+                checkQuests("vocaloid_volume_max");
+            }
+        };
+    }
+
     // Интервальный таймер для проверки статичности элементов на столе
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
@@ -178,6 +203,7 @@ function initGame() {
 
     window.onmousemove = resetActivityTimer;
     window.onmousedown = resetActivityTimer;
+    
 }
 
 function resetActivityTimer() {
@@ -525,22 +551,22 @@ function checkQuests(triggerType) {
     const deskItems = document.querySelectorAll('.item.on-desk');
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
     
+    // 1. Geometry Smash: Проверка 4 краев стола для 4 РАЗНЫХ элементов "Порядок"
     let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
     let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const edgePadding = 40; 
+    const wsRect = ws.getBoundingClientRect();
+    const tolerance = 45; 
     
     orderItems.forEach(el => {
-        let x = parseFloat(el.style.left || 0);
-        let y = parseFloat(el.style.top || 0);
-        let maxW = ws.clientWidth - el.clientWidth;
-        let maxH = ws.clientHeight - el.clientHeight;
-        if (y <= edgePadding && !wallTop) { wallTop = true; return; }
-        if (y >= maxH - edgePadding && !wallBottom) { wallBottom = true; return; }
-        if (x <= edgePadding && !wallLeft) { wallLeft = true; return; }
-        if (x >= maxW - edgePadding && !wallRight) { wallRight = true; return; }
+        let r = el.getBoundingClientRect();
+        if (Math.abs(r.top - wsRect.top) <= tolerance && !wallTop) { wallTop = true; return; }
+        if (Math.abs(r.bottom - wsRect.bottom) <= tolerance && !wallBottom) { wallBottom = true; return; }
+        if (Math.abs(r.left - wsRect.left) <= tolerance && !wallLeft) { wallLeft = true; return; }
+        if (Math.abs(r.right - wsRect.right) <= tolerance && !wallRight) { wallRight = true; return; }
     });
     let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
 
+    // 2. Расчет четырех углов стола
     let cornersFilled = false;
     if (deskItems.length >= 4) {
         let topLeft = false, topRight = false, bottomLeft = false, bottomRight = false;
@@ -557,6 +583,7 @@ function checkQuests(triggerType) {
         if (topLeft && topRight && bottomLeft && bottomRight) cornersFilled = true;
     }
 
+    // 3. Расчет вертикальной башни (Архитектор) без наслоения
     let towerBuilt = false;
     if (deskItems.length >= 3) {
         let arrY = Array.from(deskItems).map(el => ({
@@ -572,8 +599,9 @@ function checkQuests(triggerType) {
         }
     }
 
-    let zvezdecRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
-    let cosmostarsRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
+    // 4. Проверка одновременного нахождения сетов на столе
+    let hasZvezdecSet = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение");
+    let hasCosmostarsSet = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
 
     const artists = discoveredItems.filter(i => i.url).map(i => i.name);
     const totalArtists = artists.length;
@@ -596,8 +624,8 @@ function checkQuests(triggerType) {
         { id: "gates_of_s", condition: artists.includes("umikirameki") },
         { id: "graduation", condition: artists.includes("sasagichh") && artists.includes("svknon") },
         { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
-        { id: "zvezdec", condition: zvezdecRow },
-        { id: "cosmostars", condition: cosmostarsRow },
+        { id: "zvezdec", condition: hasZvezdecSet },
+        { id: "cosmostars", condition: hasCosmostarsSet },
         { id: "slime_attack", condition: triggerType === "slime_fail" },
         { id: "gigawatts", condition: triggerType === "bttf_fail" },
         { id: "what_year", condition: triggerType === "year_fail" },
@@ -612,11 +640,13 @@ function checkQuests(triggerType) {
         { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
         { id: "geometry_smash", condition: geometrySmashFilled },
         { id: "konami_code", condition: triggerType === "konami_trigger" },
+        { id: "vocaloid_sound", condition: triggerType === "vocaloid_volume_max" },
+        { id: "matrix_pills", condition: triggerType === "matrix_text" },
         { id: "someday_love", condition: triggerType === "someday_love_trigger" }
     ];
 
     checkList.forEach(q => {
-                if (q.condition && !stats.unlockedQuests.includes(q.id)) {
+        if (q.condition && !stats.unlockedQuests.includes(q.id)) {
             stats.unlockedQuests.push(q.id);
             const achMeta = ALL_ACHIEVEMENTS.find(a => a.id === q.id);
             if (achMeta.reward !== "Ничего") {
