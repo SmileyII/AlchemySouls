@@ -554,17 +554,21 @@ function checkQuests(triggerType) {
     const deskNames = Array.from(deskItems).map(el => el.dataset.name);
     let orderItems = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
     let wallTop = false, wallBottom = false, wallLeft = false, wallRight = false;
-    const tolerance = 45;
+    
     orderItems.forEach(el => {
         let x = el.offsetLeft;
         let y = el.offsetTop;
         let maxW = ws.clientWidth - el.clientWidth;
         let maxH = ws.clientHeight - el.clientHeight;
-        if (y <= tolerance && !wallTop) { wallTop = true; return; }
-        if (y >= maxH - tolerance && !wallBottom) { wallBottom = true; return; }
-        if (x <= tolerance && !wallLeft) { wallLeft = true; return; }
-        if (x >= maxW - tolerance && !wallRight) { wallRight = true; return; }
+        
+        // Карточка считается прижатой к стенке, если она находится в пределах 50px от края стола
+        // Каждая карточка закрывает только одну стенку, к которой она ближе всего
+        if (y <= 50 && !wallTop) { wallTop = true; return; }
+        if (y >= maxH - 50 && !wallBottom) { wallBottom = true; return; }
+        if (x <= 50 && !wallLeft) { wallLeft = true; return; }
+        if (x >= maxW - 50 && !wallRight) { wallRight = true; return; }
     });
+
     let geometrySmashFilled = (orderItems.length >= 4) && wallTop && wallBottom && wallLeft && wallRight;
     let cornersFilled = false;
     if (deskItems.length >= 4) {
