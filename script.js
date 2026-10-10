@@ -9,89 +9,87 @@ const BASE_ITEMS = [
     { name: "Меланхолия", img: "меланхолия.png" }
 ];
 
-const ALL_ACHIEVEMENTS = [
-    { id: "first_craft", title: "Первый шаг", desc: "Сделать один успешный крафт", reward: "Ничего", img: "опыт.png" },
-    { id: "cleaner", title: "Чистый холст", desc: "Нажать кнопку 'Очистить стол' 3 раза", reward: "Чистота", img: "чистота.png" },
-    { id: "searcher", title: "В поисках истины", desc: "Воспользоваться строкой поиска", reward: "Изучение", img: "изучение.png" },
-    { id: "four_corners", title: "Aбсолютная гармония", desc: "Расставить 4 любых элемента по четырём углам стола", reward: "Баланс, Гармония", img: "гармония.png" },
-    { id: "tower_build", title: "Архитектор?", desc: "Выстроить 3 любых элемента на столе в один ровный вертикальный ряд (не друг на друга!)", reward: "Конструкт", img: "структура.png" },
-    { id: "chaos_desk", title: "Творческий хаос", desc: "Вытащить на рабочий стол одновременно больше 15 элементов", reward: "Блеск, Вспышка", img: "хаос.png" },
-    { id: "philosopher", title: "Элемент Экзострайдера", desc: "Открыть 15 любых промежуточных элементов или смыслов", reward: "Элемент", img: "философия.png" },
-    { id: "crisis", title: "Я тебя сейчас ЗААРТБЛОЧУ!", desc: "Попробовать соединить неподходящие элементы 10 раз", reward: "Грусть, Апатия", img: "уныние.png" },
-    { id: "duck_soup", title: "Duck Soup", desc: "Открыть 100 художников выставки", reward: "Душа", img: "душа.png" },
-    { id: "madness", title: "Безумно ли?", desc: "Нужно нажать на один и тот же элемент в инвентаре 10 раз подряд", reward: "Безумие", img: "безумие.png" },
-    { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
-    { id: "tengen_toppa", title: "Супер Тенген Топпа...", desc: "Получить 10 художников из двух одинаковых материалов", reward: "Совмещение", img: "совмещение.png" },
-    { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть секретного художника umikirameki", reward: "Звезды, Чудо", img: "звезды.png" },
-    { id: "graduation", title: "Наш выпускной", desc: "Открыть художников sasagichh и svknon", reward: "Цветы", img: "цветы.png" },
-    { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
-    { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить на столе элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
-    { id: "cosmostars", title: "Космоstars", desc: "Расположить на столе элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
-    { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть элементы Призрачность и 10 Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
-    { id: "moon_on_water", title: "MOON ON THE WATER", desc: "Очистить стол, когда на нём есть элементы Закат, Тишина и Любовь", reward: "Луна, Ночь", img: "луна.png" },
-    { id: "escanor_proud", title: "Эсканор будет доволен...", desc: "Очистить стол, когда на нём есть элементы Рассвет, Тепло и Звёзды", reward: "Солнце, День", img: "солнце.png" },
-    { id: "circus_time", title: "Кажется это цирк", desc: "Попробовать соединить Хаос и Порядок, пока на столе находится хотя бы 6 разных художников", reward: "Память, Вязкость, Хрупкость", img: "цирк.png" },
-    { id: "dice_roll", title: "Бросок Дайсов", desc: "Открыть художника K'hath", reward: "Приключения", img: "дайсы.png" },
-    { id: "legend_speed", title: "...за моей легендой?", desc: "Открыть художника shakunetsu", reward: "Скорость, Молния", img: "скорость.png" },
-    { id: "wait_and_see", title: "Подождем и увидим", desc: "Оставить Вдохновение и Чистоту на столе на 30 секунд без движения", reward: "Кисть, Краски", img: "кисть.png" },
-    { id: "live_and_learn", title: "Поживём и узнаем", desc: "Оставить Кисть и Краски на столе на 30 секунд без движения", reward: "Чувства, Эмоции", img: "чувства.png" },
-    { id: "pride_sin", title: "Грех Гордыни", desc: "Открыть художника Akasakiii", reward: "Кровь", img: "кровь.png" },
-    { id: "walter_fly", title: "Муха...", desc: "Набрать в поисковике фразу: 'You got damn right'", reward: "Кристаллизация", img: "муха.png" },
-    { id: "chaos_era", title: "Эпоха хаоса", desc: "Вытащить 50 элементов на стол одновременно", reward: "Коллапс", img: "коллапс.png" },
-    { id: "void_era", title: "А это что? Эпоха пустоты?", desc: "Очистить стол, когда на нём будет ровно или больше 50 элементов", reward: "Пустота", img: "пустота.png" },
-    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "пилюли.png" },
-    { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
-    { id: "geometry_smash", title: "Geometry Smash", desc: "Собрать в одной точке стола 5 элементов Порядок", reward: "Геометрия", img: "геометрия.png" },
-    { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
-    { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
-    { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
-    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать (совместить) в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
-    { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Выкрутить ползунок звука на максимум (100%)", reward: "Звук, Танцы", img: "мику.png" },
-    { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
-    { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
-    { id: "rero_cherry", title: "Реро-вишенка", desc: "Возьмите элемент Вишенка на столе и быстро потрясите его мышкой", reward: "Энергия, Организм, Хранитель", img: "реро.png" },
-    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Наложить на одну карточку художника одновременно 5 элементов Вселенная и 5 Монстроподобие", reward: "Ужас, Вечность", img: "николь.png" },
-    { id: "not_friends", title: "Мы не подруги!!!", desc: "Расположить на столе одновременно Ярость, Огонь, Воду и Тишину", reward: "А́гг҃лъ", img: "подруги.png" },
-    { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
-    { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
-    { id: "orgy_style", title: "Это больше оргия...", desc: "Расставить по четырём углам стола элементы Эротика, Ночь и Вспышка", reward: "Сиси-писи, Жар, Сок, Животноподобие, Тот самый батон", img: "оргия.png" },
-    { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
-    { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
-    { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
-    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
-    { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
-    { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
-    { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
-    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Свобода, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
-    { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
-    { id: "elephant_feathers", title: "Слон из перьев", desc: "Открыть художника sapfirachibtelegram", reward: "Перо", img: "перо.png" },
-    { id: "gigawatts", title: "1.21 gigawatts!", desc: "Соединить Вспышку с 10 Конструктом.", reward: "Будущее, Прошлое", img: "будущее.png" },
-    { id: "more_gold", title: "Нужно больше золота!", desc: "Переключать разные вкладки Элементы, Художники или Достижение 100 раз.", reward: "Детство, Мгновение, Эйфория", img: "золото.png" },
-    { id: "hulk_hold", title: "А у нас есть Халк!", desc: "Нужно взять мышкой Гнев и не отпускать его в течении 2 минут", reward: "Кислота", img: "халк.png" },
-    { id: "for_emperor", title: "ЗА ИМПЕРАТОРА!!!", desc: "10 раз нажать колёсиком мыши на элемент Император", reward: "Незыблимость, Величие", img: "император.png" },
-    { id: "gandalf_wheel", title: "Ты не пройдёшь!", desc: "Прокрутите кольцо мыши от души", reward: "Когти и мех, Пепел, Игла и нить", img: "гендальф.png" },
-    { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы, Нежность", img: "ложь.png" },
-    { id: "that_one", title: "Тот самый!", desc: "Совместить Величие, Свет и А́гг҃лъ", reward: "Император", img: "тотсамый.png" },
-    { id: "jack_zandatsu", title: "Джек-потрошитель!", desc: "Вытащить на стол Кибернетику, Мурамаса и Металл и написать в поисковой строке фразу: 'Zandatsu'", reward: "Мясо, Незримый, Механизм", img: "джек.png" },
-    { id: "scp_173", title: "173 или Печенька...", desc: "Оставить на столе Незыблимость, Скорость, Металл и Монстроподобие и переключить вкладку 5 раз.", reward: "Кукла", img: "печенька.png" },
-    { id: "slime_touch", title: "Он меня обдал слизью!", desc: "Провести мышкой по 50 элементам не взяв их в руку.", reward: "Призрачность", img: "слизь.png" },
-    { id: "legend_michael", title: "Легендарный Майкл", desc: "Открыть художника zewikus", reward: "Ленты, Мягкость", img: "майкл.png" },
-    { id: "now_flag", title: "Теперь это флаг...", desc: "Поставить на стол элементы: Огонь, Закат, Солнце, Природа, Небо, Вода, Магия.", reward: "Радуга, Узор", img: "флаг.png" },
-    { id: "get_over_here", title: "Get Over Here!", desc: "Поставить на стол два разных художника и на них Огонь и Воду.", reward: "Инверсия", img: "скорпион.png" },
-    { id: "scooby_doo", title: "Скуби-Скуби-Скуби...", desc: "Нажать на элемент Призрачность во вкладке 'Элементах' 25 раз", reward: "Иллюзия", img: "скуби.png" },
-    { id: "in_and_out", title: "Давай, вошли и вышли.", desc: "Нажать на кнопку сброса и активировать отмену 10 раз.", reward: "Измерение", img: "дверь.png" },
-    { id: "xj9_robot", title: "XJ-9", desc: "Совместить в одной точке Кибернетику, Металл и Душу и начать двигать ползунок громкости влево и вправо, пока не получишь достижение.", reward: "Вкус, Роботизирование", img: "робот.png" },
-    { id: "noob_saibot", title: "Ты Noob или Saibot?", desc: "Поставить мышку на Затмение в списке 'Элементы' на 1 минуту.", reward: "Тень", img: "нуб.png" },
-    { id: "what_year", title: "Какой сейчас год?", desc: "Соединить 10 Будущего и Прошлого.", reward: "Время", img: "время.png" },
-    { id: "lazy_town", title: "Он был в Лентяево", desc: "Время, Организм и Энергия должны быть стёрты со стола 5 раз.", reward: "Статный", img: "лентяево.png" },
-    { id: "scissors_master", title: "Мастер ножниц", desc: "Поставить на стол 7 элементов Меч и стереть стол.", reward: "Канцелярио", img: "ножницы.png" },
-    { id: "metroidvania", title: "Метроидвания или же...", desc: "Положить Элемент на стол и нажать по 5 раз в меню 'Элементы' на Кровь, Луна и Путь", reward: "Готика", img: "кастла.png" },
-    { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
-    { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
-    { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
-    { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Яд, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
-    { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" }
-];
+    const checkList = [
+        { id: "first_craft", condition: stats.totalCrafts >= 1 },
+        { id: "cleaner", condition: stats.clearDeskClicks >= 3 },
+        { id: "searcher", condition: stats.searchUsed === true },
+        { id: "four_corners", condition: cornersFilled },
+        { id: "tower_build", condition: towerBuilt },
+        { id: "chaos_desk", condition: deskItems.length >= 15 },
+        { id: "philosopher", condition: discoveredItems.filter(i => !i.url).length >= 15 },
+        { id: "crisis", condition: stats.failedCrafts >= 10 },
+        { id: "duck_soup", condition: totalArtistsCount >= 100 },
+        { id: "madness", condition: triggerType === "spam_click" },
+        { id: "silence", condition: triggerType === "idle_timeout" },
+        { id: "tengen_toppa", condition: stats.sameMaterialCrafts >= 10 },
+        { id: "aspect_shadow", condition: triggerType === "shake_mrak" },
+        { id: "gates_of_s", condition: artistsNames.includes("umikirameki") },
+        { id: "graduation", condition: artistsNames.includes("sasagichh") && artistsNames.includes("svknon") },
+        { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
+        { id: "zvezdec", condition: zvezdecRow },
+        { id: "cosmostars", condition: cosmostarsRow },
+        { id: "slime_attack", condition: triggerType === "slime_fail" },
+        { id: "circus_time", condition: triggerType === "circus_trigger" },
+        { id: "dice_roll", condition: artistsNames.includes("K'hath") || artistsNames.includes("Khath") },
+        { id: "legend_speed", condition: artistsNames.includes("shakunetsu") },
+        { id: "wait_and_see", condition: triggerType === "wait_see_trigger" },
+        { id: "live_and_learn", condition: triggerType === "live_learn_trigger" },
+        { id: "pride_sin", condition: artistsNames.includes("Akasakiii") },
+        { id: "walter_fly", condition: triggerType === "walter_text" },
+        { id: "chaos_era", condition: deskItems.length >= 50 },
+        { id: "ghoul_inside", condition: triggerType === "ghoul_trigger" },
+        { id: "geometry_smash", condition: geometrySmashFilled },
+        { id: "bite_the_hand", condition: triggerType === "bite_hand_success" },
+        { id: "big_three", condition: hasBigThree },
+        { id: "konami_code", condition: triggerType === "konami_trigger" },
+        { id: "prism_power", condition: hasPrismPower },
+        { id: "vocaloid_sound", condition: triggerType === "vocaloid_volume_max" },
+        { id: "mix_style", condition: hasMixStyle },
+        { id: "kirito_clear", condition: triggerType === "kirito_success" },
+        { id: "rero_cherry", condition: triggerType === "shake_cherry" },
+        { id: "nicole_dead", condition: hasNicoleDead },
+        { id: "not_friends", condition: hasNotFriends },
+        { id: "my_cabbage", condition: triggerType === "cabbage_success" },
+        { id: "cherry_on_cake", condition: triggerType === "shake_sweet" },
+        { id: "orgy_style", condition: hasOrgyStyle },
+        { id: "lusty_maid", condition: hasLustyMaid },
+        { id: "collector", condition: totalArtistsCount >= 30 },
+        { id: "blue_eyed", condition: hasBlueEyed },
+        { id: "levi_pain", condition: hasLeviPain },
+        { id: "delicious_guro", condition: hasDeliciousGuro },
+        { id: "cozy_life", condition: hasCozyLife },
+        { id: "someday_love", condition: triggerType === "someday_love_trigger" },
+        { id: "true_love_exists", condition: hasTrueLoveExists || triggerType === "true_love_clear" },
+        { id: "not_in_public", condition: triggerType === "public_clear_success" },
+        { id: "elephant_feathers", condition: artistsNames.includes("sapfirachibtelegram") },
+        { id: "gigawatts", condition: triggerType === "bttf_fail" && deskNames.filter(n => n === "Конструкт").length >= 10 },
+        { id: "more_gold", condition: stats.totalTabClicksCount >= 100 },
+        { id: "hulk_hold", condition: triggerType === "hulk_hold_success" },
+        { id: "for_emperor", condition: triggerType === "emperor_click_trigger" },
+        { id: "gandalf_wheel", condition: triggerType === "gandalf_wheel_trigger" },
+        { id: "april_lie", condition: triggerType === "april_lie_success" },
+        { id: "that_one", condition: hasThtOne },
+        { id: "jack_zandatsu", condition: triggerType === "zandatsu_trigger" },
+        { id: "scp_173", condition: triggerType === "scp_173_trigger" },
+        { id: "slime_touch", condition: triggerType === "slime_hover_trigger" },
+        { id: "legend_michael", condition: artistsNames.includes("zewikus") },
+        { id: "now_flag", condition: hasNowFlag },
+        { id: "get_over_here", condition: hasGetOverHere },
+        { id: "scooby_doo", condition: triggerType === "scooby_doo_trigger" },
+        { id: "in_and_out", condition: stats.cancelResetCount >= 10 },
+        { id: "xj9_robot", condition: triggerType === "xj9_trigger" },
+        { id: "noob_saibot", condition: triggerType === "noob_saibot_trigger" },
+        { id: "what_year", condition: deskNames.filter(n => n === "Будущее").length >= 10 && deskNames.filter(n => n === "Прошлое").length >= 10 },
+        { id: "lazy_town", condition: stats.lazyTownClearCount >= 5 },
+        { id: "scissors_master", condition: triggerType === "scissors_master_success" },
+        { id: "metroidvania", condition: triggerType === "metroid_trigger" },
+        { id: "ghost_strafe", condition: triggerType === "ghost_strafe_trigger" },
+        { id: "frieren_way", condition: triggerType === "frieren_trigger" },
+        { id: "room_302", condition: triggerType === "room302_trigger" },
+        { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
+        { id: "no_second_season", condition: stats.tabSwitchCount >= 28 },
+        { id: "matrix_pills", condition: triggerType === "matrix_text" } // Исправлено: Матрица добавлена в чек-лист!
+    ];
 
 let discoveredItems = [];
 let recipes = [];
@@ -158,10 +156,13 @@ function initGame() {
             resetActivityTimer();
             const currentSearch = searchBox.value.trim().toLowerCase();
             if (currentSearch === "you got damn right") checkQuests("walter_text");
-            if (currentSearch === "red or blue") checkQuests("matrix_text");
             if (currentSearch === "love") checkQuests("someday_love_trigger");
             
-            // Квест Метал Гира (Zandatsu)
+            // Исправлено: Прямой вызов триггера Матрицы при совпадении текста "red or blue"
+            if (currentSearch === "red or blue") {
+                checkQuests("matrix_text");
+            }
+            
             if (currentSearch === "zandatsu") {
                 const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
                 if (dNames.includes("Кибернетика") && dNames.includes("Мурамаса") && dNames.includes("Металл")) {
@@ -177,7 +178,6 @@ function initGame() {
         };
     }
 
-    // Логика отслеживания Кода KONAMI
     const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
     let konamiIndex = 0;
     window.addEventListener('keydown', (e) => {
@@ -194,16 +194,17 @@ function initGame() {
 
     // Трекер бешеного скролла мыши для Гендальфа (Ты не пройдешь!)
     let lastWheelTime = Date.now();
-    let wheelSpeedCounter = 0;
+        // Обновленный мягкий трекер прокрутки для Гендальфа
+    let wheelTotalTicks = 0;
     window.addEventListener('wheel', () => {
-        let now = Date.now();
-        if (now - lastWheelTime < 60) {
-            wheelSpeedCounter++;
-            if (wheelSpeedCounter >= 25) checkQuests("gandalf_wheel_trigger");
-        } else {
-            wheelSpeedCounter = 0;
+        wheelTotalTicks++;
+        if (wheelTotalTicks >= 35) {
+            checkQuests("gandalf_wheel_trigger");
+            wheelTotalTicks = 0; // Сброс после успеха
         }
-        lastWheelTime = now;
+        // Если игрок перестал крутить, счетчик плавно обнуляется через секунду
+        clearTimeout(window.wheelResetTimeout);
+        window.wheelResetTimeout = setTimeout(() => { wheelTotalTicks = 0; }, 1000);
     });
 
     const volumeControl = document.getElementById('volume-control');
@@ -275,11 +276,13 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
+    // Исправлено: увеличиваем счетчик общего числа кликов по вкладкам инвентаря
+    stats.totalTabClicksCount = (stats.totalTabClicksCount || 0) + 1;
+
     if (currentActiveTab !== tabName) {
         if ((currentActiveTab === "items" && tabName === "artists") || (currentActiveTab === "artists" && tabName === "items")) {
             stats.tabSwitchCount++;
             
-            // Проверка ачивки SCP-173 при смене вкладок
             const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
             const deskNames = deskItems.map(el => el.dataset.name);
             if (deskNames.includes("Незыблимость") && deskNames.includes("Скорость") && deskNames.includes("Металл") && deskNames.includes("Монстроподобие")) {
@@ -289,7 +292,6 @@ function switchTab(tabName) {
                 window.scpTabCount = 0;
             }
 
-            // Проверка Призрачного стрэйфа
             if (deskNames.includes("Призрачность")) {
                 window.ghostStrafeCount = (window.ghostStrafeCount || 0) + 1;
                 if (window.ghostStrafeCount >= 5) checkQuests("ghost_strafe_trigger");
@@ -411,9 +413,11 @@ function renderItemsTab() {
                 if (stats.frierenAdvCount >= 1 && stats.frierenFrCount >= 1 && stats.frierenTimeCount >= 1 && stats.frierenFateCount >= 1) checkQuests("frieren_trigger");
             }
 
-            if (item.name === "Призрачность") {
-                stats.scoobyClicksCount++;
-                if (stats.scoobyClicksCount >= 25) checkQuests("scooby_doo_trigger");
+                if (item.name === "Призрачность") {
+                stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
+                if (stats.scoobyClicksCount >= 25) {
+                    checkQuests("scooby_doo_trigger");
+                }
             }
 
             clickCounts[item.name] = (clickCounts[item.name] || 0) + 1;
