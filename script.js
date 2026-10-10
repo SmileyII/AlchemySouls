@@ -276,7 +276,6 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
-    // Исправлено: увеличиваем счетчик общего числа кликов по вкладкам инвентаря
     stats.totalTabClicksCount = (stats.totalTabClicksCount || 0) + 1;
 
     if (currentActiveTab !== tabName) {
@@ -364,9 +363,8 @@ function renderItemsTab() {
                 window.slimeHovers = (window.slimeHovers || 0) + 1;
                 if (window.slimeHovers >= 50) {
                     checkQuests("slime_hover_trigger");
-                    window.slimeHovers = 0; // Сбрасываем после успеха
+                    window.slimeHovers = 0;
                 }
-                // Продлеваем время на проведение мышкой (даём 4 секунды на весь инвентарь)
                 clearTimeout(window.slimeHoverTimeout);
                 window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
             }
@@ -384,7 +382,6 @@ function renderItemsTab() {
             }
         };
         
-        // Нажатие колесиком мыши (middle click)
         div.onauxclick = (e) => {
             if (e.button === 1 && item.name === "Император") {
                 e.preventDefault();
@@ -394,9 +391,8 @@ function renderItemsTab() {
         };
         
         div.onmousedown = (e) => { 
-            if (e.button === 1) return; // Игнорируем колесико
+            if (e.button === 1) return; 
             
-            // Кастомные счетчики кликов по элементам меню для Метроидвании и Фрирен
             const dItemsOnDesk = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
             if (dItemsOnDesk.includes("Элемент")) {
                 if (item.name === "Кровь") { stats.metroidBloodCount++; if(stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) checkQuests("metroid_trigger"); }
@@ -413,7 +409,7 @@ function renderItemsTab() {
                 if (stats.frierenAdvCount >= 1 && stats.frierenFrCount >= 1 && stats.frierenTimeCount >= 1 && stats.frierenFateCount >= 1) checkQuests("frieren_trigger");
             }
 
-                if (item.name === "Призрачность") {
+            if (item.name === "Призрачность") {
                 stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
                 if (stats.scoobyClicksCount >= 25) {
                     checkQuests("scooby_doo_trigger");
