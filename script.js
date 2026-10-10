@@ -182,33 +182,39 @@ function resetActivityTimer() {
 }
 
 function switchTab(tabName) {
+    // 1. Считаем общие клики для ачивки "Нужно больше золота!"
     stats.totalTabClicksCount = (stats.totalTabClicksCount || 0) + 1;
 
+    // 2. Логика скрытых проверок при реальной смене вкладок
     if (currentActiveTab !== tabName) {
+        // Честный трекер перехода между Элементами и Художниками для "А где второй сезон?"
         if ((currentActiveTab === "items" && tabName === "artists") || (currentActiveTab === "artists" && tabName === "items")) {
-            stats.tabSwitchCount++;
-            
-            const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
-            const deskNames = deskItems.map(el => el.dataset.name);
-            if (deskNames.includes("Незыблимость") && deskNames.includes("Скорость") && deskNames.includes("Металл") && deskNames.includes("Монстроподобие")) {
-                window.scpTabCount = (window.scpTabCount || 0) + 1;
-                if (window.scpTabCount >= 5) checkQuests("scp_173_trigger");
-            } else {
-                window.scpTabCount = 0;
-            }
-
-            if (deskNames.includes("Призрачность")) {
-                window.ghostStrafeCount = (window.ghostStrafeCount || 0) + 1;
-                if (window.ghostStrafeCount >= 5) checkQuests("ghost_strafe_trigger");
-            } else {
-                window.ghostStrafeCount = 0;
-            }
-
+            stats.tabSwitchCount = (stats.tabSwitchCount || 0) + 1;
             if (stats.tabSwitchCount >= 28) checkQuests("season_trigger");
+        }
+        
+        // Проверка условий на столе для SCP-173 и Призрачного стрэйфа
+        const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
+        const deskNames = deskItems.map(el => el.dataset.name);
+        
+        if (deskNames.includes("Незыблимость") && deskNames.includes("Скорость") && deskNames.includes("Металл") && deskNames.includes("Монстроподобие")) {
+            window.scpTabCount = (window.scpTabCount || 0) + 1;
+            if (window.scpTabCount >= 5) checkQuests("scp_173_trigger");
+        } else {
+            window.scpTabCount = 0;
+        }
+
+        if (deskNames.includes("Призрачность")) {
+            window.ghostStrafeCount = (window.ghostStrafeCount || 0) + 1;
+            if (window.ghostStrafeCount >= 5) checkQuests("ghost_strafe_trigger");
+        } else {
+            window.ghostStrafeCount = 0;
         }
     }
 
+    // 3. Жёсткое и безотказное переключение вкладок в интерфейсе
     currentActiveTab = tabName;
+    
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabName)) {
@@ -217,9 +223,13 @@ function switchTab(tabName) {
     });
     
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
     const targetContent = document.getElementById(`${tabName}-tab`);
     if (targetContent) targetContent.classList.add('active');
+    
+    // Перерисовываем текущую вкладку (с учётом поиска)
     renderCurrentTab();
+    saveGame(); // Сохраняем набитые клики вкладок
 }
 
 function renderAllTabs() {
@@ -360,29 +370,44 @@ function renderAchievementsTab() {
     const container = document.getElementById('achievements-tab');
     if (!container) return;
     const searchBox = document.getElementById('search-box');
-    const searchQuery = searchBox ? searchBox.value.toLowerCase() : '';
+    const searchQuery = searchBox ? searchBox.value.toLowerCase().trim() : '';
     container.innerHTML = '';
+    
+    // Список всех секретных кодов, которые поиск не должен фильтровать в меню ачивок
+    const secretCodes = ["red or blue", "love", "you got damn right", "zandatsu"];
+    const isSecretCode = secretCodes.includes(searchQuery);
+
     ALL_ACHIEVEMENTS.forEach(ach => {
-        if (searchQuery && !ach.title.toLowerCase().includes(searchQuery) && !ach.desc.toLowerCase().includes(searchQuery)) return;
+        // ИСПРАВЛЕНО: Если введён секретный код, показываем все ачивки. Если обычное слово — фильтруем.
+        if (searchQuery && !isSecretCode) {
+            if (!ach.title.toLowerCase().includes(searchQuery) && !ach.desc.toLowerCase().includes(searchQuery)) {
+                return;
+            }
+        }
+
         const isUnlocked = stats.unlockedQuests.includes(ach.id);
         const card = document.createElement('div');
-        // Восстановлены обратные кавычки
         card.className = `ach-card ${isUnlocked ? 'unlocked' : ''}`;
+        
         const icon = document.createElement('div');
         icon.className = 'ach-icon';
         icon.innerText = isUnlocked ? '🏆' : '🔒';
+        
         const info = document.createElement('div');
         info.className = 'ach-info';
+        
         const title = document.createElement('div');
         title.className = 'ach-title';
         title.innerText = ach.title;
+        
         const desc = document.createElement('div');
         desc.className = 'ach-desc';
         desc.innerText = ach.desc;
+        
         const reward = document.createElement('span');
         reward.className = 'ach-reward-tag';
-        // Восстановлены обратные кавычки
         reward.innerText = ach.reward === "Ничего" ? "Награда: Скрытый трофей" : `Награда: + [${ach.reward}]`;
+        
         info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
         card.appendChild(icon); card.appendChild(info);
         container.appendChild(card);
