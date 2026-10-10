@@ -926,7 +926,7 @@ function resetGame() {
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(btn => btn.classList.remove('active'));
-        if (tabs && tabs) tabs.classList.add('active');
+        if (tabs && tabs[0]) tabs[0].classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
