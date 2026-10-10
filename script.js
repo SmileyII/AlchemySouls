@@ -90,7 +90,8 @@ const ALL_ACHIEVEMENTS = [
     { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
     { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
     { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Яд, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
-    { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" }
+    { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" },
+    { id: "where_is_he", title: "Где он? Где?!", desc: "Нажать на Ярость 20 раз пока включена максимальная громкость.", reward: "Гнев", img: "гнев.png" }
 ];
 
 let discoveredItems = [];
@@ -123,6 +124,7 @@ let stats = {
     frierenFrCount: 0,
     frierenTimeCount: 0,
     frierenFateCount: 0,
+    furyMaxVolumeClicks: 0,
     unlockedQuests: []
 };
 
@@ -380,7 +382,15 @@ function renderItemsTab() {
         
         div.onmousedown = (e) => { 
             if (e.button === 1) return; 
-            
+
+            const bgMusicEl = document.getElementById('bg-music');
+            if (item.name === "Ярость" && bgMusicEl && bgMusicEl.volume >= 0.99) {
+                stats.furyMaxVolumeClicks = (stats.furyMaxVolumeClicks || 0) + 1;
+                if (stats.furyMaxVolumeClicks >= 20) {
+                    checkQuests("where_is_he_trigger");
+                }
+            }
+
             const dItemsOnDesk = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
             if (dItemsOnDesk.includes("Элемент")) {
                 if (item.name === "Кровь") { stats.metroidBloodCount++; if(stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) checkQuests("metroid_trigger"); }
@@ -906,7 +916,8 @@ function checkQuests(triggerType) {
         { id: "room_302", condition: stats.clearDeskClicks >= 21 },
         { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
         { id: "no_second_season", condition: stats.tabSwitchCount >= 28 },
-        { id: "matrix_pills", condition: triggerType === "matrix_text" }
+        { id: "matrix_pills", condition: triggerType === "matrix_text" },
+        { id: "where_is_he", condition: triggerType === "where_is_he_trigger" }
     ];
 
     checkList.forEach(q => {
