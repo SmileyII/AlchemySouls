@@ -299,7 +299,7 @@ function initGame() {
     } else {
         discoveredItems = BASE_ITEMS.map(item => ({
             name: item.name,
-            img: ELEMENT_ICONS[item.name] || "placeholder.png"
+            img: (ELEMENT_ICONS[item.name.toLowerCase().trim()] || (item.name.toLowerCase().trim() + ".webp")).toLowerCase()
         }));
     }
 
@@ -504,11 +504,10 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // ПРИНУДИТЕЛЬНЫЙ НИЖНИЙ РЕГИСТР ДЛЯ СЕРВЕРА LINUX:
-        let lookKey = item.name.toLowerCase().trim();
-        let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
+        // Полностью игнорируем старый регистр и берем имя элемента строчными буквами
+        let cleanName = item.name.toLowerCase().trim();
+        let iconFile = ELEMENT_ICONS[cleanName] || (cleanName + ".webp");
         
-        // Гарантируем, что имя файла в ссылке будет строго маленькими буквами
         img.src = "images/element_icons/" + iconFile.toLowerCase();
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
@@ -703,15 +702,15 @@ function spawnItemOnDesk(e, itemData) {
                 img.src = 'images/placeholder.png';
             }
         };
-   } else {
-        // ПРИНУДИТЕЛЬНЫЙ НИЖНИЙ РЕГИСТР ДЛЯ СТОЛА:
-        let lookKey = itemData.name.toLowerCase().trim();
-        let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
+       } else {
+        // Жесткая сборка пути для элементов на столе strictly lowercase
+        let cleanName = itemData.name.toLowerCase().trim();
+        let iconFile = ELEMENT_ICONS[cleanName] || (cleanName + ".webp");
         
-        // Гарантируем, что имя файла на столе будет строго маленькими буквами
         img.src = "images/element_icons/" + iconFile.toLowerCase();
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
+
     
     const text = document.createElement('span');
     text.innerText = itemData.name + (isDead ? " •" : "");
