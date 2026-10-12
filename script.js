@@ -364,28 +364,76 @@ function initGame() {
         window.wheelResetTimeout = setTimeout(() => { wheelTotalTicks = 0; }, 1000);
     });
 
-    const volumeControl = document.getElementById('volume-control');
+        const volumeControl = document.getElementById('volume-control');
     const bgMusic = document.getElementById('bg-music');
+    
+    // СПИСОК ВАШИХ ТРЕКОВ: Просто впишите сюда точные названия ваших файлов из папки audio
+    const playlist = [
+        "audio/track1.mp3",
+        "audio/track2.mp3",
+        "audio/track3.mp3"
+    ];
+    let currentTrackIndex = 0;
+    
     if (volumeControl && bgMusic) {
-        bgMusic.volume = volumeControl.value;
+        // Загружаем самый первый трек на старт
+        bgMusic.src = playlist[currentTrackIndex];
+        bgMusic.volume = parseFloat(volumeControl.value);
+        
+        // 1. Управление громкостью ползунком в реальном времени
         volumeControl.oninput = (e) => {
             resetActivityTimer();
             let currentVolume = parseFloat(e.target.value);
             bgMusic.volume = currentVolume;
-            if (bgMusic.paused) {
+            
+            // Если была пауза из-за нуля, а игрок прибавил звук — запускаем плеер
+            if (bgMusic.paused && currentVolume > 0) {
                 bgMusic.play().catch(() => {});
             }
+            
+            // Ачивка Мику (Максимальный звук)
             if (currentVolume >= 0.99) {
                 checkQuests("vocaloid_volume_max");
             }
             
+            // Ачивка робота XJ-9 при движении ползунка
             const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
             if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
                 stats.volumeMoveCount++;
                 if (stats.volumeMoveCount >= 30) checkQuests("xj9_trigger");
             }
         };
+
+        // 2. Логика АВТОПЕРЕКЛЮЧЕНИЯ: когда трек доиграл до конца, плавно включается следующий
+        bgMusic.onended = () => {
+            currentTrackIndex++;
+            // Если доиграл последний трек — возвращаемся к самому первому
+            if (currentTrackIndex >= playlist.length) {
+                currentTrackIndex = 0;
+            }
+            bgMusic.src = playlist[currentTrackIndex];
+            // Запускаем новый трек (с сохранением текущей громкости ползунка)
+            if (bgMusic.volume > 0) {
+                bgMusic.play().catch(() => {});
+            }
+        };
+
+        // 3. Обход блокировки браузера (Музыка стартует при самом первом клике по сайту)
+        const startMusicOnFirstInteraction = () => {
+            if (bgMusic.paused && bgMusic.volume > 0) {
+                bgMusic.play().catch(() => {});
+            }
+            // Снимаем слежку, чтобы не тратить оперативную память
+            window.removeEventListener('click', startMusicOnFirstInteraction);
+            window.removeEventListener('mousedown', startMusicOnFirstInteraction);
+            window.removeEventListener('keydown', startMusicOnFirstInteraction);
+        };
+
+        window.addEventListener('click', startMusicOnFirstInteraction);
+        window.addEventListener('mousedown', startMusicOnFirstInteraction);
+        window.addEventListener('keydown', startMusicOnFirstInteraction);
     }
+
 
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
