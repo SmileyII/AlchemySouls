@@ -9,6 +9,164 @@ const BASE_ITEMS = [
     { name: "Меланхолия", img: "melancholy.webp" }
 ];
 
+const ELEMENT_ICONS = {
+    // Стартовые элементы
+    "Свет": "light.webp",
+    "Мрак": "darkness.webp",
+    "Холод": "cold.webp",
+    "Тепло": "heat.webp",
+    "Хаос": "chaos.webp",
+    "Порядок": "discipline.webp",
+    "Вдохновение": "lute.webp",
+    "Меланхолия": "melancholy.webp",
+
+    // Награды за достижения
+    "Чистота": "purity.webp",
+    "Изучение": "studying.webp",
+    "Баланс": "balance.webp",
+    "Гармония": "harmony.webp",
+    "Конструкт": "construct.webp",
+    "Блеск": "shine.webp",
+    "Вспышка": "flash.webp",
+    "Элемент": "element.webp",
+    "Грусть": "sad.webp",
+    "Апатия": "apathy.webp",
+    "Душа": "soul.webp",
+    "Безумие": "madness.webp",
+    "Тишина": "silence.webp",
+    "Совмещение": "combination.webp",
+    "Звезды": "stars.webp",
+    "Чудо": "miracle.webp",
+    "Цветы": "flowers.webp",
+    "Затмение": "eclipse.webp",
+    "Рассвет": "dawn.webp",
+    "Закат": "sunset.webp",
+    "Вселенная": "universe.webp",
+    "Кибернетика": "cybernetics.webp",
+    "Металл": "metal.webp",
+    "Луна": "moon.webp",
+    "Ночь": "night.webp",
+    "Солнце": "sun.webp",
+    "День": "day.webp",
+    "Память": "memory.webp",
+    "Вязкость": "viscosity.webp",
+    "Хрупкость": "fragility.webp",
+    "Приключения": "adventure.webp",
+    "Скорость": "speed.webp",
+    "Молния": "lightning.webp",
+    "Кисть": "brush.webp",
+    "Краски": "paints.webp",
+    "Чувства": "feelings.webp",
+    "Эмоции": "emotions.webp",
+    "Кровь": "blood.webp",
+    "Кристаллизация": "crystallization.webp",
+    "Коллапс": "collapse.webp",
+    "Пустота": "void.webp",
+    "Огонь": "fire.webp",
+    "Вода": "water.webp",
+    "Монстроподобие": "monster.webp",
+    "Бездна": "abyss.webp",
+    "Боль": "pain.webp",
+    "Геометрия": "geometry.webp",
+    "Богоподобие": "god.webp",
+    "Ничтожность": "insignificance.webp",
+    "Судьба": "fate.webp",
+    "Ярость": "fury.webp",
+    "Горизонт": "horizon.webp",
+    "Загадка": "puzzle.webp",
+    "Фейерверк": "firework.webp",
+    "Мерчага": "merch.webp",
+    "Магия": "magic.webp",
+    "Грёзы": "sleep.webp",
+    "Звук": "sound.webp",
+    "Танцы": "dance.webp",
+    "Улыбка": "smile.webp",
+    "Сладость": "sweetness.webp",
+    "Сестра": "sister.webp",
+    "Садизм": "sadism.webp",
+    "Сюрприз": "surprise.webp",
+    "Отражение": "reflection.webp",
+    "Забвение": "oblivion.webp",
+    "Разделение": "separation.webp",
+    "Меч": "sword.webp",
+    "Энергия": "energy.webp",
+    "Организм": "organism.webp",
+    "Хранитель": "guardian.webp",
+    "Ужас": "horror.webp",
+    "Вечность": "endless.webp",
+    "А́гг҃лъ": "angel.webp",
+    "Стихия": "stikhiya.webp",
+    "Небо": "sky.webp",
+    "Ветер": "wind.webp",
+    "Вишенка": "cherry.webp",
+    "Сиси-писи": "horny.webp",
+    "Жар": "hot.webp",
+    "Сок": "juice.webp",
+    "Животноподобие": "beast.webp",
+    "Тот самый батон": "loaf.webp",
+    "Путь": "path.webp",
+    "Веселье": "fun.webp",
+    "Свобода": "freedom.webp",
+    "Расслабление": "relax.webp",
+    "Рождение": "birth.webp",
+    "Мурамаса": "katana.webp",
+    "Письмена": "letter_cult.webp",
+    "Месть": "revenge.webp",
+    "Природа": "nature.webp",
+    "Гниль": "rot.webp",
+    "Цветение": "bloom.webp",
+    "Мох": "moss.webp",
+    "Насекомоподобие": "insect.webp",
+    "Гурокири": "guro.webp",
+    "Уют": "cosiness.webp",
+    "Безмятежность": "serenity.webp",
+    "Фальшивая любовь": "fake.webp",
+    "Любовь": "love.webp",
+    "Эротика": "erotic.webp",
+    "Перо": "feather.webp",
+    "Будущее": "future.webp",
+    "Прошлое": "past.webp",
+    "Детство": "child.webp",
+    "Мгновение": "moment.webp",
+    "Эйфория": "euphoria.webp",
+    "Кислота": "acid.webp",
+    "Незыблимость": "immutability.webp",
+    "Величие": "grandeur.webp",
+    "Когти и мех": "claws.webp",
+    "Пепел": "ash.webp",
+    "Игла и нить": "string.webp",
+    "Слёзы": "cry.webp",
+    "Император": "emperor.webp",
+    "Мясо": "meat.webp",
+    "Незримый": "invisible.webp",
+    "Механизм": "mecha.webp",
+    "Кукла": "doll.webp",
+    "Призрачность": "ghost.webp",
+    "Ленты": "ribbons.webp",
+    "Мягкость": "Softness.webp",
+    "Радуга": "rainbow.webp",
+    "Узор": "pattern.webp",
+    "Инверсия": "Inversion.webp",
+    "Иллюзия": "illusion.webp",
+    "Измерение": "backroom.webp",
+    "Роботизирование": "robot.webp",
+    "Тень": "shadow.webp",
+    "Время": "time.webp",
+    "Статный": "stately.webp",
+    "Канцелярио": "chancery.webp",
+    "Готика": "gothic.webp",
+    "Эфемерность": "ephemeral.webp",
+    "Свежесть": "freshness.webp",
+    "Туман": "mist.webp",
+    "Дружба": "friend.webp",
+    "Жемчуг": "pearl.webp",
+    "Самоцветы": "gems.webp",
+    "Стекло": "mirror.webp",
+    "Трещины": "cracks.webp",
+    "Гнев": "anger.webp",
+    "Вкус": "taste.webp"
+};
+
 const ALL_ACHIEVEMENTS = [
     { id: "first_craft", title: "Первый шаг", desc: "Сделать один успешный крафт", reward: "Ничего", img: "опыт.png" },
     { id: "cleaner", title: "Чистый холст", desc: "Нажать кнопку 'Очистить стол' 3 раза", reward: "Чистота", img: "чистота.png" },
@@ -340,19 +498,10 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // Меняем .jpg/.png на .webp для иконок в инвентаре
-        let iconName = item.img;
-        if (iconName.endsWith('.jpg')) {
-            iconName = iconName.replace(".jpg", ".webp");
-        } else if (iconName.endsWith('.png')) {
-            iconName = iconName.replace(".png", ".webp");
-        } else if (!iconName.endsWith('.webp')) {
-            iconName = iconName + ".webp";
-        }
-        img.src = "images/element_icons/" + iconName;
+        // Читаем имя файла из нашего словаря. Если элемента там нет, ставим заглушку placeholder
+        let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
-
-
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
@@ -541,8 +690,12 @@ function spawnItemOnDesk(e, itemData) {
         img.onerror = () => { 
             if (img.src.indexOf("images2/") === -1) {
                 img.src = "images2/" + itemData.img; 
-            } else {
-                img.src = 'images/placeholder.png'; 
+                } else {
+        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
+        img.onerror = () => { img.src = 'images/placeholder.png'; };
+    }
+ 
             }
         };
     } else {
