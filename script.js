@@ -209,13 +209,13 @@ const ALL_ACHIEVEMENTS = [
     { id: "rero_cherry", title: "Реро-вишенка", desc: "Возьмите элемент Вишенка на столе и быстро потрясите его мышкой", reward: "Энергия, Организм, Хранитель", img: "реро.png" },
     { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Наложить на одну карточку художника одновременно 5 элементов Вселенная и 5 Монстроподобие", reward: "Ужас, Вечность", img: "николь.png" },
     { id: "not_friends", title: "Мы не подруги!!!", desc: "Расположить на столе одновременно Ярость, Огонь, Воду и Тишину", reward: "А́гг҃лъ", img: "подруги.png" },
-    { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
+    { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить 30 элемента Садизм суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
     { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
     { id: "orgy_style", title: "Это больше оргия...", desc: "Расставить по четырём углам стола элементы Эротика, Ночь и Вспышка", reward: "Сиси-писи, Жар, Сок, Животноподобие, Тот самый батон", img: "оргия.png" },
     { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
-    { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
+    { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников", reward: "Рождение", img: "рождение.png" },
     { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
-    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников ... и элемент Душа", reward: "Притражность, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
+    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
     { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, ... , Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
@@ -239,12 +239,12 @@ const ALL_ACHIEVEMENTS = [
     { id: "in_and_out", title: "Давай, вошли и вышли.", desc: "Нажать на кнопку сброса и активировать отмену 10 раз.", reward: "Измерение", img: "дверь.png" },
     { id: "xj9_robot", title: "XJ-9", desc: "Совместить в одной точке Кибернетику, Металл и Душу и начать двигать ползунок громкости влево и вправо, пока не получишь достижение.", reward: "Вкус, Роботизирование", img: "робот.png" },
     { id: "noob_saibot", title: "Ты Noob или Saibot?", desc: "Поставить мышку на Затмение в списке 'Элементы' на 1 минуту.", reward: "Тень", img: "нуб.png" },
-    { id: "what_year", title: "Какой сейчас год?", desc: "Соединить 10 Будущего и Прошлого.", reward: "Время", img: "время.png" },
+    { id: "what_year", title: "Какой сейчас год?", desc: "Стереть стол когда на нём будет находится элементы Будущее и Прошлое", reward: "Время", img: "время.png" },
     { id: "lazy_town", title: "Он был в Лентяево", desc: "Время, Организм и Энергия должны быть стёрты со стола 5 раз.", reward: "Статный", img: "лентяево.png" },
     { id: "scissors_master", title: "Мастер ножниц", desc: "Поставить на стол 7 элементов Меч и стереть стол.", reward: "Канцелярио", img: "ножницы.png" },
-    { id: "metroidvania", title: "Метроидвания или же...", desc: "Положить Элемент на стол и нажать по 5 раз в меню 'Элементы' на Кровь, Луна и Путь", reward: "Готика", img: "кастла.png" },
+    { id: "metroidvania", title: "Метроидвания или же...", desc: "Положить Элемент на стол и нажать по 5 раз в 'Элементах' Кровь, Луна и Путь", reward: "Готика", img: "кастла.png" },
     { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
-    { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
+    { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементах' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
     { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
     { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Яд, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
     { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" },
@@ -364,81 +364,32 @@ function initGame() {
         window.wheelResetTimeout = setTimeout(() => { wheelTotalTicks = 0; }, 1000);
     });
 
-        const volumeControl = document.getElementById('volume-control');
+    const volumeControl = document.getElementById('volume-control');
     const bgMusic = document.getElementById('bg-music');
     
-    // СПИСОК ВАШИХ ТРЕКОВ: Просто впишите сюда точные названия ваших файлов из папки audio
-    const playlist = [
-        "audio/nightingale.mp3",
-        "audio/remembrance.mp3",
-        "audio/warsong.mp3",
-        "audio/stay_with_me.mp3",
-        "audio/trickster.mp3",
-        "audio/ignite.mp3",
-        "audio/love_song.mp3",
-        "audio/farewell.mp3"
-    ];
-    let currentTrackIndex = 0;
-    
     if (volumeControl && bgMusic) {
-        // Загружаем самый первый трек на старт
-        bgMusic.src = playlist[currentTrackIndex];
+        // Устанавливаем стартовую громкость из значения ползунка
         bgMusic.volume = parseFloat(volumeControl.value);
         
-        // 1. Управление громкостью ползунком в реальном времени
+        // Оставляем ползунок строго для обработки игровых достижений
         volumeControl.oninput = (e) => {
             resetActivityTimer();
             let currentVolume = parseFloat(e.target.value);
             bgMusic.volume = currentVolume;
-            
-            // Если была пауза из-за нуля, а игрок прибавил звук — запускаем плеер
-            if (bgMusic.paused && currentVolume > 0) {
-                bgMusic.play().catch(() => {});
-            }
             
             // Ачивка Мику (Максимальный звук)
             if (currentVolume >= 0.99) {
                 checkQuests("vocaloid_volume_max");
             }
             
-            // Ачивка робота XJ-9 при движении ползунка
+            // Ачивка робота XJ-9 при движении ползунка громкости
             const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
             if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
                 stats.volumeMoveCount++;
                 if (stats.volumeMoveCount >= 30) checkQuests("xj9_trigger");
             }
         };
-
-        // 2. Логика АВТОПЕРЕКЛЮЧЕНИЯ: когда трек доиграл до конца, плавно включается следующий
-        bgMusic.onended = () => {
-            currentTrackIndex++;
-            // Если доиграл последний трек — возвращаемся к самому первому
-            if (currentTrackIndex >= playlist.length) {
-                currentTrackIndex = 0;
-            }
-            bgMusic.src = playlist[currentTrackIndex];
-            // Запускаем новый трек (с сохранением текущей громкости ползунка)
-            if (bgMusic.volume > 0) {
-                bgMusic.play().catch(() => {});
-            }
-        };
-
-        // 3. Обход блокировки браузера (Музыка стартует при самом первом клике по сайту)
-        const startMusicOnFirstInteraction = () => {
-            if (bgMusic.paused && bgMusic.volume > 0) {
-                bgMusic.play().catch(() => {});
-            }
-            // Снимаем слежку, чтобы не тратить оперативную память
-            window.removeEventListener('click', startMusicOnFirstInteraction);
-            window.removeEventListener('mousedown', startMusicOnFirstInteraction);
-            window.removeEventListener('keydown', startMusicOnFirstInteraction);
-        };
-
-        window.addEventListener('click', startMusicOnFirstInteraction);
-        window.addEventListener('mousedown', startMusicOnFirstInteraction);
-        window.addEventListener('keydown', startMusicOnFirstInteraction);
     }
-
 
     setInterval(() => {
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
@@ -1156,7 +1107,7 @@ function checkQuests(triggerType) {
         { id: "in_and_out", condition: stats.cancelResetCount >= 10 },
         { id: "xj9_robot", condition: triggerType === "xj9_trigger" },
         { id: "noob_saibot", condition: triggerType === "noob_saibot_trigger" },
-        { id: "what_year", condition: deskNames.filter(n => n === "Будущее").length >= 10 && deskNames.filter(n => n === "Прошлое").length >= 10 },
+        { id: "what_year", condition: triggerType === "what_year_success" },
         { id: "lazy_town", condition: stats.lazyTownClearCount >= 5 },
         { id: "scissors_master", condition: triggerType === "scissors_master_success" },
         { id: "metroidvania", condition: triggerType === "metroid_trigger" },
@@ -1222,6 +1173,7 @@ function checkClearDeskQuests() {
     if (deskItems.includes("Любовь") && bgMusic && bgMusic.volume <= 0.01) {
         checkQuests("april_lie_success");
     }
+    }
     if (wsItems.length >= 50 && !stats.unlockedQuests.includes("void_era")) {
         stats.unlockedQuests.push("void_era");
         unlockClearReward("void_era");
@@ -1248,6 +1200,10 @@ function checkClearDeskQuests() {
     if (hasDawn && hasHeat && hasStars && !stats.unlockedQuests.includes("escanor_proud")) {
         stats.unlockedQuests.push("escanor_proud");
         unlockClearReward("escanor_proud");
+    }
+
+if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
+        checkQuests("what_year_success");
     }
 }
 
