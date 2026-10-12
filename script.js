@@ -1,12 +1,12 @@
 const BASE_ITEMS = [
-    { name: "Свет", img: "свет.png" },
-    { name: "Мрак", img: "мрак.png" },
-    { name: "Холод", img: "холод.png" },
-    { name: "Тепло", img: "тепло.png" },
-    { name: "Хаос", img: "хаос.png" },
-    { name: "Порядок", img: "порядок.png" },
-    { name: "Вдохновение", img: "вдохновение.png" },
-    { name: "Меланхолия", img: "меланхолия.png" }
+    { name: "Свет", img: "light.webp" },
+    { name: "Мрак", img: "darkness.webp" },
+    { name: "Холод", img: "cold.webp" },
+    { name: "Тепло", img: "heat.webp" },
+    { name: "Хаос", img: "chaos.webp" },
+    { name: "Порядок", img: "discipline.webp" },
+    { name: "Вдохновение", img: "lute.webp" },
+    { name: "Меланхолия", img: "melancholy.webp" }
 ];
 
 const ALL_ACHIEVEMENTS = [
