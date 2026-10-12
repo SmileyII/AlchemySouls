@@ -382,7 +382,7 @@ function initGame() {
                 checkQuests("vocaloid_volume_max");
             }
             
-            // Ачивка робота XJ-9 при движении ползунка громкости
+                       // Ачивка робота XJ-9 при движении ползунка громкости
             const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
             if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
                 stats.volumeMoveCount++;
@@ -391,10 +391,17 @@ function initGame() {
         };
     }
 
-    setInterval(() => {
-        const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
-        const deskNames = deskItems.map(el => el.dataset.name);
-        let idleTime = Date.now() - lastInputTime;
+    // ИСПРАВЛЕНО: Восстановлена закрывающая скобка функции initGame() и её внутренние слушатели
+    window.onmousemove = resetActivityTimer;
+    window.onmousedown = resetActivityTimer;
+}
+
+// Запускаем независимый интервальный таймер для Халка и Гуля в корне файла
+setInterval(() => {
+    const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
+    const deskNames = deskItems.map(el => el.dataset.name);
+    let idleTime = Date.now() - lastInputTime;
+
 
         if (window.isHoldingHulkNow === true) {
             window.hulkHoldTimer = (window.hulkHoldTimer || 0) + 2;
@@ -1187,7 +1194,7 @@ function checkClearDeskQuests() {
         stats.unlockedQuests.push("project_2501");
         unlockClearReward("project_2501");
     }
-    let hasSunset = deskItems.includes("Закат");
+        let hasSunset = deskItems.includes("Закат");
     let hasSilence = deskItems.includes("Тишина");
     let hasLove = deskItems.includes("Любовь");
     if (hasSunset && hasSilence && hasLove && !stats.unlockedQuests.includes("moon_on_water")) {
@@ -1201,8 +1208,9 @@ function checkClearDeskQuests() {
         stats.unlockedQuests.push("escanor_proud");
         unlockClearReward("escanor_proud");
     }
-
-if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
+    
+    // ИСПРАВЛЕНО: Ваша новая логика ачивки времени при очистке стола
+    if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
         checkQuests("what_year_success");
     }
 }
