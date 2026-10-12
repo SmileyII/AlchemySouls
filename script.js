@@ -340,8 +340,9 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        img.src = `images/${item.img}`; 
-        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
+        // УМНЫЙ ПУТЬ: Отображение иконок в инвентаре элементов
+        img.src = "images/element_icons/" + item.img;
+        img.onerror = () => { img.src = 'images/placeholder.png'; };
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
@@ -518,7 +519,12 @@ function spawnItemOnDesk(e, itemData) {
     if(itemData.desc) clone.dataset.desc = itemData.desc;
     
     const img = document.createElement('img');
-    img.src = `images/${itemData.img}`;
+    // УМНЫЙ ПУТЬ: Разделяем папки картинок художников и иконок элементов
+    if (itemData.url) {
+        img.src = "images/" + itemData.img;
+    } else {
+        img.src = "images/element_icons/" + itemData.img;
+    }
     img.onerror = () => { img.src = 'images/placeholder.png'; };
     
     const text = document.createElement('span');
