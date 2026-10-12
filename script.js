@@ -504,10 +504,12 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // Принудительно приводим имя к нижнему регистру, чтобы совпасть со словарём
+        // ПРИНУДИТЕЛЬНЫЙ НИЖНИЙ РЕГИСТР ДЛЯ СЕРВЕРА LINUX:
         let lookKey = item.name.toLowerCase().trim();
         let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
-        img.src = "images/element_icons/" + iconFile;
+        
+        // Гарантируем, что имя файла в ссылке будет строго маленькими буквами
+        img.src = "images/element_icons/" + iconFile.toLowerCase();
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
@@ -701,11 +703,13 @@ function spawnItemOnDesk(e, itemData) {
                 img.src = 'images/placeholder.png';
             }
         };
-    } else {
-        // Принудительно приводим имя к нижнему регистру для элементов на столе
+   } else {
+        // ПРИНУДИТЕЛЬНЫЙ НИЖНИЙ РЕГИСТР ДЛЯ СТОЛА:
         let lookKey = itemData.name.toLowerCase().trim();
         let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
-        img.src = "images/element_icons/" + iconFile;
+        
+        // Гарантируем, что имя файла на столе будет строго маленькими буквами
+        img.src = "images/element_icons/" + iconFile.toLowerCase();
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
     
