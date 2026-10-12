@@ -441,8 +441,15 @@ function renderArtistsTab() {
         div.className = 'item artist-card';
         
         const img = document.createElement('img');
-        img.src = `images/${item.img}`; 
-        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
+        img.src = "images/" + item.img; 
+        img.onerror = () => { 
+            if (img.src.indexOf("images2/") === -1) {
+                img.src = "images2/" + item.img; 
+            } else {
+                img.src = 'images/placeholder.png'; 
+            }
+        };
+ 
         
         const text = document.createElement('span');
         text.innerText = item.name;
@@ -1054,10 +1061,16 @@ function showArtistModal(item) {
     document.getElementById('m-link').href = item.url;
     const modalArt = document.getElementById('m-art');
     if (modalArt) {
-        // Восстановлены обратные кавычки для генерации путей к картинкам авторов
-        modalArt.src = `images/${item.img}`;
-        modalArt.onerror = () => { modalArt.src = 'images/placeholder.png'; };
+        modalArt.src = "images/" + item.img;
+        modalArt.onerror = () => { 
+            if (modalArt.src.indexOf("images2/") === -1) {
+                modalArt.src = "images2/" + item.img; 
+            } else {
+                modalArt.src = 'images/placeholder.png'; 
+            }
+        };
     }
+
     document.getElementById('artist-modal').classList.add('active');
 }
 
