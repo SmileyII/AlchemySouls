@@ -503,13 +503,11 @@ function renderItemsTab() {
         const isDead = isElementDeadEnd(item);
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
-        const img = document.createElement('img');
-        // Полностью игнорируем старый регистр и берем имя элемента строчными буквами
-        let cleanName = item.name.toLowerCase().trim();
-        let iconFile = ELEMENT_ICONS[cleanName] || (cleanName + ".webp");
-        
-        img.src = "images/element_icons/" + iconFile.toLowerCase();
-        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
+       const img = document.createElement('img');
+        // ПРИВЯЗКА К АНГЛИЙСКОМУ СЛОВАРЮ:
+        let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
+        img.onerror = () => { img.src = 'images/placeholder.png'; };
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
@@ -702,14 +700,13 @@ function spawnItemOnDesk(e, itemData) {
                 img.src = 'images/placeholder.png';
             }
         };
-       } else {
-        // Жесткая сборка пути для элементов на столе strictly lowercase
-        let cleanName = itemData.name.toLowerCase().trim();
-        let iconFile = ELEMENT_ICONS[cleanName] || (cleanName + ".webp");
-        
-        img.src = "images/element_icons/" + iconFile.toLowerCase();
+        } else {
+        // ПРИВЯЗКА К АНГЛИЙСКОМУ СЛОВАРЮ НА СТОЛЕ:
+        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
+
 
     
     const text = document.createElement('span');
