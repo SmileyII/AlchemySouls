@@ -1,170 +1,166 @@
 const BASE_ITEMS = [
-    { name: "Свет", img: "light.webp" },
-    { name: "Мрак", img: "darkness.webp" },
-    { name: "Холод", img: "cold.webp" },
-    { name: "Тепло", img: "heat.webp" },
-    { name: "Хаос", img: "chaos.webp" },
-    { name: "Порядок", img: "discipline.webp" },
-    { name: "Вдохновение", img: "lute.webp" },
-    { name: "Меланхолия", img: "melancholy.webp" }
+    { name: "Свет" },
+    { name: "Мрак" },
+    { name: "Холод" },
+    { name: "Тепло" },
+    { name: "Хаос" },
+    { name: "Порядок" },
+    { name: "Вдохновение" },
+    { name: "Меланхолия" }
 ];
 
 const ELEMENT_ICONS = {
-    // Стартовые элементы
-    "Свет": "light.webp",
-    "Мрак": "darkness.webp",
-    "Холод": "cold.webp",
-    "Тепло": "heat.webp",
-    "Хаос": "chaos.webp",
-    "Порядок": "discipline.webp",
-    "Вдохновение": "lute.webp",
-    "Меланхолия": "melancholy.webp",
-
-    // Награды за достижения
-    "Чистота": "purity.webp",
-    "Изучение": "studying.webp",
-    "Баланс": "balance.webp",
-    "Гармония": "harmony.webp",
-    "Конструкт": "construct.webp",
-    "Блеск": "shine.webp",
-    "Вспышка": "flash.webp",
-    "Элемент": "element.webp",
-    "Грусть": "sad.webp",
-    "Апатия": "apathy.webp",
-    "Душа": "soul.webp",
-    "Безумие": "madness.webp",
-    "Тишина": "silence.webp",
-    "Совмещение": "combination.webp",
-    "Звезды": "stars.webp",
-    "Чудо": "miracle.webp",
-    "Цветы": "flowers.webp",
-    "Затмение": "eclipse.webp",
-    "Рассвет": "dawn.webp",
-    "Закат": "sunset.webp",
-    "Вселенная": "universe.webp",
-    "Кибернетика": "cybernetics.webp",
-    "Металл": "metal.webp",
-    "Луна": "moon.webp",
-    "Ночь": "night.webp",
-    "Солнце": "sun.webp",
-    "День": "day.webp",
-    "Память": "memory.webp",
-    "Вязкость": "viscosity.webp",
-    "Хрупкость": "fragility.webp",
-    "Приключения": "adventure.webp",
-    "Скорость": "speed.webp",
-    "Молния": "lightning.webp",
-    "Кисть": "brush.webp",
-    "Краски": "paints.webp",
-    "Чувства": "feelings.webp",
-    "Эмоции": "emotions.webp",
-    "Кровь": "blood.webp",
-    "Кристаллизация": "crystallization.webp",
-    "Коллапс": "collapse.webp",
-    "Пустота": "void.webp",
-    "Огонь": "fire.webp",
-    "Вода": "water.webp",
-    "Монстроподобие": "monster.webp",
-    "Бездна": "abyss.webp",
-    "Боль": "pain.webp",
-    "Геометрия": "geometry.webp",
-    "Богоподобие": "god.webp",
-    "Ничтожность": "insignificance.webp",
-    "Судьба": "fate.webp",
-    "Ярость": "fury.webp",
-    "Горизонт": "horizon.webp",
-    "Загадка": "puzzle.webp",
-    "Фейерверк": "firework.webp",
-    "Мерчага": "merch.webp",
-    "Магия": "magic.webp",
-    "Грёзы": "sleep.webp",
-    "Звук": "sound.webp",
-    "Танцы": "dance.webp",
-    "Улыбка": "smile.webp",
-    "Сладость": "sweetness.webp",
-    "Сестра": "sister.webp",
-    "Садизм": "sadism.webp",
-    "Сюрприз": "surprise.webp",
-    "Отражение": "reflection.webp",
-    "Забвение": "oblivion.webp",
-    "Разделение": "separation.webp",
-    "Меч": "sword.webp",
-    "Энергия": "energy.webp",
-    "Организм": "organism.webp",
-    "Хранитель": "guardian.webp",
-    "Ужас": "horror.webp",
-    "Вечность": "endless.webp",
-    "А́гг҃лъ": "angel.webp",
-    "Стихия": "stikhiya.webp",
-    "Небо": "sky.webp",
-    "Ветер": "wind.webp",
-    "Вишенка": "cherry.webp",
-    "Сиси-писи": "horny.webp",
-    "Жар": "hot.webp",
-    "Сок": "juice.webp",
-    "Животноподобие": "beast.webp",
-    "Тот самый батон": "loaf.webp",
-    "Путь": "path.webp",
-    "Веселье": "fun.webp",
-    "Свобода": "freedom.webp",
-    "Расслабление": "relax.webp",
-    "Рождение": "birth.webp",
-    "Мурамаса": "katana.webp",
-    "Письмена": "letter_cult.webp",
-    "Месть": "revenge.webp",
-    "Природа": "nature.webp",
-    "Гниль": "rot.webp",
-    "Цветение": "bloom.webp",
-    "Мох": "moss.webp",
-    "Насекомоподобие": "insect.webp",
-    "Гурокири": "guro.webp",
-    "Уют": "cosiness.webp",
-    "Безмятежность": "serenity.webp",
-    "Фальшивая любовь": "fake.webp",
-    "Любовь": "love.webp",
-    "Эротика": "erotic.webp",
-    "Перо": "feather.webp",
-    "Будущее": "future.webp",
-    "Прошлое": "past.webp",
-    "Детство": "child.webp",
-    "Мгновение": "moment.webp",
-    "Эйфория": "euphoria.webp",
-    "Кислота": "acid.webp",
-    "Незыблимость": "immutability.webp",
-    "Величие": "grandeur.webp",
-    "Когти и мех": "claws.webp",
-    "Пепел": "ash.webp",
-    "Игла и нить": "string.webp",
-    "Слёзы": "cry.webp",
-    "Император": "emperor.webp",
-    "Мясо": "meat.webp",
-    "Незримый": "invisible.webp",
-    "Механизм": "mecha.webp",
-    "Кукла": "doll.webp",
-    "Призрачность": "ghost.webp",
-    "Ленты": "ribbons.webp",
-    "Мягкость": "Softness.webp",
-    "Радуга": "rainbow.webp",
-    "Узор": "pattern.webp",
-    "Инверсия": "Inversion.webp",
-    "Иллюзия": "illusion.webp",
-    "Измерение": "backroom.webp",
-    "Роботизирование": "robot.webp",
-    "Тень": "shadow.webp",
-    "Время": "time.webp",
-    "Статный": "stately.webp",
-    "Канцелярио": "chancery.webp",
-    "Готика": "gothic.webp",
-    "Эфемерность": "ephemeral.webp",
-    "Свежесть": "freshness.webp",
-    "Туман": "mist.webp",
-    "Дружба": "friend.webp",
-    "Жемчуг": "pearl.webp",
-    "Самоцветы": "gems.webp",
-    "Стекло": "mirror.webp",
-    "Трещины": "cracks.webp",
-    "Гнев": "anger.webp",
-    "Вкус": "taste.webp"
+    "Свет": "свет.webp",
+    "Мрак": "мрак.webp",
+    "Холод": "холод.webp",
+    "Тепло": "тепло.webp",
+    "Хаос": "хаос.webp",
+    "Порядок": "порядок.webp",
+    "Вдохновение": "вдохновение.webp",
+    "Меланхолия": "меланхолия.webp",
+    "Чистота": "чистота.webp",
+    "Изучение": "изучение.webp",
+    "Баланс": "баланс.webp",
+    "Гармония": "гармония.webp",
+    "Конструкт": "конструкт.webp",
+    "Блеск": "блеск.webp",
+    "Вспышка": "вспышка.webp",
+    "Элемент": "элемент.webp",
+    "Грусть": "грусть.webp",
+    "Апатия": "апатия.webp",
+    "Душа": "душа.webp",
+    "Безумие": "безумие.webp",
+    "Тишина": "тишина.webp",
+    "Совмещение": "совмещение.webp",
+    "Звезды": "звезды.webp",
+    "Чудо": "чудо.webp",
+    "Цветы": "цветы.webp",
+    "Затмение": "затмение.webp",
+    "Рассвет": "рассвет.webp",
+    "Закат": "закат.webp",
+    "Вселенная": "вселенная.webp",
+    "Кибернетика": "кибернетика.webp",
+    "Металл": "металл.webp",
+    "Луна": "луна.webp",
+    "Ночь": "ночь.webp",
+    "Солнце": "солнце.webp",
+    "День": "день.webp",
+    "Память": "память.webp",
+    "Вязкость": "вязкость.webp",
+    "Хрупкость": "хрупкость.webp",
+    "Приключения": "приключения.webp",
+    "Скорость": "скорость.webp",
+    "Молния": "молния.webp",
+    "Кисть": "кисть.webp",
+    "Краски": "краски.webp",
+    "Чувства": "чувства.webp",
+    "Эмоции": "эмоции.webp",
+    "Кровь": "кровь.webp",
+    "Кристаллизация": "кристаллизация.webp",
+    "Коллапс": "коллапс.webp",
+    "Пустота": "пустота.webp",
+    "Огонь": "огонь.webp",
+    "Вода": "вода.webp",
+    "Монстроподобие": "монстроподобие.webp",
+    "Бездна": "бездна.webp",
+    "Боль": "боль.webp",
+    "Геометрия": "геометрия.webp",
+    "Богоподобие": "богоподобие.webp",
+    "Ничтожность": "ничтожность.webp",
+    "Судьба": "судьба.webp",
+    "Ярость": "ярость.webp",
+    "Горизонт": "горизонт.webp",
+    "Загадка": "загадка.webp",
+    "Фейерверк": "фейерверк.webp",
+    "Мерчага": "мерчага.webp",
+    "Магия": "магия.webp",
+    "Грёзы": "грезы.webp",
+    "Звук": "звук.webp",
+    "Танцы": "танцы.webp",
+    "Улыбка": "улыбка.webp",
+    "Сладость": "сладость.webp",
+    "Сестра": "сестра.webp",
+    "Садизм": "садизм.webp",
+    "Сюрприз": "сюрприз.webp",
+    "Отражение": "отражение.webp",
+    "Забвение": "забвение.webp",
+    "Разделение": "разделение.webp",
+    "Меч": "меч.webp",
+    "Энергия": "энергия.webp",
+    "Организм": "организм.webp",
+    "Хранитель": "хранитель.webp",
+    "Ужас": "ужас.webp",
+    "Вечность": "вечность.webp",
+    "А́гг҃лъ": "ангел.webp",
+    "Стихия": "стихия.webp",
+    "Небо": "небо.webp",
+    "Ветер": "ветер.webp",
+    "Вишенка": "вишенка.webp",
+    "Сиси-писи": "сисиписи.webp",
+    "Жар": "жар.webp",
+    "Сок": "сок.webp",
+    "Животноподобие": "животноподобие.webp",
+    "Тот самый батон": "батон.webp",
+    "Путь": "путь.webp",
+    "Веселье": "веселье.webp",
+    "Свобода": "свобода.webp",
+    "Расслабление": "расслабление.webp",
+    "Рождение": "рождение.webp",
+    "Мурамаса": "мурамаса.webp",
+    "Письмена": "письмена.webp",
+    "Месть": "месть.webp",
+    "Притражность": "притражность.webp",
+    "Гниль": "гниль.webp",
+    "Цветение": "цветение.webp",
+    "Мох": "мох.webp",
+    "Насекомоподобие": "насекомоподобие.webp",
+    "Гурокири": "гурокири.webp",
+    "Уют": "уют.webp",
+    "Безмятежность": "безмятежность.webp",
+    "Фальшивая любовь": "фальш_любовь.webp",
+    "Любовь": "любовь.webp",
+    "Эротика": "эротика.webp",
+    "Перо": "перо.webp",
+    "Будущее": "будущее.webp",
+    "Прошлое": "прошлое.webp",
+    "Детство": "детство.webp",
+    "Мгновение": "мгновение.webp",
+    "Эйфория": "эйфория.webp",
+    "Кислота": "кислота.webp",
+    "Незыблимость": "незыблимость.webp",
+    "Величие": "величие.webp",
+    "Когти и мех": "мех.webp",
+    "Пепел": "пепел.webp",
+    "Игла и нить": "нитки.webp",
+    "Слёзы": "слезы.webp",
+    "Император": "император.webp",
+    "Мясо": "мясо.webp",
+    "Незримый": "незримый.webp",
+    "Механизм": "механизм.webp",
+    "Кукла": "кукла.webp",
+    "Призрачность": "призрачность.webp",
+    "Ленты": "ленты.webp",
+    "Мягкость": "мягкость.webp",
+    "Радуга": "радуга.webp",
+    "Узор": "узор.webp",
+    "Инверсия": "инверсия.webp",
+    "Иллюзия": "измерение.webp",
+    "Измерение": "измерение.webp",
+    "Роботизирование": "роботизирование.webp",
+    "Тень": "тень.webp",
+    "Время": "время.webp",
+    "Статный": "статный.webp",
+    "Канцелярио": "канцелярио.webp",
+    "Готика": "готика.webp",
+    "Эфемерность": "эфемерность.webp",
+    "Свежесть": "свежесть.webp",
+    "Туман": "туман.webp",
+    "Дружба": "дружба.webp",
+    "Жемчуг": "жемчуг.webp",
+    "Самоцветы": "самоцветы.webp",
+    "Стекло": "стекло.webp",
+    "Трещины": "трещины.webp",
+    "Гнев": "гнев.webp"
 };
 
 const ALL_ACHIEVEMENTS = [
@@ -185,7 +181,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
     { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
     { id: "cosmostars", title: "Космоstars", desc: "Расположить элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
-    { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть элементы Призрачность и 10 Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
+    { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть элементы Призрачность и 10... Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
     { id: "moon_on_water", title: "MOON ON THE WATER", desc: "Очистить стол, когда на нём есть элементы Закат, Тишина и Любовь", reward: "Луна, Ночь", img: "луна.png" },
     { id: "escanor_proud", title: "Эсканор будет доволен...", desc: "Очистить стол, когда на нём есть элементы Рассвет, Тепло и Звёзды", reward: "Солнце, День", img: "солнце.png" },
     { id: "circus_time", title: "Кажется это цирк", desc: "Попробовать соединить Хаос и Порядок, пока на столе находится хотя бы 6 разных художников", reward: "Память, Вязкость, Хрупкость", img: "цирк.png" },
@@ -197,7 +193,9 @@ const ALL_ACHIEVEMENTS = [
     { id: "walter_fly", title: "Муха...", desc: "Набрать в поисковике фразу: 'You got damn right'", reward: "Кристаллизация", img: "муха.png" },
     { id: "chaos_era", title: "Эпоха хаоса", desc: "Вытащить 50 элементов на стол одновременно", reward: "Коллапс", img: "коллапс.png" },
     { id: "void_era", title: "А это что? Эпоха пустоты?", desc: "Очистить стол, когда на нём будет ровно или больше 50 элементов", reward: "Пустота", img: "пустота.png" },
-    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "piлюли.png" },
+    { id: "matrix_pills", title: "Пилюлей не будет?", desc: "Написать в поисковике 'red or blue'", reward: "Огонь, Вода", img: "пилюли.png" }
+];
+    const ALL_ACHIEVEMENTS_PART2 = [
     { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
     { id: "geometry_smash", title: "Geometry Smash", desc: "Собрать (совместить) в одной точке стола 5 элементов Порядок", reward: "Геометрия", img: "геометрия.png" },
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
@@ -216,8 +214,8 @@ const ALL_ACHIEVEMENTS = [
     { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
     { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
     { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
-    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Притражность, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
-    { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
+    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников ... и элемент Душа", reward: "Притражность, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
+    { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, ... , Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
     { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Свобода, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
@@ -252,6 +250,8 @@ const ALL_ACHIEVEMENTS = [
     { id: "where_is_he", title: "Где он? Где?!", desc: "Нажать на Ярость 20 раз пока включена максимальная громкость.", reward: "Гнев", img: "гнев.png" }
 ];
 
+ALL_ACHIEVEMENTS.push(...ALL_ACHIEVEMENTS_PART2);
+
 let discoveredItems = [];
 let recipes = [];
 let isDraggingNow = false;
@@ -282,7 +282,7 @@ let stats = {
     frierenFrCount: 0,
     frierenTimeCount: 0,
     frierenFateCount: 0,
-    furyMaxVolumeClicks: 0,
+    furyMaxVolumeClicks: 0, // Добавлено сохранение кликов для ачивки "Где он? Где?!"
     unlockedQuests: []
 };
 
@@ -290,12 +290,16 @@ let clickCounts = {};
 let lastInputTime = Date.now();
 
 initGame();
+
 function initGame() {
     const savedProgress = localStorage.getItem('alchemy_souls_progress');
     if (savedProgress) {
         discoveredItems = JSON.parse(savedProgress);
     } else {
-        discoveredItems = [...BASE_ITEMS];
+        discoveredItems = BASE_ITEMS.map(item => ({
+            name: item.name,
+            img: ELEMENT_ICONS[item.name] || "placeholder.png"
+        }));
     }
 
     const savedStats = localStorage.getItem('alchemy_souls_stats');
@@ -423,6 +427,7 @@ function initGame() {
 function resetActivityTimer() {
     lastInputTime = Date.now();
 }
+
 function switchTab(tabName) {
     stats.totalTabClicksCount = (stats.totalTabClicksCount || 0) + 1;
 
@@ -498,10 +503,9 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // Читаем имя файла из нашего словаря. Если элемента там нет, ставим заглушку placeholder
         let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
         img.src = "images/element_icons/" + iconFile;
-        img.onerror = () => { img.src = 'images/placeholder.png'; };
+        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
@@ -542,7 +546,7 @@ function renderItemsTab() {
         
         div.onmousedown = (e) => { 
             if (e.button === 1) return; 
-
+            
             const bgMusicEl = document.getElementById('bg-music');
             if (item.name === "Ярость" && bgMusicEl && bgMusicEl.volume >= 0.99) {
                 stats.furyMaxVolumeClicks = (stats.furyMaxVolumeClicks || 0) + 1;
@@ -608,7 +612,6 @@ function renderArtistsTab() {
                 img.src = 'images/placeholder.png'; 
             }
         };
- 
         
         const text = document.createElement('span');
         text.innerText = item.name;
@@ -624,6 +627,7 @@ function renderArtistsTab() {
     const counterEl = document.getElementById('artists-count');
     if (counterEl) counterEl.innerText = totalArtists;
 }
+
 function renderAchievementsTab() {
     const container = document.getElementById('achievements-tab');
     if (!container) return;
@@ -687,28 +691,16 @@ function spawnItemOnDesk(e, itemData) {
     const img = document.createElement('img');
     if (itemData.url) {
         img.src = "images/" + itemData.img;
-        img.onerror = () => { 
+        img.onerror = () => {
             if (img.src.indexOf("images2/") === -1) {
-                img.src = "images2/" + itemData.img; 
-                } else {
-        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
-        img.src = "images/element_icons/" + iconFile;
-        img.onerror = () => { img.src = 'images/placeholder.png'; };
-    }
- 
+                img.src = "images2/" + itemData.img;
+            } else {
+                img.src = 'images/placeholder.png';
             }
         };
     } else {
-        // НА ЛЕТУ: Меняем .jpg/.png на .webp для иконок на столе
-        let iconName = itemData.img;
-        if (iconName.endsWith('.jpg')) {
-            iconName = iconName.replace(".jpg", ".webp");
-        } else if (iconName.endsWith('.png')) {
-            iconName = iconName.replace(".png", ".webp");
-        } else if (!iconName.endsWith('.webp')) {
-            iconName = iconName + ".webp";
-        }
-        img.src = "images/element_icons/" + iconName;
+        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
     
@@ -849,8 +841,14 @@ function combineElements(el1, el2) {
         if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
         
         const img = document.createElement('img');
-        img.src = `images/${newItemData.img}`;
-        img.onerror = () => { img.src = 'images/placeholder.png'; };
+        img.src = "images/" + newItemData.img;
+        img.onerror = () => {
+            if (img.src.indexOf("images2/") === -1) {
+                img.src = "images2/" + newItemData.img;
+            } else {
+                img.src = 'images/placeholder.png';
+            }
+        };
         
         const text = document.createElement('span');
         text.innerText = newItemData.name + (isDead ? " •" : "");
@@ -890,11 +888,12 @@ function combineElements(el1, el2) {
                 checkQuests("bttf_fail");
             }
         }
-        
+
         if ((name1 === "Огонь" && name2 === "Кристаллизация") || (name2 === "Огонь" && name1 === "Кристаллизация")) checkQuests("gold_fail_trigger");
         if ((name1 === "Гнев" && name2 === "Безумие") || (name2 === "Гнев" && name1 === "Безумие")) checkQuests("hulk_fail_trigger");
         if ((name1 === "Судьба" && name2 === "Огонь") || (name2 === "Судьба" && name1 === "Огонь")) checkQuests("lotr_fail_trigger");
         if ((name1 === "Слёзы" && name2 === "Музыка") || (name2 === "Слёзы" && name1 === "Музыка")) checkQuests("april_fail_trigger");
+
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
         if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
     }
@@ -967,6 +966,7 @@ function checkQuests(triggerType) {
     let hasGetOverHere = false;
 
     let tableArtists = Array.from(deskItems).filter(el => el.classList.contains('artist-card'));
+    // ИСПРАВЛЕНО: Теперь координаты считываются с первого элемента массива, а не со всей коллекции!
     if (tableArtists.length >= 20) {
         let first = tableArtists[0];
         let closeCount = 0;
@@ -1137,51 +1137,40 @@ function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
     const deskItems = Array.from(wsItems).map(el => el.dataset.name);
     let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
-    
     if (artistCountOnDesk > 0) {
         stats.deletedArtistsCount += artistCountOnDesk;
         if (stats.deletedArtistsCount >= 213) checkQuests("kirito_success");
     }
-    
     let sadismCount = deskItems.filter(name => name === "Садизм").length;
     if (sadismCount > 0) {
         stats.cabbageRemoveCount += sadismCount;
         if (stats.cabbageRemoveCount >= 30) checkQuests("cabbage_success");
     }
-    
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
     let hasLovePack = deskItems.includes("Свобода") && deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
     if (hasFakeLove && hasLovePack) checkQuests("true_love_clear");
-    
     let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
     if (pubLove && pubV && pubN && pubD) {
         stats.notInPublicCount++;
         if (stats.notInPublicCount >= 7) checkQuests("public_clear_success");
     }
-    
     if (deskItems.includes("Время") && deskItems.includes("Организм") && deskItems.includes("Энергия")) {
         stats.lazyTownClearCount++;
     }
-    
     if (deskItems.filter(n => n === "Меч").length >= 7) checkQuests("scissors_master_success");
-    
     let fireCheck = ["Элемент", "Огонь", "Металл", "Ветер", "Молния", "Яд", "Свет", "Тень"].every(n => deskItems.includes(n));
     if (fireCheck) checkQuests("fired_clear_success");
-    
     const bgMusic = document.getElementById('bg-music');
     if (deskItems.includes("Любовь") && bgMusic && bgMusic.volume <= 0.01) {
         checkQuests("april_lie_success");
     }
-    
     if (wsItems.length >= 50 && !stats.unlockedQuests.includes("void_era")) {
         stats.unlockedQuests.push("void_era");
         unlockClearReward("void_era");
     }
-    
     let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
     if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
-    
     let hasGhost = deskItems.includes("Призрачность");
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
@@ -1210,7 +1199,9 @@ function unlockClearReward(id) {
     const rewards = achMeta.reward.split(',').map(r => r.trim());
     rewards.forEach(rewardName => {
         if (!discoveredItems.some(i => i.name === rewardName)) {
-            discoveredItems.push({ name: rewardName, img: achMeta.img, url: "", desc: "" });
+            // Подтягиваем правильное имя картинки из нашего центрального словаря ELEMENT_ICONS
+            let iconFile = ELEMENT_ICONS[rewardName] || 'placeholder.png';
+            discoveredItems.push({ name: rewardName, img: iconFile, url: "", desc: "" });
         }
     });
     showAchievementToast(achMeta);
@@ -1221,7 +1212,7 @@ function unlockClearReward(id) {
 function showAchievementToast(ach) {
     const toast = document.getElementById('achievement-popup');
     if (toast) {
-        // Восстановлены обратные кавычки для динамического неонового тоста
+        // Восстановлены обратные косые кавычки для динамического неонового тоста
         toast.innerHTML = `<span class="icon">🏆</span> Достижение: <span style="color:#ff007f;">«${ach.title}»</span>! Получен элемент: <span class="reward">${ach.reward}</span>`;
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 4500);
@@ -1240,15 +1231,14 @@ function showArtistModal(item) {
     const modalArt = document.getElementById('m-art');
     if (modalArt) {
         modalArt.src = "images/" + item.img;
-        modalArt.onerror = () => { 
+        modalArt.onerror = () => {
             if (modalArt.src.indexOf("images2/") === -1) {
-                modalArt.src = "images2/" + item.img; 
+                modalArt.src = "images2/" + item.img;
             } else {
-                modalArt.src = 'images/placeholder.png'; 
+                modalArt.src = 'images/placeholder.png';
             }
         };
     }
-
     document.getElementById('artist-modal').classList.add('active');
 }
 
@@ -1260,13 +1250,16 @@ function resetGame() {
     if (confirm("Вы уверены, что хотите полностью сбросить прогресс, открытых художников и все достижения?")) {
         localStorage.removeItem('alchemy_souls_progress');
         localStorage.removeItem('alchemy_souls_stats');
-        discoveredItems = [...BASE_ITEMS];
-        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, deletedArtistsCount: 0, tabSwitchCount: 0, cabbageRemoveCount: 0, notInPublicCount: 0, cancelResetCount: 0, unlockedQuests: [] };
+        discoveredItems = BASE_ITEMS.map(item => ({
+            name: item.name,
+            img: ELEMENT_ICONS[item.name] || "placeholder.png"
+        }));
+        stats = { totalCrafts: 0, clearDeskClicks: 0, failedCrafts: 0, searchUsed: false, sameMaterialCrafts: 0, shadowAttempts: 0, deletedArtistsCount: 0, tabSwitchCount: 0, cabbageRemoveCount: 0, notInPublicCount: 0, cancelResetCount: 0, furyMaxVolumeClicks: 0, unlockedQuests: [] };
         document.getElementById('workspace').innerHTML = '';
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(btn => btn.classList.remove('active'));
-        if (tabs && tabs) tabs.classList.add('active');
+        if (tabs && tabs[0]) tabs[0].classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
@@ -1274,7 +1267,7 @@ function resetGame() {
     } else {
         stats.cancelResetCount = (stats.cancelResetCount || 0) + 1;
         saveGame();
-        checkQuests(); 
+        checkQuests();
     }
 }
 
