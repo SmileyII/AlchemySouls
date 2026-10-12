@@ -369,9 +369,14 @@ function initGame() {
     
     // СПИСОК ВАШИХ ТРЕКОВ: Просто впишите сюда точные названия ваших файлов из папки audio
     const playlist = [
-        "audio/track1.mp3",
-        "audio/track2.mp3",
-        "audio/track3.mp3"
+        "audio/nightingale.mp3",
+        "audio/remembrance.mp3",
+        "audio/warsong.mp3",
+        "audio/stay_with_me.mp3",
+        "audio/trickster.mp3",
+        "audio/ignite.mp3",
+        "audio/love_song.mp3",
+        "audio/farewell.mp3"
     ];
     let currentTrackIndex = 0;
     
