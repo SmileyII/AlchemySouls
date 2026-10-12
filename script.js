@@ -219,7 +219,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
-    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Свобода, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
+    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
     { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
     { id: "elephant_feathers", title: "Слон из перьев", desc: "Открыть художника sapfirachibtelegram", reward: "Перо", img: "перо.png" },
     { id: "gigawatts", title: "1.21 gigawatts!", desc: "Соединить Вспышку с 10 Конструктом.", reward: "Будущее, Прошлое", img: "будущее.png" },
@@ -1148,7 +1148,7 @@ function checkClearDeskQuests() {
     }
     
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
-    let hasLovePack = deskItems.includes("Свобода") && deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
+    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
     if (hasFakeLove && hasLovePack) checkQuests("true_love_clear");
     
     let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
