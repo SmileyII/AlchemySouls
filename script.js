@@ -340,9 +340,19 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        // УМНЫЙ ПУТЬ: Отображение иконок в инвентаре элементов
-        img.src = "images/element_icons/" + item.img;
+        // Меняем .jpg/.png на .webp для иконок в инвентаре
+        let iconName = item.img;
+        if (iconName.endsWith('.jpg')) {
+            iconName = iconName.replace(".jpg", ".webp");
+        } else if (iconName.endsWith('.png')) {
+            iconName = iconName.replace(".png", ".webp");
+        } else if (!iconName.endsWith('.webp')) {
+            iconName = iconName + ".webp";
+        }
+        img.src = "images/element_icons/" + iconName;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
+
+
         
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
@@ -526,13 +536,28 @@ function spawnItemOnDesk(e, itemData) {
     if(itemData.desc) clone.dataset.desc = itemData.desc;
     
     const img = document.createElement('img');
-    // УМНЫЙ ПУТЬ: Разделяем папки картинок художников и иконок элементов
     if (itemData.url) {
         img.src = "images/" + itemData.img;
+        img.onerror = () => { 
+            if (img.src.indexOf("images2/") === -1) {
+                img.src = "images2/" + itemData.img; 
+            } else {
+                img.src = 'images/placeholder.png'; 
+            }
+        };
     } else {
-        img.src = "images/element_icons/" + itemData.img;
+        // НА ЛЕТУ: Меняем .jpg/.png на .webp для иконок на столе
+        let iconName = itemData.img;
+        if (iconName.endsWith('.jpg')) {
+            iconName = iconName.replace(".jpg", ".webp");
+        } else if (iconName.endsWith('.png')) {
+            iconName = iconName.replace(".png", ".webp");
+        } else if (!iconName.endsWith('.webp')) {
+            iconName = iconName + ".webp";
+        }
+        img.src = "images/element_icons/" + iconName;
+        img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
-    img.onerror = () => { img.src = 'images/placeholder.png'; };
     
     const text = document.createElement('span');
     text.innerText = itemData.name + (isDead ? " •" : "");
