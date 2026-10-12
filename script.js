@@ -167,7 +167,7 @@ const ELEMENT_ICONS = {
 const ALL_ACHIEVEMENTS = [
     { id: "first_craft", title: "Первый шаг", desc: "Сделать один успешный крафт", reward: "Ничего", img: "опыт.png" },
     { id: "cleaner", title: "Чистый холст", desc: "Нажать кнопку 'Очистить стол' 3 раза", reward: "Чистота", img: "чистота.png" },
-    { id: "searcher", title: "В поисках истины", desc: "Воспользоваться строкой поиска", reward: "Изучение", img: "изучение.png" },
+    { id: "searcher", title: "В поисках истины", desc: "Воспользоваться строкой поиска", reward: "Изучение, Нежность", img: "изучение.png" },
     { id: "four_corners", title: "Aбсолютная гармония", desc: "Расставить 4 любых элемента по четырём углам стола", reward: "Баланс, Гармония", img: "гармония.png" },
     { id: "tower_build", title: "Архитектор?", desc: "Выстроить 3 любых элемента на столе в один ровный вертикальный ряд (не друг на друга!)", reward: "Конструкт", img: "структура.png" },
     { id: "chaos_desk", title: "Творческий хаос", desc: "Вытащить на рабочий стол одновременно больше 15 элементов", reward: "Блеск, Вспышка", img: "хаос.png" },
@@ -227,7 +227,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "hulk_hold", title: "А у нас есть Халк!", desc: "Нужно взять мышкой Гнев и не отпускать его в течении 2 минут", reward: "Кислота", img: "халк.png" },
     { id: "for_emperor", title: "ЗА ИМПЕРАТОРА!!!", desc: "10 раз нажать колёсиком мыши на элемент Император", reward: "Незыблимость, Величие", img: "император.png" },
     { id: "gandalf_wheel", title: "Ты не пройдёшь!", desc: "Прокрутите кольцо мыши от души", reward: "Когти и мех, Пепел, Игла и нить", img: "гендальф.png" },
-    { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы, Нежность", img: "ложь.png" },
+    { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы", img: "ложь.png" },
     { id: "that_one", title: "Тот самый!", desc: "Совместить Величие, Свет и А́гг҃лъ", reward: "Император", img: "тотсамый.png" },
     { id: "jack_zandatsu", title: "Джек-потрошитель!", desc: "Вытащить на стол Кибернетику, Мурамаса и Металл и написать в поисковой строке фразу: 'Zandatsu'", reward: "Мясо, Незримый, Механизм", img: "джек.png" },
     { id: "scp_173", title: "173 или Печенька...", desc: "Оставить на столе Незыблимость, Скорость, Металл и Монстроподобие и переключить вкладку 5 раз.", reward: "Кукла", img: "печенька.png" },
@@ -1133,12 +1133,32 @@ const ws = document.getElementById('workspace');
 
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
-    const deskItems = Array.from(wsItems).map(el => el.dataset.name);
+    
+    // ИСПРАВЛЕНО: Принудительно очищаем имена элементов от маркеров тупика "•" и лишних пробелов
+    const deskItems = Array.from(wsItems).map(el => {
+        let name = el.dataset.name || "";
+        return name.replace("•", "").trim();
+    });
+    
     let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
     
     if (artistCountOnDesk > 0) {
         stats.deletedArtistsCount += artistCountOnDesk;
         if (stats.deletedArtistsCount >= 213) checkQuests("kirito_success");
+    }
+    
+    let sadismCount = deskItems.filter(name => name === "Садизм").length;
+    if (sadismCount > 0) {
+        stats.cabbageRemoveCount += sadismCount;
+        if (stats.cabbageRemoveCount >= 30) checkQuests("cabbage_success");
+    }
+    
+    // ТЕПЕРЬ СРАБОТАЕТ С ПЕРВОГО РАЗА: Чистая проверка без "Свободы"
+    let hasFakeLove = deskItems.includes("Фальшивая любовь");
+    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
+    
+    if (hasFakeLove && hasLovePack) {
+        checkQuests("true_love_clear");
     }
     
     let sadismCount = deskItems.filter(name => name === "Садизм").length;
