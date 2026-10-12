@@ -169,7 +169,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "cleaner", title: "Чистый холст", desc: "Нажать кнопку 'Очистить стол' 3 раза", reward: "Чистота", img: "чистота.png" },
     { id: "searcher", title: "В поисках истины", desc: "Воспользоваться строкой поиска", reward: "Изучение", img: "изучение.png" },
     { id: "four_corners", title: "Aбсолютная гармония", desc: "Расставить 4 любых элемента по четырём углам стола", reward: "Баланс, Гармония", img: "гармония.png" },
-    { id: "tower_build", title: "Архитектор?", desc: "Выстроить 3 любых элемента на столе в один ровный вертикальный ряд (не друг на друга!)", reward: "Конструкт", img: "структура.png" },
+    { id: "tower_build", title: "Архитектор?", desc: "Выстроить 3 любых элемента на столе в один ровный вертикальный ряд", reward: "Конструкт", img: "структура.png" },
     { id: "chaos_desk", title: "Творческий хаос", desc: "Вытащить на рабочий стол одновременно больше 15 элементов", reward: "Блеск, Вспышка", img: "хаос.png" },
     { id: "philosopher", title: "Элемент Экзострайдера", desc: "Открыть 15 любых промежуточных элементов или смыслов", reward: "Элемент", img: "философия.png" },
     { id: "crisis", title: "Я тебя сейчас ЗААРТБЛОЧУ!", desc: "Попробовать соединить неподходящие элементы 10 раз", reward: "Грусть, Апатия", img: "уныние.png" },
@@ -177,12 +177,12 @@ const ALL_ACHIEVEMENTS = [
     { id: "madness", title: "Безумно ли?", desc: "Нужно нажать на один и тот же элемент в инвентаре 10 раз подряд", reward: "Безумие", img: "безумие.png" },
     { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
     { id: "tengen_toppa", title: "Супер Тенген Топпа...", desc: "Получить 10 художников из двух одинаковых материалов.", reward: "Совмещение", img: "совмещение.png" },
-    { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть секретного художника umikirameki", reward: "Звезды, Чудо", img: "звезды.png" },
+    { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть художника umikirameki", reward: "Звезды, Чудо", img: "звезды.png" },
     { id: "graduation", title: "Наш выпускной", desc: "Открыть художников sasagichh и svknon", reward: "Цветы", img: "цветы.png" },
-    { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
+    { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть элементы Тепло или Свет элементами Мрак или Холод на столе", reward: "Затмение", img: "затмение.png" },
     { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
     { id: "cosmostars", title: "Космоstars", desc: "Расположить элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
-    { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть элементы Призрачность и 10... Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
+    { id: "project_2501", title: "Project 2501", desc: "Очистить стол, когда на нём есть элементы Призрачность и 10 Конструктов", reward: "Кибернетика, Металл", img: "кибер.png" },
     { id: "moon_on_water", title: "MOON ON THE WATER", desc: "Очистить стол, когда на нём есть элементы Закат, Тишина и Любовь", reward: "Луна, Ночь", img: "луна.png" },
     { id: "escanor_proud", title: "Эсканор будет доволен...", desc: "Очистить стол, когда на нём есть элементы Рассвет, Тепло и Звёзды", reward: "Солнце, День", img: "солнце.png" },
     { id: "circus_time", title: "Кажется это цирк", desc: "Попробовать соединить Хаос и Порядок, пока на столе находится хотя бы 6 разных художников", reward: "Память, Вязкость, Хрупкость", img: "цирк.png" },
@@ -198,11 +198,11 @@ const ALL_ACHIEVEMENTS = [
 ];
     const ALL_ACHIEVEMENTS_PART2 = [
     { id: "ghoul_inside", title: "Boku no naka ni dare ga iru no?", desc: "Оставить на столе Чувства, Эмоции, Тепло и 10 элементов Пустоты на 1 минуту без движения", reward: "Монстроподобие, Бездна, Боль", img: "гуль.png" },
-    { id: "geometry_smash", title: "Geometry Smash", desc: "Собрать (совместить) в одной точке стола 5 элементов Порядок", reward: "Геометрия", img: "геометрия.png" },
+    { id: "geometry_smash", title: "Geometry Smash", desc: "Собрать в одной точке стола 5 элементов Порядок", reward: "Геометрия", img: "геометрия.png" },
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
     { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
     { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
-    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать (совместить) в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
+    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
     { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Выкрутить ползунок звука на максимум (100%)", reward: "Звук, Танцы", img: "мику.png" },
     { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
     { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
@@ -504,7 +504,9 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
+        // Принудительно приводим имя к нижнему регистру, чтобы совпасть со словарём
+        let lookKey = item.name.toLowerCase().trim();
+        let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
         img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         
@@ -700,7 +702,9 @@ function spawnItemOnDesk(e, itemData) {
             }
         };
     } else {
-        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
+        // Принудительно приводим имя к нижнему регистру для элементов на столе
+        let lookKey = itemData.name.toLowerCase().trim();
+        let iconFile = ELEMENT_ICONS[lookKey] || (lookKey + ".webp");
         img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
