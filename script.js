@@ -176,11 +176,11 @@ const ALL_ACHIEVEMENTS = [
     { id: "philosopher", title: "Элемент Экзострайдера", desc: "Открыть 15 любых промежуточных элементов или смыслов", reward: "Элемент", img: "философия.png" },
     { id: "crisis", title: "Я тебя сейчас ЗААРТБЛОЧУ!", desc: "Попробовать соединить неподходящие элементы 10 раз", reward: "Грусть, Апатия", img: "уныние.png" },
     { id: "duck_soup", title: "Duck Soup", desc: "Открыть 100 художников выставки", reward: "Душа", img: "душа.png" },
-    { id: "madness", title: "Безумно ли?", desc: "Нужно нажать на один и тот же элемент в инвентаре 10 раз подряд", reward: "Безумие", img: "безумие.png" },
+    { id: "madness", title: "Безумно ли?", desc: "Нужно нажать на один и тот же element в инвентаре 10 раз подряд", reward: "Безумие", img: "безумие.png" },
     { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
     { id: "tengen_toppa", title: "Супер Тенген Топпа...", desc: "Получить 10 художников из двух одинаковых материалов.", reward: "Совмещение", img: "совмещение.png" },
     { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть секретного художника umikirameki", reward: "Звезды, Чудо, Свобода", img: "звезды.png" },
-    { id: "graduation", title: "Наш выпускной", desc: "Совместить в одной точке стола художников sasagichh и svknon", reward: "Цветы", img: "цветы.png" },
+    { id: "graduation", title: "Наш выпускной", desc: "Совместить в одной точке стола художников юсаги и svknon", reward: "Цветы", img: "цветы.png" },
     { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
     { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
     { id: "cosmostars", title: "Космоstars", desc: "Расположить элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
@@ -204,12 +204,12 @@ const ALL_ACHIEVEMENTS = [
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
     { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
     { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
-    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
+    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать (совместить) в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
     { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Выкрутить ползунок звука на максимум (100%)", reward: "Звук, Танцы", img: "мику.png" },
     { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
-    { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
+    { id: "kirito_clear", title: "Eryushidēta / Dāкурuпаpуsā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
     { id: "rero_cherry", title: "Реро-вишенка", desc: "Возьмите элемент Вишенка на столе и быстро потрясите его мышкой", reward: "Энергия, Организм, Хранитель", img: "реро.png" },
-    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Положить на одну карточку художника одновременно 5 элементов Вселенная и 5 Мрак", reward: "Ужас, Вечность", img: "николь.png" },
+    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Наложить на одну карточку художника одновременно 5 элементов Вселенная и 5 Мрак", reward: "Ужас, Вечность", img: "николь.png" },
     { id: "not_friends", title: "Мы не подруги!!!", desc: "Расположить на столе одновременно Ярость, Огонь, Воду и Тишину", reward: "А́гг҃лъ", img: "подруги.png" },
     { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
     { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
@@ -248,7 +248,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
     { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
     { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
-    { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Свет, Tень.", reward: "Дружба", img: "нацу.png" },
+    { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
     { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" },
     { id: "where_is_he", title: "Где он? Где?!", desc: "Нажать на Ярость 20 раз пока включена максимальная громкость.", reward: "Гнев", img: "гнев.png" }
 ];
@@ -388,8 +388,10 @@ function initGame() {
     }
 
     setInterval(() => {
+        const workspace = document.getElementById('workspace');
+        if (!workspace) return;
         const deskItems = Array.from(document.querySelectorAll('.item.on-desk'));
-        const deskNames = deskItems.map(el => el.dataset.name);
+        const deskNames = deskItems.map(el => el.dataset.name || "");
         let idleTime = Date.now() - lastInputTime;
 
         if (window.isHoldingHulkNow === true) {
@@ -518,7 +520,7 @@ function renderItemsTab() {
             img.src = "images/element_icons/" + iconFile;
             img.onerror = () => { img.src = 'images/placeholder.png'; }; 
         }
-
+        
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
         
@@ -665,17 +667,6 @@ function renderAchievementsTab() {
         icon.className = 'ach-icon';
         icon.innerText = isUnlocked ? '🏆' : '🔒';
         
-        const info = document.createElement('div');
-        info.className = 'ach-info';
-        
-        const title = document.createElement('div');
-        title.className = 'ach-title';
-        title.innerText = ach.title;
-        
-        const desc = document.createElement('div');
-        desc.className = 'ach-desc';
-        desc.innerText = ach.desc;
-        
         const reward = document.createElement('span');
         reward.className = 'ach-reward-tag';
         reward.innerText = ach.reward === "Ничего" ? "Награда: Скрытый трофей" : `Награда: + [${ach.reward}]`;
@@ -703,11 +694,11 @@ function spawnItemOnDesk(e, itemData) {
     const img = document.createElement('img');
     if (itemData.url) {
         img.src = "images/" + itemData.img;
-        img.onerror = () => { 
+        img.onerror = () => {
             if (img.src.indexOf("images2/") === -1) {
-                img.src = "images2/" + itemData.img; 
+                img.src = "images2/" + itemData.img;
             } else {
-                img.src = 'images/placeholder.png'; 
+                img.src = 'images/placeholder.png';
             }
         };
     } else {
@@ -909,7 +900,6 @@ function combineElements(el1, el2) {
         if ((name1 === "Гнев" && name2 === "Безумие") || (name2 === "Гнев" && name1 === "Безумие")) checkQuests("hulk_fail_trigger");
         if ((name1 === "Судьба" && name2 === "Огонь") || (name2 === "Судьба" && name1 === "Огонь")) checkQuests("lotr_fail_trigger");
         if ((name1 === "Слёзы" && name2 === "Музыка") || (name2 === "Слёзы" && name1 === "Музыка")) checkQuests("april_fail_trigger");
-
         if ((name1 === "Мрак" && name2 === "Тень") || (name2 === "Мрак" && name1 === "Тень")) stats.shadowAttempts++;
         if ((name1 === "Хаос" && name2 === "Судьба") || (name2 === "Хаос" && name1 === "Судьба")) checkQuests("slime_fail");
     }
@@ -920,7 +910,6 @@ function checkQuests(triggerType) {
     const ws = document.getElementById('workspace');
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
-    // Гарантируем создание чистого массива текстовых имён элементов для проверок .includes()
     const deskNames = Array.from(deskItems).map(el => {
         let name = el.dataset.name || "";
         return name.replace("•", "").trim();
@@ -958,7 +947,6 @@ function checkQuests(triggerType) {
             x: el.offsetLeft,
             y: el.offsetTop
         })).sort((a, b) => a.y - b.y);
-
         for (let i = 0; i < arrY.length - 2; i++) {
             let i1 = arrY[i], i2 = arrY[i+1], i3 = arrY[i+2];
             let sameColumn = Math.abs(i1.x - i2.x) <= 20;
@@ -1011,24 +999,14 @@ function checkQuests(triggerType) {
     }
 
     let doubleArtistsWithElementsCount = 0;
-
     tableArtists.forEach(art => {
         let ax = art.offsetLeft; let ay = art.offsetTop;
         let stackedItems = Array.from(deskItems).filter(el => Math.abs(el.offsetLeft - ax) <= 35 && Math.abs(el.offsetTop - ay) <= 35);
-
         let universes = stackedItems.filter(el => el.dataset.name === "Вселенная").length;
         let darks = stackedItems.filter(el => el.dataset.name === "Мрак").length;
         if (universes >= 5 && darks >= 5) hasNicoleDead = true;
-        
-        const has = (name) => stackedItems.some(el => el.dataset.name === name);
-
-        if (has("Нежность") && has("Осязание") && has("Чистота") && has("Улыбка") && has("Мгновение")) hasTrueLoveExists = true;
+        const has = (name) => stackedItems.some(el => (el.dataset.name || "").replace("•", "").trim() === name);
         if (has("Огонь") && has("Вода")) doubleArtistsWithElementsCount++;
-        
-        let hasSoul = deskItems.includes("Душа");
-        if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
-        checkQuests("levi_clear_success");
-    }
     });
 
     if (tableArtists.length >= 2 && doubleArtistsWithElementsCount >= 2) hasGetOverHere = true;
@@ -1094,7 +1072,7 @@ function checkQuests(triggerType) {
         { id: "delicious_guro", condition: triggerType === "delicious_guro_clear" },
         { id: "cozy_life", condition: triggerType === "cozy_life_clear" },
         { id: "someday_love", condition: triggerType === "someday_love_trigger" },
-        { id: "true_love_exists", condition: hasTrueLoveExists || triggerType === "true_love_clear" },
+        { id: "true_love_exists", condition: triggerType === "true_love_clear" },
         { id: "not_in_public", condition: triggerType === "public_clear_success" },
         { id: "elephant_feathers", condition: artistsNames.includes("sapfirachibtelegram") },
         { id: "gigawatts", condition: triggerType === "bttf_fail" && deskNames.filter(n => n === "Конструкт").length >= 10 },
@@ -1123,9 +1101,9 @@ function checkQuests(triggerType) {
         { id: "room_302", condition: stats.clearDeskClicks >= 21 },
         { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
         { id: "no_second_season", condition: stats.tabSwitchCount >= 28 },
-        { id: "where_is_he", condition: triggerType === "where_is_he_trigger" },
-        { id: "matrix_pills", condition: triggerType === "matrix_text" }
-];
+        { id: "matrix_pills", condition: triggerType === "matrix_text" },
+        { id: "where_is_he", condition: triggerType === "where_is_he_trigger" }
+    ];
 
     checkList.forEach(q => {
         if (q.condition && !stats.unlockedQuests.includes(q.id)) {
@@ -1152,13 +1130,10 @@ function checkQuests(triggerType) {
 
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
-    
-    // Очищаем имена всех элементов на столе от маркеров тупика "•" и лишних пробелов
     const deskItems = Array.from(wsItems).map(el => {
         let name = el.dataset.name || "";
         return name.replace("•", "").trim();
     });
-    
     let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
     
     if (artistCountOnDesk > 0) {
@@ -1172,12 +1147,9 @@ function checkClearDeskQuests() {
         if (stats.cabbageRemoveCount >= 30) checkQuests("cabbage_success");
     }
     
-    // Проверка квеста "Она существует!" без "Свободы", срабатывает ровно 1 раз
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
     let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
-    if (hasFakeLove && hasLovePack) {
-        checkQuests("true_love_clear");
-    }
+    if (hasFakeLove && hasLovePack) checkQuests("true_love_clear");
     
     let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
     if (pubLove && pubV && pubN && pubD) {
@@ -1191,7 +1163,6 @@ function checkClearDeskQuests() {
     
     if (deskItems.filter(n => n === "Меч").length >= 7) checkQuests("scissors_master_success");
     
-    // Убран "Яд" из проверки условий для "Я аж воспылал!"
     let fireCheck = ["Элемент", "Огонь", "Металл", "Ветер", "Молния", "Свет", "Тень"].every(n => deskItems.includes(n));
     if (fireCheck) checkQuests("fired_clear_success");
     
@@ -1205,9 +1176,8 @@ function checkClearDeskQuests() {
         unlockClearReward("void_era");
     }
     
-    let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
-    if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
+    if (artistCountOnDesk >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
     
     let hasGhost = deskItems.includes("Призрачность");
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
@@ -1267,6 +1237,7 @@ function unlockClearReward(id) {
 function showAchievementToast(ach) {
     const toast = document.getElementById('achievement-popup');
     if (toast) {
+        // ИСПРАВЛЕНО: Восстановлены косые обратные кавычки для генерации тоста
         toast.innerHTML = `<span class="icon">🏆</span> Достижение: <span style="color:#ff007f;">«${ach.title}»</span>! Получен элемент: <span class="reward">${ach.reward}</span>`;
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 4500);
@@ -1313,7 +1284,7 @@ function resetGame() {
         currentActiveTab = "items";
         const tabs = document.querySelectorAll('.tab-btn');
         tabs.forEach(btn => btn.classList.remove('active'));
-        if (tabs && tabs) tabs.classList.add('active');
+        if (tabs && tabs[0]) tabs[0].classList.add('active');
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         const itemsTab = document.getElementById('items-tab');
         if (itemsTab) itemsTab.classList.add('active');
