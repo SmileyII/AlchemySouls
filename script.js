@@ -219,7 +219,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
-    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
+    { id: "true_love_exists", title: "Она существует!", desc: "Очистить стол, когда на нём находится Фальшивая любовь, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
     { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
     { id: "elephant_feathers", title: "Слон из перьев", desc: "Открыть художника sapfirachibtelegram", reward: "Перо", img: "перо.png" },
     { id: "gigawatts", title: "1.21 gigawatts!", desc: "Соединить Вспышку с 10 Конструктом.", reward: "Будущее, Прошлое", img: "будущее.png" },
@@ -1003,7 +1003,6 @@ const ws = document.getElementById('workspace');
         if (stackedNames.includes("Животноподобие") && stackedNames.includes("Сок") && stackedNames.includes("Вкус") && stackedNames.includes("Вишенка") && stackedNames.includes("Тот самый батон")) hasLustyMaid = true;
         if (stackedNames.includes("Мясо") && stackedNames.includes("Кровь") && stackedNames.includes("Садизм") && stackedNames.includes("Хрупкость") && stackedNames.includes("Эротика") && stackedNames.includes("Мурамаса") && stackedNames.includes("Свобода")) hasDeliciousGuro = true;
         if (stackedNames.includes("Тепло") && stackedNames.includes("Нежность") && stackedNames.includes("Мягкость") && stackedNames.includes("Гармонию")) hasCozyLife = true;
-        if (stackedNames.includes("Нежность") && stackedNames.includes("Осязание") && stackedNames.includes("Чистота") && stackedNames.includes("Улыбка") && stackedNames.includes("Мгновение")) hasTrueLoveExists = true;
         if (stackedNames.includes("Огонь") && stackedNames.includes("Вода")) doubleArtistsWithElementsCount++;
         
         let otherArtists = stackedItems.filter(el => el.classList.contains('artist-card') && el !== art);
