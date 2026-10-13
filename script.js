@@ -202,12 +202,12 @@ const ALL_ACHIEVEMENTS = [
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
     { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
     { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
-    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы, Нежность", img: "призма.png" },
+    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
     { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Выкрутить ползунок звука на максимум (100%)", reward: "Звук, Танцы", img: "мику.png" },
     { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
     { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
     { id: "rero_cherry", title: "Реро-вишенка", desc: "Возьмите элемент Вишенка на столе и быстро потрясите его мышкой", reward: "Энергия, Организм, Хранитель", img: "реро.png" },
-    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Наложить на одну карточку художника одновременно 5 элементов Вселенная и 5 Монстроподобие", reward: "Ужас, Вечность", img: "николь.png" },
+    { id: "nicole_dead", title: "N.I.C.O.L.E. I.S. D.E.A.D.", desc: "Положить на одну карточку художника одновременно 5 элементов Вселенная и 5 Мрак", reward: "Ужас, Вечность", img: "николь.png" },
     { id: "not_friends", title: "Мы не подруги!!!", desc: "Расположить на столе одновременно Ярость, Огонь, Воду и Тишину", reward: "А́гг҃лъ", img: "подруги.png" },
     { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
     { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
@@ -232,7 +232,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "jack_zandatsu", title: "Джек-потрошитель!", desc: "Вытащить на стол Кибернетику, Мурамаса и Металл и написать в поисковой строке фразу: 'Zandatsu'", reward: "Мясо, Незримый, Механизм", img: "джек.png" },
     { id: "scp_173", title: "173 или Печенька...", desc: "Оставить на столе Незыблимость, Скорость, Металл и Монстроподобие и переключить вкладку 5 раз.", reward: "Кукла", img: "печенька.png" },
     { id: "slime_touch", title: "Он меня обдал слизью!", desc: "Провести мышкой по 50 элементам не взяв их в руку.", reward: "Призрачность", img: "слизь.png" },
-    { id: "legend_michael", title: "Легендарный Майкл", desc: "Открыть художника zewikus", reward: "Ленты, Мягкость", img: "майкл.png" },
+    { id: "legend_michael", title: "Легендарный Майкл", desc: "Открыть художника zewikus", reward: "Ленты, Мягкость, Нежность", img: "майкл.png" },
     { id: "now_flag", title: "Теперь это флаг...", desc: "Поставить на стол элементы: Огонь, Закат, Солнце, Природа, Небо, Вода, Магия.", reward: "Радуга, Узор", img: "флаг.png" },
     { id: "get_over_here", title: "Get Over Here!", desc: "Поставить на стол два разных художника и на них Огонь и Воду.", reward: "Инверсия", img: "скорпион.png" },
     { id: "scooby_doo", title: "Скуби-Скуби-Скуби...", desc: "Нажать на элемент Призрачность во вкладке 'Элементах' 25 раз", reward: "Иллюзия", img: "скуби.png" },
@@ -995,9 +995,11 @@ const ws = document.getElementById('workspace');
         let ax = art.offsetLeft; let ay = art.offsetTop;
         let stackedItems = Array.from(deskItems).filter(el => Math.abs(el.offsetLeft - ax) <= 35 && Math.abs(el.offsetTop - ay) <= 35);
 
+        let stackedNames = stackedItems.map(el => el.dataset.name); 
+        
         let universes = stackedItems.filter(el => el.dataset.name === "Вселенная").length;
-        let monsters = stackedItems.filter(el => el.dataset.name === "Монстроподобие").length;
-        if (universes >= 5 && monsters >= 5) hasNicoleDead = true;
+        let darks = stackedItems.filter(el => el.dataset.name === "Мрак").length;
+        if (universes >= 5 && darks >= 5) hasNicoleDead = true;
         
         let stackedNames = stackedItems.map(el => el.dataset.name);
         if (stackedNames.includes("Животноподобие") && stackedNames.includes("Сок") && stackedNames.includes("Вкус") && stackedNames.includes("Вишенка") && stackedNames.includes("Тот самый батон")) hasLustyMaid = true;
