@@ -1174,7 +1174,7 @@ function checkClearDeskQuests() {
     }
     
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
-    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
+    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танцы") && deskItems.includes("Краски");
     if (hasFakeLove && hasLovePack) checkQuests("true_love_clear");
     
     let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
