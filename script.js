@@ -180,7 +180,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
     { id: "tengen_toppa", title: "Супер Тенген Топпа...", desc: "Получить 10 художников из двух одинаковых материалов.", reward: "Совмещение", img: "совмещение.png" },
     { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть секретного художника umikirameki", reward: "Звезды, Чудо, Свобода", img: "звезды.png" },
-    { id: "graduation", title: "Наш выпускной", desc: "Открыть художников sasagichh и svknon", reward: "Цветы", img: "цветы.png" },
+    { id: "graduation", title: "Наш выпускной", desc: "Совместить в одной точке стола художников sasagichh и svknon", reward: "Цветы", img: "цветы.png" },
     { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
     { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
     { id: "cosmostars", title: "Космоstars", desc: "Расположить элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
@@ -217,7 +217,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Очистить стол, когда на нём находится Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Расслабление", img: "дева.png" },
     { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
     { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
-    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
+    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Стереть стол, когда на нём одновременно находятся художники Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
     { id: "delicious_guro", title: "Delicious!", desc: "Очистить стол, когда на нём находится 1 художник, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Очистить стол, когда на нём находится 1 художник, Тепло, Нежность, Мягкость, Гармония", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
@@ -230,7 +230,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "for_emperor", title: "ЗА ИМПЕРАТОРА!!!", desc: "10 раз нажать колёсиком мыши на элемент Император", reward: "Незыблимость, Величие", img: "император.png" },
     { id: "gandalf_wheel", title: "Ты не пройдёшь!", desc: "Прокрутите кольцо мыши от души", reward: "Когти и мех, Пепел, Игла и нить", img: "гендальф.png" },
     { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы", img: "ложь.png" },
-    { id: "that_one", title: "Тот самый!", desc: "Совместить Величие, Свет и А́гг҃лъ", reward: "Император", img: "тотсамый.png" },
+    { id: "that_one", title: "Тот самый!", desc: "Совместить в одной точке Свет и А́гг҃лъ", reward: "Император", img: "тотсамый.png" },
     { id: "jack_zandatsu", title: "Джек-потрошитель!", desc: "Вытащить на стол Кибернетику, Мурамаса и Металл и написать в поисковой строке фразу: 'Zandatsu'", reward: "Мясо, Незримый, Механизм", img: "джек.png" },
     { id: "scp_173", title: "173 или Печенька...", desc: "Оставить на столе Незыблимость, Скорость, Металл и Монстроподобие и переключить вкладку 5 раз.", reward: "Кукла", img: "печенька.png" },
     { id: "slime_touch", title: "Он меня обдал слизью!", desc: "Провести мышкой по 50 элементам не взяв их в руку.", reward: "Призрачность", img: "слизь.png" },
@@ -808,6 +808,9 @@ function combineElements(el1, el2) {
     if (((name1 === "Мрак" || name1 === "Холод") && (name2 === "Тепло" || name2 === "Свет")) ||
         ((name2 === "Мрак" || name2 === "Холод") && (name1 === "Тепло" || name1 === "Свет"))) {
         checkQuests("eclipse_trigger");
+
+        if ((name1 === "sasagichh" && name2 === "svknon") || (name1 === "svknon" && name2 === "sasagichh")) {
+        checkQuests("graduation_clear");
     }
 
     const match = recipes.find(r => (r.item1 === name1 && r.item2 === name2) || (r.item1 === name2 && r.item2 === name1));
@@ -952,7 +955,7 @@ const ws = document.getElementById('workspace');
     let cosmostarsRow = deskNames.includes("Тепло") && deskNames.includes("Холод") && deskNames.includes("Затмение") && deskNames.includes("Закат") && deskNames.includes("Рассвет");
     let hasBigThree = deskNames.includes("Богоподобие") && deskNames.includes("Монстроподобие") && deskNames.includes("Животноподобие");
     let hasNotFriends = deskNames.includes("Ярость") && deskNames.includes("Огонь") && deskNames.includes("Вода") && deskNames.includes("Тишина");
-    let hasThtOne = deskNames.includes("Величие") && deskNames.includes("Свет") && deskNames.includes("А́гг҃лъ");
+    let hasThtOne = deskNames.includes("Свет") && deskNames.includes("А́гг҃лъ");
     let hasNowFlag = deskNames.includes("Огонь") && deskNames.includes("Закат") && deskNames.includes("Солнце") && deskNames.includes("Природа") && deskNames.includes("Небо") && deskNames.includes("Вода") && deskNames.includes("Магия");
 
     let hasPrismPower = false;
@@ -1006,10 +1009,10 @@ const ws = document.getElementById('workspace');
         if (has("Нежность") && has("Осязание") && has("Чистота") && has("Улыбка") && has("Мгновение")) hasTrueLoveExists = true;
         if (has("Огонь") && has("Вода")) doubleArtistsWithElementsCount++;
         
-        let otherArtists = stackedItems.filter(el => el.classList.contains('artist-card') && el !== art);
-        if (otherArtists.length >= 1 && has("Душа")) {
-            if (has("Sovka") && has("illusolis_art")) hasLeviPain = true;
-        }
+        let hasSoul = deskItems.includes("Душа");
+        if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
+        checkQuests("levi_clear_success");
+    }
     });
 
     if (tableArtists.length >= 2 && doubleArtistsWithElementsCount >= 2) hasGetOverHere = true;
@@ -1040,7 +1043,7 @@ const ws = document.getElementById('workspace');
         { id: "tengen_toppa", condition: stats.sameMaterialCrafts >= 10 },
         { id: "aspect_shadow", condition: triggerType === "shake_mrak" },
         { id: "gates_of_s", condition: artistsNames.includes("umikirameki") },
-        { id: "graduation", condition: artistsNames.includes("sasagichh") && artistsNames.includes("svknon") },
+        { id: "graduation", condition: triggerType === "graduation_clear" },
         { id: "eclipse_quest", condition: triggerType === "eclipse_trigger" },
         { id: "zvezdec", condition: zvezdecRow },
         { id: "cosmostars", condition: cosmostarsRow },
@@ -1071,7 +1074,7 @@ const ws = document.getElementById('workspace');
         { id: "lusty_maid", condition: triggerType === "lusty_maid_clear" },
         { id: "collector", condition: totalArtistsCount >= 30 },
         { id: "blue_eyed", condition: hasBlueEyed },
-        { id: "levi_pain", condition: hasLeviPain },
+        { id: "levi_pain", condition: triggerType === "levi_clear_success" },
         { id: "delicious_guro", condition: triggerType === "delicious_guro_clear" },
         { id: "cozy_life", condition: triggerType === "cozy_life_clear" },
         { id: "someday_love", condition: triggerType === "someday_love_trigger" },
