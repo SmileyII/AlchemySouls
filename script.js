@@ -202,7 +202,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "bite_the_hand", title: "Кусай руку!", desc: "Очистить стол, когда на нём находится 9 художников и 10 элементов Монстроподобие", reward: "Богоподобие, Ничтожность", img: "титан.png" },
     { id: "big_three", title: "Большая тройка", desc: "Расположить на столе одновременно Богоподобие, Монстроподобие и Животноподобие", reward: "Судьба, Ярость, Горизонт", img: "тройка.png" },
     { id: "konami_code", title: "Осадки в виде KONAMI", desc: "Ввести легендарный Код Конами на клавиатуре", reward: "Загадка, Фейерверк, Мерчага", img: "конами.png" },
-    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать (совместить) в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы", img: "призма.png" },
+    { id: "prism_power", title: "Призма... Давай же силу!", desc: "Собрать в одной точке стола 20 любых художников выставки", reward: "Магия, Грёзы, Нежность", img: "призма.png" },
     { id: "vocaloid_sound", title: "Первый звук будущего", desc: "Выкрутить ползунок звука на максимум (100%)", reward: "Звук, Танцы", img: "мику.png" },
     { id: "mix_style", title: "Смесь так смесь", desc: "Разместить 5 художников: четырёх строго по краям экрана и одного ровно в центре", reward: "Улыбка, Сладость, Сестра, Садизм, Сюрприз", img: "микс.png" },
     { id: "kirito_clear", title: "Eryushidēta / Dākuriparusā", desc: "Удалить со стола суммарно 213 художников кнопкой очистки", reward: "Отражение, Забвение, Разделение, Меч", img: "кирито.png" },
@@ -219,7 +219,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
-    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Нежность, Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Свобода, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
+    { id: "true_love_exists", title: "Она существует!", desc: "1. Соединить Осязание, Чистота, Улыбка, Мгновение ИЛИ 2. Очистить Фальшивая любовь + Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
     { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
     { id: "elephant_feathers", title: "Слон из перьев", desc: "Открыть художника sapfirachibtelegram", reward: "Перо", img: "перо.png" },
     { id: "gigawatts", title: "1.21 gigawatts!", desc: "Соединить Вспышку с 10 Конструктом.", reward: "Будущее, Прошлое", img: "будущее.png" },
@@ -227,7 +227,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "hulk_hold", title: "А у нас есть Халк!", desc: "Нужно взять мышкой Гнев и не отпускать его в течении 2 минут", reward: "Кислота", img: "халк.png" },
     { id: "for_emperor", title: "ЗА ИМПЕРАТОРА!!!", desc: "10 раз нажать колёсиком мыши на элемент Император", reward: "Незыблимость, Величие", img: "император.png" },
     { id: "gandalf_wheel", title: "Ты не пройдёшь!", desc: "Прокрутите кольцо мыши от души", reward: "Когти и мех, Пепел, Игла и нить", img: "гендальф.png" },
-    { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы, Нежность", img: "ложь.png" },
+    { id: "april_lie", title: "Моя апрельская ложь", desc: "Удалить элемент Любовь снизив перед этим звук до максимума.", reward: "Осязание, Слёзы", img: "ложь.png" },
     { id: "that_one", title: "Тот самый!", desc: "Совместить Величие, Свет и А́гг҃лъ", reward: "Император", img: "тотсамый.png" },
     { id: "jack_zandatsu", title: "Джек-потрошитель!", desc: "Вытащить на стол Кибернетику, Мурамаса и Металл и написать в поисковой строке фразу: 'Zandatsu'", reward: "Мясо, Незримый, Механизм", img: "джек.png" },
     { id: "scp_173", title: "173 или Печенька...", desc: "Оставить на столе Незыблимость, Скорость, Металл и Монстроподобие и переключить вкладку 5 раз.", reward: "Кукла", img: "печенька.png" },
@@ -246,7 +246,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
     { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
     { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
-    { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Яд, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
+    { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Свет, Tень.", reward: "Дружба", img: "нацу.png" },
     { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" },
     { id: "where_is_he", title: "Где он? Где?!", desc: "Нажать на Ярость 20 раз пока включена максимальная громкость.", reward: "Гнев", img: "гнев.png" }
 ];
@@ -1105,7 +1105,8 @@ const ws = document.getElementById('workspace');
         { id: "room_302", condition: stats.clearDeskClicks >= 21 },
         { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
         { id: "no_second_season", condition: stats.tabSwitchCount >= 28 },
-        { id: "where_is_he", condition: triggerType === "where_is_he_trigger" }
+        { id: "where_is_he", condition: triggerType === "where_is_he_trigger" },
+        { id: "matrix_pills", condition: triggerType === "matrix_text" }
 ];
 
     checkList.forEach(q => {
@@ -1133,7 +1134,12 @@ const ws = document.getElementById('workspace');
 
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
-    const deskItems = Array.from(wsItems).map(el => el.dataset.name);
+    
+    const deskItems = Array.from(wsItems).map(el => {
+        let name = el.dataset.name || "";
+        return name.replace("•", "").trim();
+    });
+    
     let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
     
     if (artistCountOnDesk > 0) {
@@ -1148,8 +1154,10 @@ function checkClearDeskQuests() {
     }
     
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
-    let hasLovePack = deskItems.includes("Свобода") && deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
-    if (hasFakeLove && hasLovePack) checkQuests("true_love_clear");
+    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
+    if (hasFakeLove && hasLovePack) {
+        checkQuests("true_love_clear");
+    }
     
     let pubLove = deskItems.includes("Любовь"), pubV = deskItems.includes("Вязкость"), pubN = deskItems.includes("Ночь"), pubD = deskItems.includes("День");
     if (pubLove && pubV && pubN && pubD) {
@@ -1163,7 +1171,7 @@ function checkClearDeskQuests() {
     
     if (deskItems.filter(n => n === "Меч").length >= 7) checkQuests("scissors_master_success");
     
-    let fireCheck = ["Элемент", "Огонь", "Металл", "Ветер", "Молния", "Яд", "Свет", "Тень"].every(n => deskItems.includes(n));
+    let fireCheck = ["Элемент", "Огонь", "Металл", "Ветер", "Молния", "Свет", "Тень"].every(n => deskItems.includes(n));
     if (fireCheck) checkQuests("fired_clear_success");
     
     const bgMusic = document.getElementById('bg-music');
@@ -1181,7 +1189,7 @@ function checkClearDeskQuests() {
     if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
     
     let hasGhost = deskItems.includes("Призрачность");
-    let constructCount = deskItems.filter(name => name === "Конструкт").length;
+    let constructCount = deskItems.filter(name => n === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
         stats.unlockedQuests.push("project_2501");
         unlockClearReward("project_2501");
