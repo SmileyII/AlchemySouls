@@ -576,7 +576,7 @@ function renderItemsTab() {
                 if (item.name === "Путь") { stats.metroidPathCount++; if(stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) checkQuests("metroid_trigger"); }
             }
             
-            let artCountDesk = Array.from(document.querySelectorAll('.item.on-desk.artist-card')).length;
+            let artCountDesk = Array.from(document.querySelectorAll('.item.on-desk')).filter(el => el.classList.contains('artist-card')).length;
             if (artCountDesk >= 3) {
                 if (item.name === "Приключение") stats.frierenAdvCount++;
                 if (item.name === "Дружба") stats.frierenFrCount++;
@@ -846,8 +846,8 @@ function combineElements(el1, el2) {
         const newItemData = {
             name: match.result,
             img: match.result_img,
-            url: match.artist_url || "",
-            desc: match.artist_desc || ""
+            url: match.artist_url || match.url || "https://github.com", // Железный маркер художника
+            desc: match.artist_desc || match.desc || "Художник выставки"
         };
         
         const workspace = document.getElementById('workspace');
