@@ -667,12 +667,28 @@ function renderAchievementsTab() {
         icon.className = 'ach-icon';
         icon.innerText = isUnlocked ? '🏆' : '🔒';
         
+        // ВОССТАНОВЛЕНО: Создаем контейнер info, который потерялся в вашем коде!
+        const info = document.createElement('div');
+        info.className = 'ach-info';
+        
+        const title = document.createElement('div');
+        title.className = 'ach-title';
+        title.innerText = ach.title;
+        
+        const desc = document.createElement('div');
+        desc.className = 'ach-desc';
+        desc.innerText = ach.desc;
+        
         const reward = document.createElement('span');
         reward.className = 'ach-reward-tag';
         reward.innerText = ach.reward === "Ничего" ? "Награда: Скрытый трофей" : `Награда: + [${ach.reward}]`;
         
-        info.appendChild(title); info.appendChild(desc); info.appendChild(reward);
-        card.appendChild(icon); card.appendChild(info);
+        // Теперь info и card состыкованы идеально без ошибок ReferenceError
+        info.appendChild(title); 
+        info.appendChild(desc); 
+        info.appendChild(reward);
+        card.appendChild(icon); 
+        card.appendChild(info);
         
         container.appendChild(card);
     });
