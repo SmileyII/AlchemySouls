@@ -805,12 +805,13 @@ function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
     
+    if ((name1 === "sasagichh" && name2 === "svknon") || (name1 === "svknon" && name2 === "sasagichh")) {
+        checkQuests("graduation_clear");
+    }
+
     if (((name1 === "Мрак" || name1 === "Холод") && (name2 === "Тепло" || name2 === "Свет")) ||
         ((name2 === "Мрак" || name2 === "Холод") && (name1 === "Тепло" || name1 === "Свет"))) {
         checkQuests("eclipse_trigger");
-
-        if ((name1 === "sasagichh" && name2 === "svknon") || (name1 === "svknon" && name2 === "sasagichh")) {
-        checkQuests("graduation_clear");
     }
 
     const match = recipes.find(r => (r.item1 === name1 && r.item2 === name2) || (r.item1 === name2 && r.item2 === name1));
@@ -1214,19 +1215,15 @@ function checkClearDeskQuests() {
         unlockClearReward("escanor_proud");
     }
 
-    // Новая логика для квеста "Похотливая аргонианская дева"
     let maidPack = ["Животноподобие", "Сок", "Вкус", "Вишенка", "Тот самый батон"].every(n => deskItems.includes(n));
     if (maidPack) checkQuests("lusty_maid_clear");
 
-    // Новая логика для квеста "Delicious!"
     let guroPack = ["Мясо", "Кровь", "Садизм", "Хрупкость", "Эротика", "Мурамаса", "Свобода"].every(n => deskItems.includes(n));
     if (guroPack && artistCountOnDesk >= 1) checkQuests("delicious_guro_clear");
 
-    // Новая логика для квеста "Приятно жить..."
     let cozyPack = ["Тепло", "Нежность", "Мягкость", "Гармония"].every(n => deskItems.includes(n));
     if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
 
-    // Новая логика для квеста "Левай, тебе больно?" при очистке стола
     let hasSoul = deskItems.includes("Душа");
     if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
         checkQuests("levi_clear_success");
