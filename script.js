@@ -215,7 +215,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
     { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
     { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
-    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Притражность, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
+    { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
     { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
     { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
@@ -1184,12 +1184,12 @@ function checkClearDeskQuests() {
         unlockClearReward("void_era");
     }
     
-        let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
+    let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
     if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
     
     let hasGhost = deskItems.includes("Призрачность");
-    // ИСПРАВЛЕНО: Заменена ошибочная переменная 'n' на 'name'
+    // ИСПРАВЛЕНО: Безопасный и чистый подсчёт конструктов через массив строк deskItems
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
         stats.unlockedQuests.push("project_2501");
