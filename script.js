@@ -1243,7 +1243,7 @@ function checkClearDeskQuests() {
         checkQuests("levi_clear_success");
     }
 
-    let frierenPack = ["Приключение", "Дружба", "Время", "Судьба"].every(n => deskItems.includes(n));
+    let frierenPack = ["Приключения", "Дружба", "Время", "Судьба"].every(n => deskItems.includes(n));
     if (frierenPack && artistCountOnDesk >= 3) {
         checkQuests("frieren_clear_success");
     }
