@@ -161,7 +161,9 @@ const ELEMENT_ICONS = {
     "Стекло": "mirror.webp",
     "Трещины": "cracks.webp",
     "Гнев": "anger.webp",
-    "Вкус": "taste.webp"
+    "Вкус": "taste.webp",
+    "Нежность": "tenderness.webp",
+    "Осязание": "touch.webp"
 };
 
 const ALL_ACHIEVEMENTS = [
