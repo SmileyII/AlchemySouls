@@ -995,22 +995,23 @@ const ws = document.getElementById('workspace');
         let ax = art.offsetLeft; let ay = art.offsetTop;
         let stackedItems = Array.from(deskItems).filter(el => Math.abs(el.offsetLeft - ax) <= 35 && Math.abs(el.offsetTop - ay) <= 35);
 
-        let stackedNames = stackedItems.map(el => el.dataset.name); 
-        
+        // ИСПРАВЛЕНО: Объявляем переменную stackedNames СТРОГО один раз в самом начале цикла
+        let stackedNames = stackedItems.map(el => el.dataset.name);
+
         let universes = stackedItems.filter(el => el.dataset.name === "Вселенная").length;
+        // Замена Монстроподобия на Мрак для ачивки Николь
         let darks = stackedItems.filter(el => el.dataset.name === "Мрак").length;
         if (universes >= 5 && darks >= 5) hasNicoleDead = true;
         
-        let stackedNames = stackedItems.map(el => el.dataset.name);
         if (stackedNames.includes("Животноподобие") && stackedNames.includes("Сок") && stackedNames.includes("Вкус") && stackedNames.includes("Вишенка") && stackedNames.includes("Тот самый батон")) hasLustyMaid = true;
         if (stackedNames.includes("Мясо") && stackedNames.includes("Кровь") && stackedNames.includes("Садизм") && stackedNames.includes("Хрупкость") && stackedNames.includes("Эротика") && stackedNames.includes("Мурамаса") && stackedNames.includes("Свобода")) hasDeliciousGuro = true;
         if (stackedNames.includes("Тепло") && stackedNames.includes("Нежность") && stackedNames.includes("Мягкость") && stackedNames.includes("Гармонию")) hasCozyLife = true;
+        if (stackedNames.includes("Нежность") && stackedNames.includes("Осязание") && stackedNames.includes("Чистота") && stackedNames.includes("Улыбка") && stackedNames.includes("Мгновение")) hasTrueLoveExists = true;
         if (stackedNames.includes("Огонь") && stackedNames.includes("Вода")) doubleArtistsWithElementsCount++;
         
         let otherArtists = stackedItems.filter(el => el.classList.contains('artist-card') && el !== art);
         if (otherArtists.length >= 1 && stackedNames.includes("Душа")) {
-            let namesInStack = stackedItems.map(el => el.dataset.name);
-            if (namesInStack.includes("Sovka") && namesInStack.includes("illusolis_art")) hasLeviPain = true;
+            if (stackedNames.includes("Sovka") && stackedNames.includes("illusolis_art")) hasLeviPain = true;
         }
     });
 
