@@ -1092,7 +1092,7 @@ function checkQuests(triggerType) {
         { id: "someday_love", condition: triggerType === "someday_love_trigger" },
         { id: "true_love_exists", condition: triggerType === "true_love_clear" },
         { id: "not_in_public", condition: triggerType === "public_clear_success" },
-        { id: "elephant_feathers", condition: artistsNames.includes("sapfirachibtelegram") },
+        { id: "elephant_feathers", condition: artistsNames.includes("Svetlana_chib") || artistsNames.includes("svetlana_chib") || discoveredItems.some(i => i.url && i.url.toLowerCase().includes("chib")) || triggerType === "elephant_feathers_clear" },
         { id: "gigawatts", condition: triggerType === "bttf_fail" && deskNames.filter(n => n === "Конструкт").length >= 10 },
         { id: "more_gold", condition: stats.totalTabClicksCount >= 100 },
         { id: "hulk_hold", condition: triggerType === "hulk_hold_success" },
@@ -1248,7 +1248,7 @@ function checkClearDeskQuests() {
         checkQuests("frieren_clear_success");
     }
 
-    if (deskArtists.some(name => name.includes("sapfira") || name.includes("chib"))) {
+    if (deskArtists.some(name => name.includes("svetlana") || name.includes("chib"))) {
         checkQuests("elephant_feathers_clear"); 
     }
 
