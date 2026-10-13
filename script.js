@@ -180,7 +180,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "silence", title: "Ты ещё тут?", desc: "Ничего не делать в игре в течение 3 минут", reward: "Тишина", img: "тишина.png" },
     { id: "tengen_toppa", title: "Супер Тенген Топпа...", desc: "Получить 10 художников из двух одинаковых материалов.", reward: "Совмещение", img: "совмещение.png" },
     { id: "gates_of_s", title: "Выбор врат Ш.", desc: "Открыть секретного художника umikirameki", reward: "Звезды, Чудо, Свобода", img: "звезды.png" },
-    { id: "graduation", title: "Наш выпускной", desc: "Совместить в одной точке стола художников юсаги и svknon", reward: "Цветы", img: "цветы.png" },
+    { id: "graduation", title: "Наш выпускной", desc: "Стереть стол, когда на нём одновременно находятся художники юсаги и svknon", reward: "Цветы", img: "цветы.png" },
     { id: "eclipse_quest", title: "Eclipse", desc: "Попробовать закрыть (наложить) элементы Тепло и Свет элементами Мрак и Холод на столе", reward: "Затмение", img: "затмение.png" },
     { id: "zvezdec", title: "ЗВЕЗДец", desc: "Расположить элементы одновременно: Тепло/Холод, Затмение, Холод/Тепло", reward: "Рассвет, Закат", img: "рассвет.png" },
     { id: "cosmostars", title: "Космоstars", desc: "Расположить элементы одновременно: Рассвет/Закат, Затмение, Закат/Рассвет", reward: "Вселенная", img: "вселенная.png" },
@@ -822,10 +822,6 @@ function checkCollisions(draggedElement) {
 function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
-    
-    if ((name1 === "юсаги" && name2 === "svknon") || (name1 === "svknon" && name2 === "юсаги")) {
-        checkQuests("graduation_clear");
-    }
 
     if (((name1 === "Мрак" || name1 === "Холод") && (name2 === "Тепло" || name2 === "Свет")) ||
         ((name2 === "Мрак" || name2 === "Холод") && (name1 === "Тепло" || name1 === "Свет"))) {
@@ -1228,6 +1224,10 @@ function checkClearDeskQuests() {
     let hasSoul = deskItems.includes("Душа");
     if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
         checkQuests("levi_clear_success");
+    }
+
+    if (deskItems.includes("юсаги") && deskItems.includes("svknon")) {
+        checkQuests("graduation_clear");
     }
 
     if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
