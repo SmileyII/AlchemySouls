@@ -246,7 +246,7 @@ const ALL_ACHIEVEMENTS = [
     { id: "scissors_master", title: "Мастер ножниц", desc: "Поставить на стол 7 элементов Меч и стереть стол.", reward: "Канцелярио", img: "ножницы.png" },
     { id: "metroidvania", title: "Метроидвания или же...", desc: "Положить Элемент на стол и нажать по 5 раз в меню 'Элементы' на Кровь, Луна и Путь", reward: "Готика", img: "кастла.png" },
     { id: "ghost_strafe", title: "Призрачный стрэйф", desc: "Положить на стол Призрачность и сменить вкладку 5 раз.", reward: "Эфемерность", img: "стрэйф.png" },
-    { id: "frieren_way", title: "Провожающая в последний путь", desc: "Поставить на стол три художника и нажать в 'Элементы' на Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
+    { id: "frieren_way", title: "Провожающая в последний путь", desc: "Стереть стол, когда на нём одновременно находятся 3 любых художника, Приключение, Дружба, Время и Судьба", reward: "Свежесть", img: "фрирен.png" },
     { id: "room_302", title: "Квартира 302", desc: "Нажать на кнопку 'Очистить стол' ровно 21 раз", reward: "Туман", img: "рум302.png" },
     { id: "i_am_fired", title: "Я аж воспылал!", desc: "Стереть стол когда на нём будет находится Элемент, Огонь, Металл, Ветер, Молния, Свет, Тень.", reward: "Дружба", img: "нацу.png" },
     { id: "no_second_season", title: "А где второй сезон?", desc: "Переключиться на вкладку художников 28 раз (Нельзя просто нажимать на неё, надо именно переключать)", reward: "Жемчуг, Самоцветы, Стекло, Трещины", img: "сезон.png" },
@@ -1115,7 +1115,7 @@ function checkQuests(triggerType) {
         { id: "scissors_master", condition: triggerType === "scissors_master_success" },
         { id: "metroidvania", condition: triggerType === "metroid_trigger" },
         { id: "ghost_strafe", condition: triggerType === "ghost_strafe_trigger" },
-        { id: "frieren_way", condition: triggerType === "frieren_trigger" },
+        { id: "frieren_way", condition: triggerType === "frieren_clear_success" },
         { id: "room_302", condition: stats.clearDeskClicks >= 21 },
         { id: "i_am_fired", condition: triggerType === "fired_clear_success" },
         { id: "no_second_season", condition: stats.tabSwitchCount >= 28 },
@@ -1236,14 +1236,22 @@ function checkClearDeskQuests() {
     if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
 
     let hasSoul = deskItems.includes("Душа");
-    let hasSovka = deskArtists.some(name => name.includes("SOVKA"));
+    let hasSovka = deskArtists.some(name => name.includes("sovka") || name.includes("monster"));
     let hasIllusolis = deskArtists.some(name => name.includes("illusolis"));
 
     if (hasSoul && hasSovka && hasIllusolis) {
         checkQuests("levi_clear_success");
     }
 
-    // ИСПРАВЛЕНО: Наш выпускной теперь идеально считывает маленькие буквы авторов при очистке
+    let frierenPack = ["Приключение", "Дружба", "Время", "Судьба"].every(n => deskItems.includes(n));
+    if (frierenPack && artistCountOnDesk >= 3) {
+        checkQuests("frieren_clear_success");
+    }
+
+    if (deskArtists.some(name => name.includes("sapfira") || name.includes("chib"))) {
+        checkQuests("elephant_feathers_clear"); 
+    }
+
     if (deskArtists.includes("юсаги") && deskArtists.includes("svknon")) {
         checkQuests("graduation_clear");
     }
