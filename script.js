@@ -1184,16 +1184,18 @@ function checkClearDeskQuests() {
         unlockClearReward("void_era");
     }
     
-    let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
+        let artistCount = document.querySelectorAll('.item.on-desk.artist-card').length;
     let monsterCount = deskItems.filter(name => name === "Монстроподобие").length;
     if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
     
     let hasGhost = deskItems.includes("Призрачность");
-    let constructCount = deskItems.filter(name => n === "Конструкт").length;
+    // ИСПРАВЛЕНО: Заменена ошибочная переменная 'n' на 'name'
+    let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
         stats.unlockedQuests.push("project_2501");
         unlockClearReward("project_2501");
     }
+    
     let hasSunset = deskItems.includes("Закат");
     let hasSilence = deskItems.includes("Тишина");
     let hasLove = deskItems.includes("Любовь");
@@ -1232,7 +1234,6 @@ function unlockClearReward(id) {
 function showAchievementToast(ach) {
     const toast = document.getElementById('achievement-popup');
     if (toast) {
-        // ИСПРАВЛЕНО: Восстановлены обратные косые кавычки
         toast.innerHTML = `<span class="icon">🏆</span> Достижение: <span style="color:#ff007f;">«${ach.title}»</span>! Получен элемент: <span class="reward">${ach.reward}</span>`;
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 4500);
