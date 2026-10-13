@@ -214,12 +214,12 @@ const ALL_ACHIEVEMENTS = [
     { id: "my_cabbage", title: "Моя капуста!", desc: "Удалить Садизм со стола кнопкой очистки 30 раз суммарно", reward: "Стихия, Небо, Ветер", img: "капуста.png" },
     { id: "cherry_on_cake", title: "Вишенка на торте.", desc: "Возьмите элемент Сладость на столе и быстро потрясите его мышкой", reward: "Вишенка", img: "вишенка.png" },
     { id: "orgy_style", title: "Это больше оргия...", desc: "Расставить по четырём углам стола элементы Эротика, Ночь и Вспышка", reward: "Сиси-писи, Жар, Сок, Животноподобие, Тот самый батон", img: "оргия.png" },
-    { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Расположить в одной точке Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
+    { id: "lusty_maid", title: "Похотливая аргонианская дева", desc: "Очистить стол, когда на нём находится Животноподобие, Сок, Вкус, Вишенка и Тот самый батон", reward: "Путь, Веселье, Свобода, Расслабление", img: "дева.png" },
     { id: "collector", title: "Коллекционер душ", desc: "Открыть 30 разных художников выставки", reward: "Рождение", img: "рождение.png" },
     { id: "blue_eyed", title: "ГолубоГЛАЗАЯ", desc: "4 художника по углам, 1 в центре, и на боковых художников наложен Огонь", reward: "Мурамаса, Письмена, Месть", img: "глаза.png" },
     { id: "levi_pain", title: "Левай, тебе больно?", desc: "Расположить в одной точке художников Sovka, illusolis_art и элемент Душа", reward: "Природа, Гниль, Цветение, Мох, Насекомоподобие", img: "левай.png" },
-    { id: "delicious_guro", title: "Delicious!", desc: "Расположить в одной точке 1 художника, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
-    { id: "cozy_life", title: "Приятно жить...", desc: "Расположить в одной точке 1 художника, Тепло, Нежность, Мягкость, Гармонию", reward: "Уют, Безмятежность", img: "уют.png" },
+    { id: "delicious_guro", title: "Delicious!", desc: "Очистить стол, когда на нём находится 1 художник, Мясо, Кровь, Садизм, Хрупкость, Эротика, Мурамаса, Свобода", reward: "Гурокири", img: "гуро.png" },
+    { id: "cozy_life", title: "Приятно жить...", desc: "Очистить стол, когда на нём находится 1 художник, Тепло, Нежность, Мягкость, Гармония", reward: "Уют, Безмятежность", img: "уют.png" },
     { id: "someday_love", title: "Когда-нибудь...", desc: "Набрать в поисковике фразу: 'love'", reward: "Фальшивая любовь", img: "фальш.png" },
     { id: "true_love_exists", title: "Она существует!", desc: "Очистить стол, когда на нём находится Фальшивая любовь, Чувства, Эмоции, Танец, Краски", reward: "Любовь", img: "любовь.png" },
     { id: "not_in_public", title: "Ну не при всех же!", desc: "Очистить стол, когда на нём Любовь, Вязкость, Ночь, День (проделать 7 раз)", reward: "Эротика", img: "публика.png" },
@@ -1003,9 +1003,6 @@ const ws = document.getElementById('workspace');
         
         const has = (name) => stackedItems.some(el => el.dataset.name === name);
 
-        if (has("Животноподобие") && has("Сок") && has("Вкус") && has("Вишенка") && has("Тот самый батон")) hasLustyMaid = true;
-        if (has("Мясо") && has("Кровь") && has("Садизм") && has("Хрупкость") && has("Эротика") && has("Мурамаса") && has("Свобода")) hasDeliciousGuro = true;
-        if (has("Тепло") && has("Нежность") && has("Мягкость") && has("Гармонию")) hasCozyLife = true;
         if (has("Нежность") && has("Осязание") && has("Чистота") && has("Улыбка") && has("Мгновение")) hasTrueLoveExists = true;
         if (has("Огонь") && has("Вода")) doubleArtistsWithElementsCount++;
         
@@ -1071,12 +1068,12 @@ const ws = document.getElementById('workspace');
         { id: "my_cabbage", condition: triggerType === "cabbage_success" },
         { id: "cherry_on_cake", condition: triggerType === "shake_sweet" },
         { id: "orgy_style", condition: hasOrgyStyle },
-        { id: "lusty_maid", condition: hasLustyMaid },
+        { id: "lusty_maid", condition: triggerType === "lusty_maid_clear" },
         { id: "collector", condition: totalArtistsCount >= 30 },
         { id: "blue_eyed", condition: hasBlueEyed },
         { id: "levi_pain", condition: hasLeviPain },
-        { id: "delicious_guro", condition: hasDeliciousGuro },
-        { id: "cozy_life", condition: hasCozyLife },
+        { id: "delicious_guro", condition: triggerType === "delicious_guro_clear" },
+        { id: "cozy_life", condition: triggerType === "cozy_life_clear" },
         { id: "someday_love", condition: triggerType === "someday_love_trigger" },
         { id: "true_love_exists", condition: hasTrueLoveExists || triggerType === "true_love_clear" },
         { id: "not_in_public", condition: triggerType === "public_clear_success" },
@@ -1217,6 +1214,15 @@ function checkClearDeskQuests() {
     if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
         checkQuests("what_year_success");
     }
+
+    let maidPack = ["Животноподобие", "Сок", "Вкус", "Вишенка", "Тот самый батон"].every(n => deskItems.includes(n));
+    if (maidPack) checkQuests("lusty_maid_clear");
+
+    let guroPack = ["Мясо", "Кровь", "Садизм", "Хрупкость", "Эротика", "Мурамаса", "Свобода"].every(n => deskItems.includes(n));
+    if (guroPack && artistCountOnDesk >= 1) checkQuests("delicious_guro_clear");
+
+    let cozyPack = ["Тепло", "Нежность", "Мягкость", "Гармония"].every(n => deskItems.includes(n));
+    if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
 }
 
 function unlockClearReward(id) {
