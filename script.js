@@ -917,10 +917,14 @@ function combineElements(el1, el2) {
 }
 
 function checkQuests(triggerType) {
-const ws = document.getElementById('workspace');
+    const ws = document.getElementById('workspace');
     if (!ws) return;
     const deskItems = document.querySelectorAll('.item.on-desk');
-    const deskNames = Array.from(deskItems).map(el => el.dataset.name);
+    // Гарантируем создание чистого массива текстовых имён элементов для проверок .includes()
+    const deskNames = Array.from(deskItems).map(el => {
+        let name = el.dataset.name || "";
+        return name.replace("•", "").trim();
+    });
   
     let hasGeometrySmash = false;
     let orderItemsOnDesk = Array.from(deskItems).filter(el => el.dataset.name === "Порядок");
