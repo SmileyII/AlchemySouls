@@ -1137,6 +1137,7 @@ const ws = document.getElementById('workspace');
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
     
+    // Очищаем имена всех элементов на столе от маркеров тупика "•" и лишних пробелов
     const deskItems = Array.from(wsItems).map(el => {
         let name = el.dataset.name || "";
         return name.replace("•", "").trim();
@@ -1155,9 +1156,9 @@ function checkClearDeskQuests() {
         if (stats.cabbageRemoveCount >= 30) checkQuests("cabbage_success");
     }
     
+    // Проверка квеста "Она существует!" без "Свободы", срабатывает ровно 1 раз
     let hasFakeLove = deskItems.includes("Фальшивая любовь");
-    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танцы") && deskItems.includes("Краски");
-    
+    let hasLovePack = deskItems.includes("Чувства") && deskItems.includes("Эмоции") && deskItems.includes("Танец") && deskItems.includes("Краски");
     if (hasFakeLove && hasLovePack) {
         checkQuests("true_love_clear");
     }
@@ -1174,6 +1175,7 @@ function checkClearDeskQuests() {
     
     if (deskItems.filter(n => n === "Меч").length >= 7) checkQuests("scissors_master_success");
     
+    // Убран "Яд" из проверки условий для "Я аж воспылал!"
     let fireCheck = ["Элемент", "Огонь", "Металл", "Ветер", "Молния", "Свет", "Тень"].every(n => deskItems.includes(n));
     if (fireCheck) checkQuests("fired_clear_success");
     
@@ -1192,13 +1194,11 @@ function checkClearDeskQuests() {
     if (artistCount >= 9 && monsterCount >= 10) checkQuests("bite_hand_success");
     
     let hasGhost = deskItems.includes("Призрачность");
-    // ИСПРАВЛЕНО: Безопасный и чистый подсчёт конструктов через массив строк deskItems
     let constructCount = deskItems.filter(name => name === "Конструкт").length;
     if (hasGhost && constructCount >= 10 && !stats.unlockedQuests.includes("project_2501")) {
         stats.unlockedQuests.push("project_2501");
         unlockClearReward("project_2501");
     }
-    
     let hasSunset = deskItems.includes("Закат");
     let hasSilence = deskItems.includes("Тишина");
     let hasLove = deskItems.includes("Любовь");
@@ -1214,18 +1214,27 @@ function checkClearDeskQuests() {
         unlockClearReward("escanor_proud");
     }
 
-    if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
-        checkQuests("what_year_success");
-    }
-
+    // Новая логика для квеста "Похотливая аргонианская дева"
     let maidPack = ["Животноподобие", "Сок", "Вкус", "Вишенка", "Тот самый батон"].every(n => deskItems.includes(n));
     if (maidPack) checkQuests("lusty_maid_clear");
 
+    // Новая логика для квеста "Delicious!"
     let guroPack = ["Мясо", "Кровь", "Садизм", "Хрупкость", "Эротика", "Мурамаса", "Свобода"].every(n => deskItems.includes(n));
     if (guroPack && artistCountOnDesk >= 1) checkQuests("delicious_guro_clear");
 
+    // Новая логика для квеста "Приятно жить..."
     let cozyPack = ["Тепло", "Нежность", "Мягкость", "Гармония"].every(n => deskItems.includes(n));
     if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
+
+    // Новая логика для квеста "Левай, тебе больно?" при очистке стола
+    let hasSoul = deskItems.includes("Душа");
+    if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
+        checkQuests("levi_clear_success");
+    }
+
+    if (deskItems.includes("Будущее") && deskItems.includes("Прошлое")) {
+        checkQuests("what_year_success");
+    }
 }
 
 function unlockClearReward(id) {
