@@ -576,13 +576,16 @@ function renderItemsTab() {
                 if (item.name === "Путь") { stats.metroidPathCount++; if(stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) checkQuests("metroid_trigger"); }
             }
             
-            let artCountDesk = Array.from(document.querySelectorAll('.item.on-desk')).filter(el => el.classList.contains('artist-card')).length;
+            let artCountDesk = document.querySelectorAll('.item.on-desk.artist-card').length;
             if (artCountDesk >= 3) {
-                if (item.name === "Приключение") stats.frierenAdvCount++;
-                if (item.name === "Дружба") stats.frierenFrCount++;
-                if (item.name === "Время") stats.frierenTimeCount++;
-                if (item.name === "Судьба") stats.frierenFateCount++;
-                if (stats.frierenAdvCount >= 1 && stats.frierenFrCount >= 1 && stats.frierenTimeCount >= 1 && stats.frierenFateCount >= 1) checkQuests("frieren_trigger");
+                if (item.name === "Приключение") stats.frierenAdvCount = (stats.frierenAdvCount || 0) + 1;
+                if (item.name === "Дружба") stats.frierenFrCount = (stats.frierenFrCount || 0) + 1;
+                if (item.name === "Время") stats.frierenTimeCount = (stats.frierenTimeCount || 0) + 1;
+                if (item.name === "Судьба") stats.frierenFateCount = (stats.frierenFateCount || 0) + 1;
+                
+                if ((stats.frierenAdvCount || 0) >= 1 && (stats.frierenFrCount || 0) >= 1 && (stats.frierenTimeCount || 0) >= 1 && (stats.frierenFateCount || 0) >= 1) {
+                    checkQuests("frieren_trigger");
+                }
             }
 
             if (item.name === "Призрачность") {
@@ -1233,7 +1236,10 @@ function checkClearDeskQuests() {
     if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
 
     let hasSoul = deskItems.includes("Душа");
-    if (hasSoul && deskArtists.includes("sovka") && deskArtists.includes("illusolis_art")) {
+    let hasSovka = deskArtists.some(name => name.includes("SOVKA"));
+    let hasIllusolis = deskArtists.some(name => name.includes("illusolis"));
+
+    if (hasSoul && hasSovka && hasIllusolis) {
         checkQuests("levi_clear_success");
     }
 
