@@ -881,6 +881,9 @@ function combineElements(el1, el2) {
             discoveredItems.push(newItemData);
             saveGame();
             renderAllTabs(); 
+            
+            checkQuests();
+            
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
@@ -1142,11 +1145,19 @@ function checkQuests(triggerType) {
 
 function checkClearDeskQuests() {
     const wsItems = document.querySelectorAll('.item.on-desk');
+    
+    // 1. Массив всех элементов на столе (очищенный от маркеров тупика и пробелов)
     const deskItems = Array.from(wsItems).map(el => {
         let name = el.dataset.name || "";
         return name.replace("•", "").trim();
     });
-    let artistCountOnDesk = Array.from(wsItems).filter(el => el.classList.contains('artist-card')).length;
+
+    // 2. УМНЫЙ МАССИВ ХУДОЖНИКОВ: Собираем имена ВСЕХ авторов на столе строго маленькими буквами
+    const deskArtists = Array.from(wsItems)
+        .filter(el => el.classList.contains('artist-card') || el.dataset.url)
+        .map(el => (el.dataset.name || "").toLowerCase().trim());
+
+    let artistCountOnDesk = deskArtists.length;
     
     if (artistCountOnDesk > 0) {
         stats.deletedArtistsCount += artistCountOnDesk;
@@ -1222,11 +1233,12 @@ function checkClearDeskQuests() {
     if (cozyPack && artistCountOnDesk >= 1) checkQuests("cozy_life_clear");
 
     let hasSoul = deskItems.includes("Душа");
-    if (hasSoul && deskItems.includes("Sovka") && deskItems.includes("illusolis_art")) {
+    if (hasSoul && deskArtists.includes("sovka") && deskArtists.includes("illusolis_art")) {
         checkQuests("levi_clear_success");
     }
 
-    if (deskItems.includes("юсаги") && deskItems.includes("svknon")) {
+    // ИСПРАВЛЕНО: Наш выпускной теперь идеально считывает маленькие буквы авторов при очистке
+    if (deskArtists.includes("юсаги") && deskArtists.includes("svknon")) {
         checkQuests("graduation_clear");
     }
 
