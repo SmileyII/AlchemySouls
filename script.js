@@ -504,10 +504,21 @@ function renderItemsTab() {
         div.className = `item ${isDead ? 'dead-end' : ''}`;
         
         const img = document.createElement('img');
-        let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
-        img.src = "images/element_icons/" + iconFile;
-        img.onerror = () => { img.src = 'images/placeholder.png'; }; 
-        
+        if (item.url) {
+            img.src = "images/" + item.img;
+            img.onerror = () => { 
+                if (img.src.indexOf("images2/") === -1) {
+                    img.src = "images2/" + item.img; 
+                } else {
+                    img.src = 'images/placeholder.png'; 
+                }
+            };
+        } else {
+            let iconFile = ELEMENT_ICONS[item.name] || 'placeholder.png';
+            img.src = "images/element_icons/" + iconFile;
+            img.onerror = () => { img.src = 'images/placeholder.png'; }; 
+        }
+
         const text = document.createElement('span');
         text.innerText = item.name + (isDead ? " •" : "");
         
@@ -692,11 +703,11 @@ function spawnItemOnDesk(e, itemData) {
     const img = document.createElement('img');
     if (itemData.url) {
         img.src = "images/" + itemData.img;
-        img.onerror = () => {
+        img.onerror = () => { 
             if (img.src.indexOf("images2/") === -1) {
-                img.src = "images2/" + itemData.img;
+                img.src = "images2/" + itemData.img; 
             } else {
-                img.src = 'images/placeholder.png';
+                img.src = 'images/placeholder.png'; 
             }
         };
     } else {
@@ -805,7 +816,7 @@ function combineElements(el1, el2) {
     const name1 = el1.dataset.name;
     const name2 = el2.dataset.name;
     
-    if ((name1 === "sasagichh" && name2 === "svknon") || (name1 === "svknon" && name2 === "sasagichh")) {
+    if ((name1 === "юсаги" && name2 === "svknon") || (name1 === "svknon" && name2 === "юсаги")) {
         checkQuests("graduation_clear");
     }
 
