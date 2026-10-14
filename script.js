@@ -473,7 +473,7 @@ function switchTab(tabName) {
 }
 
 function renderAllTabs() {
-    ();
+    renderItemsTab();
     renderArtistsTab();
     renderAchievementsTab();
 }
