@@ -743,7 +743,11 @@ function spawnItemOnDesk(e, itemData) {
 function startDragProcess(e, element, shiftX, shiftY) {
     const workspace = document.getElementById('workspace');
     const rect = workspace.getBoundingClientRect();
-    if (currentMoveHandler) document.removeEventListener('mousemove', currentMoveHandler);
+    
+    if (currentMoveHandler) {
+        document.removeEventListener('mousemove', currentMoveHandler);
+        document.removeEventListener('touchmove', currentMoveHandler);
+    }
     
     if (element.dataset.name === "Гнев") {
         window.isHoldingHulkNow = true;
@@ -779,12 +783,26 @@ function startDragProcess(e, element, shiftX, shiftY) {
         }
     }
     
-    currentMoveHandler = function(event) { moveAt(event.clientX, event.clientY); };
-    document.addEventListener('mousemove', currentMoveHandler);
+    currentMoveHandler = function(event) { 
+        const clientX = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+        const clientY = event.type.includes('touch') ? event.touches[0].clientY : event.clientY;
+        moveAt(clientX, clientY); 
+    };
     
-    window.onmouseup = function() {
-        if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
-        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false; 
+    document.addEventListener('mousemove', currentMoveHandler);
+    document.addEventListener('touchmove', currentMoveHandler, { passive: false });
+    
+    const endDrag = function() {
+        if (currentMoveHandler) { 
+            document.removeEventListener('mousemove', currentMoveHandler); 
+            document.removeEventListener('touchmove', currentMoveHandler); 
+            currentMoveHandler = null; 
+        }
+        window.onmouseup = null; 
+        window.ontouchend = null;
+        element.onmouseup = null; 
+        element.ontouchend = null;
+        isDraggingNow = false; 
         
         if (element.dataset.name === "Гнев") {
             window.isHoldingHulkNow = false;
@@ -793,19 +811,33 @@ function startDragProcess(e, element, shiftX, shiftY) {
         checkCollisions(element);
         checkQuests();
     };
-    element.onmouseup = window.onmouseup;
+    
+    window.onmouseup = endDrag;
+    window.ontouchend = endDrag;
+    element.onmouseup = endDrag;
+    element.ontouchend = endDrag;
 }
 
-document.getElementById('workspace').onmousedown = function(e) {
+document.getElementById('workspace').onmousedown = handleWorkspaceStart;
+document.getElementById('workspace').ontouchstart = handleWorkspaceStart;
+
+function handleWorkspaceStart(e) {
     if (isDraggingNow) return; 
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
-    e.preventDefault();
+    
+    if (e.type === 'touchstart') e.preventDefault(); 
+    
     isDraggingNow = true; 
-    let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
-    let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
+    
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    
+    let shiftX = clientX - targetItem.getBoundingClientRect().left;
+    let shiftY = clientY - targetItem.getBoundingClientRect().top;
+    
     startDragProcess(e, targetItem, shiftX, shiftY);
-};
+}
 
 function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
