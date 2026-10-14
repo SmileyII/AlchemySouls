@@ -747,7 +747,7 @@ function spawnItemInCenter(itemData) {
         img.src = "images/" + itemData.img;
         img.onerror = () => { img.src = (img.src.indexOf("images2/") === -1) ? "images2/" + itemData.img : 'images/placeholder.png'; };
     } else {
-        let iconFile = ELEMENT_ICONS[itemDataData?.name || itemData.name] || 'placeholder.png';
+        let iconFile = ELEMENT_ICONS[itemData.name] || 'placeholder.png';
         img.src = "images/element_icons/" + iconFile;
         img.onerror = () => { img.src = 'images/placeholder.png'; };
     }
