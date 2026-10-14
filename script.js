@@ -473,13 +473,13 @@ function switchTab(tabName) {
 }
 
 function renderAllTabs() {
-    renderItemsTab();
+    ();
     renderArtistsTab();
     renderAchievementsTab();
 }
 
 function renderCurrentTab() {
-    if (currentActiveTab === "items") renderItemsTab();
+    if (currentActiveTab === "items") ();
     if (currentActiveTab === "artists") renderArtistsTab();
     if (currentActiveTab === "achievements") renderAchievementsTab();
 }
@@ -558,6 +558,7 @@ function renderItemsTab() {
             }
         };
         
+        // ПОДДЕРЖКА ПЕРЕТАСКИВАНИЯ И СЧЁТЧИКОВ КВЕСТОВ ДЛЯ ПК
         div.onmousedown = (e) => { 
             if (e.button === 1) return; 
             
@@ -578,7 +579,7 @@ function renderItemsTab() {
             
             let artCountDesk = document.querySelectorAll('.item.on-desk.artist-card').length;
             if (artCountDesk >= 3) {
-                if (item.name === "Приключение") stats.frierenAdvCount = (stats.frierenAdvCount || 0) + 1;
+                if (item.name === "Приключения") stats.frierenAdvCount = (stats.frierenAdvCount || 0) + 1;
                 if (item.name === "Дружба") stats.frierenFrCount = (stats.frierenFrCount || 0) + 1;
                 if (item.name === "Время") stats.frierenTimeCount = (stats.frierenTimeCount || 0) + 1;
                 if (item.name === "Судьба") stats.frierenFateCount = (stats.frierenFateCount || 0) + 1;
@@ -602,6 +603,21 @@ function renderItemsTab() {
             setTimeout(() => { clickCounts[item.name] = 0; }, 2000);
             if (!isDraggingNow) spawnItemOnDesk(e, item); 
         };
+
+        // НАДЁЖНЫЙ СПАВН ДЛЯ ТЕЛЕФОНОВ: Создает элемент по обычному клику/тапу в центре стола
+        div.onclick = (e) => {
+            if (!isDraggingNow) {
+                spawnItemInCenter(item);
+            }
+        };
+
+        div.ontouchend = (e) => {
+            if (!isDraggingNow) {
+                e.preventDefault(); // Блокирует системный зум и контекстное меню смартфона
+                spawnItemInCenter(item);
+            }
+        };
+
         container.appendChild(div);
     });
 }
@@ -635,8 +651,25 @@ function renderArtistsTab() {
         
         div.appendChild(img); div.appendChild(text);
         
-        div.onmousedown = (e) => { if (!isDraggingNow) spawnItemOnDesk(e, item); };
-        div.onclick = () => showArtistModal(item);
+        // Поддержка стандартного перетаскивания карточки для ПК
+        div.onmousedown = (e) => { 
+            if (!isDraggingNow) spawnItemOnDesk(e, item); 
+        };
+        
+        div.ontouchend = (e) => {
+            if (!isDraggingNow) {
+                e.preventDefault();
+                spawnItemInCenter(item);
+            }
+        };
+
+        div.onclick = () => {
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) {
+                showArtistModal(item);
+            }
+        };
+        
         container.appendChild(div);
     });
 
@@ -695,6 +728,46 @@ function renderAchievementsTab() {
         
         container.appendChild(card);
     });
+}
+
+function spawnItemInCenter(itemData) {
+    const workspace = document.getElementById('workspace');
+    if (!workspace) return;
+
+    const clone = document.createElement('div');
+    const isDead = isElementDeadEnd(itemData);
+    clone.className = 'item on-desk' + (itemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
+    clone.dataset.name = itemData.name;
+    clone.dataset.img = itemData.img;
+    if(itemData.url) clone.dataset.url = itemData.url;
+    if(itemData.desc) clone.dataset.desc = itemData.desc;
+    
+    const img = document.createElement('img');
+    if (itemData.url) {
+        img.src = "images/" + itemData.img;
+        img.onerror = () => { img.src = (img.src.indexOf("images2/") === -1) ? "images2/" + itemData.img : 'images/placeholder.png'; };
+    } else {
+        let iconFile = ELEMENT_ICONS[itemDataData?.name || itemData.name] || 'placeholder.png';
+        img.src = "images/element_icons/" + iconFile;
+        img.onerror = () => { img.src = 'images/placeholder.png'; };
+    }
+    
+    const text = document.createElement('span');
+    text.innerText = itemData.name + (isDead ? " •" : "");
+    
+    clone.appendChild(img); clone.appendChild(text);
+    workspace.appendChild(clone);
+    
+    let x = (workspace.clientWidth - 100) / 2;
+    let y = (workspace.clientHeight - 110) / 2;
+    
+    x += Math.floor(Math.random() * 40) - 20;
+    y += Math.floor(Math.random() * 40) - 20;
+
+    clone.style.left = `${x}px`; 
+    clone.style.top = `${y}px`;
+    
+    checkQuests();
 }
 
 function spawnItemOnDesk(e, itemData) {
