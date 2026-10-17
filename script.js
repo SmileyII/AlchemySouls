@@ -745,8 +745,7 @@ function startDragProcess(e, element, shiftX, shiftY) {
     const rect = workspace.getBoundingClientRect();
     
     if (currentMoveHandler) {
-        document.removeEventListener('mousemove', currentMoveHandler);
-        document.removeEventListener('touchmove', currentMoveHandler);
+        document.removeEventListener('pointermove', currentMoveHandler);
     }
     
     if (element.dataset.name === "Гнев") {
@@ -783,25 +782,21 @@ function startDragProcess(e, element, shiftX, shiftY) {
         }
     }
     
+    // Универсальное движение
     currentMoveHandler = function(event) { 
-        const clientX = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
-        const clientY = event.type.includes('touch') ? event.touches[0].clientY : event.clientY;
-        moveAt(clientX, clientY); 
+        moveAt(event.clientX, event.clientY); 
     };
     
-    document.addEventListener('mousemove', currentMoveHandler);
-    document.addEventListener('touchmove', currentMoveHandler, { passive: false });
+    document.addEventListener('pointermove', currentMoveHandler);
     
+    // Универсальное отпускание
     const endDrag = function() {
         if (currentMoveHandler) { 
-            document.removeEventListener('mousemove', currentMoveHandler); 
-            document.removeEventListener('touchmove', currentMoveHandler); 
+            document.removeEventListener('pointermove', currentMoveHandler); 
             currentMoveHandler = null; 
         }
-        window.onmouseup = null; 
-        window.ontouchend = null;
-        element.onmouseup = null; 
-        element.ontouchend = null;
+        window.onpointerup = null; 
+        element.onpointerup = null; 
         isDraggingNow = false; 
         
         if (element.dataset.name === "Гнев") {
@@ -812,29 +807,23 @@ function startDragProcess(e, element, shiftX, shiftY) {
         checkQuests();
     };
     
-    window.onmouseup = endDrag;
-    window.ontouchend = endDrag;
-    element.onmouseup = endDrag;
-    element.ontouchend = endDrag;
+    window.onpointerup = endDrag;
+    element.onpointerup = endDrag;
 }
 
-document.getElementById('workspace').onmousedown = handleWorkspaceStart;
-document.getElementById('workspace').ontouchstart = handleWorkspaceStart;
+document.getElementById('workspace').onpointerdown = handleWorkspaceStart;
 
 function handleWorkspaceStart(e) {
     if (isDraggingNow) return; 
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
     
-    if (e.type === 'touchstart') e.preventDefault(); 
-    
+    e.preventDefault();
     isDraggingNow = true; 
     
-    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
-    let shiftX = clientX - targetItem.getBoundingClientRect().left;
-    let shiftY = clientY - targetItem.getBoundingClientRect().top;
+    // Pointer Events считывает координаты clientX/clientY одинаково и для мыши, и для пальца!
+    let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
+    let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
     
     startDragProcess(e, targetItem, shiftX, shiftY);
 }
