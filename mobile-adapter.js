@@ -22,24 +22,26 @@
     let mobileKonamiIndex = 0;
 
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
-    const style = document.createElement('style');
+     const style = document.createElement('style');
     style.innerHTML = `
-        /* Блокировка зума и исправление поисковой строки */
+        /* Исправление поисковой строки */
         #search-box { font-size: 16px !important; }
         
-        /* Фиксация игрового стола в границах экрана */
+        /* Выравниваем нижнюю границу стола по уровню вкладок */
         #workspace { 
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
-            height: 55vh !important; /* Ограничиваем стол, чтобы углы не уходили за экран */
+            height: 50vh !important; /* Корректируем высоту под уровень боковых вкладок */
             border: 2px dashed #ff007f;
+            box-sizing: border-box;
         }
         
         /* Разрешаем скролл в меню элементов и художников */
         #items-tab, #artists-tab {
-            touch-action: pan-y !important; /* Позволяет скроллить пальцем вверх/вниз */
+            touch-action: pan-y !important;
             overflow-y: auto !important;
+            height: 50vh !important; /* Меню и стол теперь строго одной высоты */
             -webkit-overflow-scrolling: touch;
         }
 
@@ -124,8 +126,12 @@
             }
         }, { passive: false });
 
-        // Перехват тачей на самом воркспейсе (для перетаскивания существующих элементов и LongPress)
         workspace.addEventListener('touchstart', function(e) {
+            const searchBox = document.getElementById('search-box');
+            if (searchBox && document.activeElement === searchBox) {
+                searchBox.blur();
+            }
+
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
@@ -308,30 +314,12 @@
         }
     }
 
-    /**
-     * 3. РЕАЛИЗАЦИЯ ТРЯСКИ ТЕЛЕФОНА (DeviceMotion API)
-     */
     function initMobileAccelerometer() {
         let lastX = null, lastY = null, lastZ = null;
         let threshold = 25;
 
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            const permissionBtn = document.createElement('button');
-            permissionBtn.innerText = "Включить физическую тряску 📳";
-            permissionBtn.style = "position:fixed; bottom:10px; right:10px; z-index:10000; font-size:11px; padding:5px; background:#ff007f; color:#fff; border:none; border-radius:4px;";
-            permissionBtn.onclick = function() {
-                DeviceMotionEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            window.addEventListener('devicemotion', handleMotion, false);
-                            permissionBtn.remove();
-                        }
-                    }).catch(console.error);
-            };
-            document.body.appendChild(permissionBtn);
-        } else {
-            window.addEventListener('devicemotion', handleMotion, false);
-        }
+        // Просто вешаем событие напрямую без генерации раздражающих кнопок
+        window.addEventListener('devicemotion', handleMotion, false);
 
         function handleMotion(event) {
             let acceleration = event.accelerationIncludingGravity;
