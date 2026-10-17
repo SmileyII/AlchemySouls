@@ -137,8 +137,7 @@
                     document.body.scrollTop = 0;
 
                     document.documentElement.style.height = '100.1%';
-                    setTimeout(() => {
-                        document.documentElement.style.height = '100%';
+                    setTimeout(() => {document.documentElement.style.height = '100%';
                     }, 50);
                 }, 100);
             });
