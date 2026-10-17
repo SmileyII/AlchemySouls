@@ -98,120 +98,85 @@
 </style>
 <style>
 /* ==========================================
-   📱 НЕУБИВАЕМЫЙ CSS-ПОРТ ДЛЯ СМАРТФОНОВ
+   📱 КРОСС-ПЛАТФОРМЕННЫЙ МОБИЛЬНЫЙ ПОРТ (FINAL)
    ========================================== */
 @media screen and (max-width: 768px) {
     body, html {
         overflow: hidden !important;
+        position: fixed !important;
         height: 100vh !important;
         width: 100vw !important;
         margin: 0 !important;
         padding: 0 !important;
+        /* Отключаем системный скролл и жесты браузера, чтобы они не мешали тащить элементы */
+        touch-action: none !important;
     }
 
     .game-container {
         display: flex !important;
-        flex-direction: column !important; /* Принудительно разворачиваем: стол сверху, меню снизу */
+        flex-direction: column !important; /* Разворачиваем строго вертикально */
         width: 100% !important;
         height: 100vh !important;
+        position: absolute !important;
+        top: 0; left: 0;
     }
 
-    /* Сжимаем шапку игры, чтобы освободить место */
     header {
         width: 100% !important;
         padding: 4px 8px !important;
         min-height: auto !important;
         box-sizing: border-box !important;
         background: #09090d !important;
+        flex-shrink: 0 !important;
     }
 
-    header h1 {
-        font-size: 16px !important;
-        margin: 2px 0 !important;
-        display: inline-block !important;
-    }
-
-    header p {
-        font-size: 9px !important;
-        margin: 0 !important;
-        opacity: 0.7;
-    }
-
-    .volume-container {
-        float: right !important;
-        scale: 0.75 !important;
-        margin-top: -2px !important;
-    }
+    header h1 { font-size: 15px !important; margin: 2px 0 !important; display: inline-block !important; }
+    header p { font-size: 9px !important; margin: 0 !important; opacity: 0.7; }
+    .volume-container { float: right !important; scale: 0.7 !important; margin-top: -4px !important; }
 
     /* 1. РАБОЧИЙ СТОЛ (Верхняя половина экрана) */
     #workspace {
         width: 100% !important;
-        height: 50vh !important; 
+        height: 48vh !important; 
         position: relative !important;
         border-bottom: 2px solid #ff007f !important;
         border-right: none !important;
         background-color: #12121c !important;
-        order: 1 !important;
+        flex-shrink: 0 !important;
+        touch-action: none !important; /* Даем полную свободу пальцу */
     }
 
-    .workspace-hint {
-        font-size: 11px !important;
-        bottom: 10px !important;
-    }
+    .workspace-hint { font-size: 11px !important; bottom: 8px !important; }
 
     /* 2. НИЖНЯЯ ПАНЕЛЬ ИНВЕНТАРЯ */
     .sidebar {
         width: 100% !important;
-        height: 44vh !important; 
+        height: 46vh !important; 
         box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
         background: #0d0d13 !important;
         padding: 6px !important;
-        order: 2 !important;
+        flex-grow: 1 !important;
     }
 
-    .sidebar h2, .sidebar p {
-        font-size: 11px !important;
-        margin: 1px 0 !important;
-        text-align: center !important;
-    }
+    .sidebar h2, .sidebar p { font-size: 11px !important; margin: 1px 0 !important; text-align: center !important; }
+    .search-container { margin: 2px 0 !important; }
+    #search-box { padding: 5px !important; font-size: 11px !important; }
 
-    .search-container {
-        margin: 2px 0 !important;
-    }
+    .control-btns { display: flex !important; gap: 4px !important; margin-bottom: 2px !important; }
+    .control-btns button { flex: 1 !important; padding: 5px 2px !important; font-size: 10px !important; }
+
+    .tabs { display: flex !important; justify-content: space-around !important; margin: 4px 0 !important; gap: 2px !important; }
     
-    #search-box {
-        padding: 5px !important;
-        font-size: 11px !important;
-    }
-
-    .control-btns {
-        display: flex !important;
-        gap: 4px !important;
-        margin-bottom: 2px !important;
-    }
-
-    .control-btns button {
-        flex: 1 !important;
-        padding: 5px 2px !important;
-        font-size: 10px !important;
-    }
-
-    .tabs {
-        display: flex !important;
-        justify-content: space-around !important;
-        margin: 4px 0 !important;
-        gap: 2px !important;
-    }
-
     .tab-btn {
         flex: 1 !important;
-        padding: 6px 2px !important;
-        font-size: 10px !important;
+        padding: 8px 2px !important;
+        font-size: 11px !important;
         text-align: center !important;
         background: #1a1a26 !important;
         color: #fff !important;
+        border: none !important;
     }
     
     .tab-btn.active {
@@ -219,7 +184,7 @@
         border-bottom: 2px solid #fff !important;
     }
 
-    /* Компактная сетка материалов */
+    /* Компактная мобильная сетка материалов */
     .tab-content {
         flex: 1 !important;
         overflow-y: auto !important;
@@ -236,34 +201,21 @@
         font-size: 8px !important; 
     }
 
-    .tab-content .item img {
-        width: 26px !important; 
-        height: 26px !important;
-    }
+    .tab-content .item img { width: 26px !important; height: 26px !important; }
 
-    #achievements-tab {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 4px !important;
-    }
+    #achievements-tab { display: flex !important; flex-direction: column !important; gap: 4px !important; }
+    .ach-card { padding: 4px !important; font-size: 10px !important; }
 
-    .ach-card {
-        padding: 4px !important;
-        font-size: 10px !important;
-    }
-
-    /* Предметы НА СТОЛЕ */
+    /* Предметы и авторы непосредственно НА РАБОЧЕМ СТОЛЕ */
     .item.on-desk {
         width: 65px !important;
         height: 70px !important;
         font-size: 8px !important;
         position: absolute !important;
+        touch-action: none !important; /* Убирает задержку отклика */
     }
 
-    .item.on-desk img {
-        width: 32px !important;
-        height: 32px !important;
-    }
+    .item.on-desk img { width: 32px !important; height: 32px !important; }
 }
 </style>
 </head>
