@@ -96,75 +96,161 @@
 }
         
 @media screen and (max-width: 768px) {
-        body, .game-container {
-            flex-direction: column !important;
-            overflow: hidden;
-            height: 100vh;
-            margin: 0; padding: 0;
-        }
-        #workspace {
-            width: 100% !important;
-            height: 55vh !important;
-            position: relative;
-            border-bottom: 2px solid #ff007f;
-            border-right: none !important;
-        }
-        .sidebar {
-            width: 100% !important;
-            height: 45vh !important;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            background: #0d0d13 !important;
-            padding: 8px !important;
-        }
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 8px !important;
-            gap: 4px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px 4px !important;
-            font-size: 12px !important;
-            text-align: center;
-            white-space: nowrap;
-        }
-        .search-container { margin-bottom: 8px !important; }
-        #search-box { padding: 8px !important; font-size: 14px !important; }
-        .control-btns { display: flex; gap: 6px; margin-top: 4px; }
-        .control-btns button { flex: 1; padding: 8px 2px !important; font-size: 11px !important; }
-        .tab-content {
-            flex: 1;
-            overflow-y: auto !important;
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)) !important;
-            gap: 6px !important;
-            padding: 4px !important;
-        }
-        .tab-content .item {
-            width: auto !important;
-            height: 85px !important;
-            padding: 4px !important;
-            font-size: 10px !important;
-        }
-        .tab-content .item img { width: 40px !important; height: 40px !important; }
-        .item.on-desk {
-            width: 80px !important;
-            height: 85px !important;
-            font-size: 10px !important;
-            z-index: 10;
-        }
-        .item.on-desk img { width: 45px !important; height: 45px !important; }
-        .modal-content {
-            width: 90% !important;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 16px !important;
-        }
-        #m-art { max-width: 100% !important; height: auto !important; }
+    /* Перестраиваем всё строго в один вертикальный некопируемый экран */
+    body {
+        overflow: hidden !important;
+        height: 100vh !important;
+        margin: 0; padding: 0;
     }
+
+    .game-container {
+        flex-direction: column !important;
+        height: 100vh !important;
+        width: 100% !important;
+    }
+
+    /* Сжимаем гигантскую верхнюю шапку игры под мобильный экран */
+    header {
+        padding: 4px !important;
+        min-height: auto !important;
+    }
+
+    header h1 {
+        font-size: 16px !important;
+        margin: 2px 0 !important;
+    }
+
+    header p {
+        font-size: 10px !important;
+        margin: 0 !important;
+    }
+
+    /* Музыкальный ползунок в шапке */
+    .volume-container {
+        scale: 0.8;
+        margin: 2px 0 !important;
+    }
+
+    /* 1. Рабочий стол (Верхняя зона — занимает ровно половину свободного места) */
+    #workspace {
+        width: 100% !important;
+        height: 50vh !important; 
+        position: relative !important;
+        border-bottom: 2px solid #ff007f;
+        border-right: none !important;
+        background-color: #12121c !important;
+    }
+
+    /* Текст-подсказка на пустом столе */
+    .workspace-hint {
+        font-size: 12px !important;
+    }
+
+    /* 2. Нижняя панель инвентаря */
+    .sidebar {
+        width: 100% !important;
+        height: 50vh !important;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        background: #0d0d13 !important;
+        padding: 6px !important;
+    }
+
+    /* Счётчик открытых художников */
+    .sidebar h2, .sidebar p {
+        font-size: 12px !important;
+        margin: 2px 0 !important;
+        text-align: center;
+    }
+
+    /* Поле поиска */
+    .search-container {
+        margin: 4px 0 !important;
+    }
+    
+    #search-box {
+        padding: 6px !important;
+        font-size: 12px !important;
+    }
+
+    /* Кнопки Очистить стол и Сброс */
+    .control-btns {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px !important;
+    }
+
+    .control-btns button {
+        flex: 1;
+        padding: 6px 2px !important;
+        font-size: 11px !important;
+    }
+
+    /* Кнопки вкладок (Элементы, Художники, Достижения) */
+    .tabs {
+        display: flex;
+        justify-content: space-around;
+        margin: 4px 0 !important;
+        gap: 2px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 8px 2px !important;
+        font-size: 11px !important;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* Мобильная сетка инвентаря скроллится внутри своей половины */
+    .tab-content {
+        flex: 1;
+        overflow-y: auto !important;
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)) !important;
+        gap: 4px !important;
+        padding: 2px !important;
+    }
+
+    /* Элементы внутри сетки инвентаря */
+    .tab-content .item {
+        width: auto !important;
+        height: 75px !important;
+        padding: 2px !important;
+        font-size: 9px !important;
+    }
+
+    .tab-content .item img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    /* Сетка для достижений, чтобы карточки не ломались в узком ряду */
+    #achievements-tab {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+
+    .ach-card {
+        padding: 6px !important;
+        font-size: 11px !important;
+    }
+
+    /* Предметы и авторы непосредственно НА РАБОЧЕМ СТОЛЕ */
+    .item.on-desk {
+        width: 70px !important;
+        height: 75px !important;
+        font-size: 9px !important;
+        position: absolute;
+    }
+
+    .item.on-desk img {
+        width: 38px !important;
+        height: 38px !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -195,9 +281,9 @@
             
             <!-- Кнопки переключения вкладок -->
             <div class="tabs-container">
-                <button class="tab-btn active" onclick="switchTab('items')">Элементы</button>
-                <button class="tab-btn" onclick="switchTab('artists')">Художники</button>
-                <button class="tab-btn" onclick="switchTab('achievements')">Достижения</button>
+                <button class="tab-btn active" onclick="switchTab('items')" ontouchend="switchTab('items')">Элементы</button>
+                <button class="tab-btn" onclick="switchTab('artists')" ontouchend="switchTab('artists')">Художники</button>
+                <button class="tab-btn" onclick="switchTab('achievements')" ontouchend="switchTab('achievements')">Достижения</button>
             </div>
             
             <!-- Списки инвентаря под каждую вкладку -->
