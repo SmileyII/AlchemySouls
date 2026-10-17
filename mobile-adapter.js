@@ -24,10 +24,10 @@
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Блокировка зума и исправление поисковой строки (Баг №3) */
+        /* Блокировка зума и исправление поисковой строки */
         #search-box { font-size: 16px !important; }
         
-        /* Фиксация игрового стола в границах экрана (Баг №4) */
+        /* Фиксация игрового стола в границах экрана */
         #workspace { 
             touch-action: none; 
             position: relative; 
@@ -36,7 +36,7 @@
             border: 2px dashed #ff007f;
         }
         
-        /* Разрешаем скролл в меню элементов и художников (Баг №5) */
+        /* Разрешаем скролл в меню элементов и художников */
         #items-tab, #artists-tab {
             touch-action: pan-y !important; /* Позволяет скроллить пальцем вверх/вниз */
             overflow-y: auto !important;
@@ -45,20 +45,6 @@
 
         .item { user-select: none; -webkit-user-select: none; }
         .item img { transform: scale(1.05); }
-
-        /* Позиционирование всплывающих ачивок по центру сверху (Баг №1) */
-        #achievement-popup {
-            position: fixed !important;
-            top: 20px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            z-index: 999999 !important;
-            width: 90% !important;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.9) !important;
-            border: 2px solid #ff007f !important;
-            box-shadow: 0 0 15px #ff007f !important;
-        }
     `;
     document.head.appendChild(style);
 
