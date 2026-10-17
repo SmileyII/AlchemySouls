@@ -21,40 +21,32 @@
     let mobileKonamiIndex = 0;
 
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
-     const style = document.createElement('style');
+    const style = document.createElement('style');
     style.innerHTML = `
-        /* Обман мобильного автозума: для браузера шрифт 16px, но визуально уменьшен до 85% */
-        #search-box { 
-            font-size: 16px !important; 
-            transform: scale(0.85) !important;
-            transform-origin: left center !important;
-            width: 115% !important; /* Компенсируем уменьшение ширины после scale */
+        /* Стили для имитации кнопки на мобильном поиске */
+        #search-box {
+            cursor: pointer;
+            caret-color: transparent !important; /* Прячем курсор */
         }
         
-        /* Задаем безопасную зону для игрового стола */
         #workspace { 
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
-            border: 2px dashed #ff007f;
-            box-sizing: border-box;
         }
         
-        /* Разрешаем мягкий нативный мобильный скролл */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Выталкиваем последний элемент из-за нижней границы экрана */
-        #items-tab > div:last-child, 
-        #artists-tab > div:last-child {
-            margin-bottom: 140px !important; /* Безопасный отступ для последнего элемента */
+        /* Выталкиваем последний скрытый элемент */
+        #items-tab, #artists-tab {
+            padding-bottom: 120px !important;
         }
 
         .item { user-select: none; -webkit-user-select: none; }
-        .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
 
@@ -135,12 +127,25 @@
         }, { passive: false });
 
         workspace.addEventListener('touchstart', function(e) {
-            const searchBox = document.getElementById('search-box');
-            if (searchBox) {
-            searchBox.addEventListener('blur', function() {
-        setTimeout(() => { window.scrollTo(0, 0); }, 100);
-    });
-}
+        const searchBox = document.getElementById('search-box');
+        if (searchBox) {
+            // Отключаем стандартное появление клавиатуры при таче
+            searchBox.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Вызываем системное окно ввода
+                const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
+                
+                if (userQuery !== null) {
+                    searchBox.value = userQuery;
+                    // Триггерим оригинальное событие oninput из script.js, чтобы запустился поиск игры
+                    if (typeof searchBox.oninput === 'function') {
+                        searchBox.oninput();
+                    }
+                }
+            }, { passive: false });
+        }
             
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
