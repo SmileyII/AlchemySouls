@@ -10,6 +10,7 @@
 
     console.log("Alchemy Souls: Mobile Mode Activated 📱");
 
+    // Глобальные переменные для мобильных жестов
     let touchStartData = null;
     let longPressTimeout = null;
     let activeDraggedElement = null;
@@ -33,30 +34,35 @@
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
+            height: 50vh !important; /* Устанавливаем высоту воркспейса */
+            border: 2px dashed #ff007f;
+            box-sizing: border-box;
         }
         
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
+            height: 50vh !important; /* Строго равна высоте воркспейса */
+            padding-bottom: 120px !important; /* Решает баг скрытого элемента: добавляет пустоту внизу списка */
+            box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Выталкиваем последний скрытый элемент */
-        #items-tab, #artists-tab {
-            padding-bottom: 120px !important;
-        }
-
         .item { user-select: none; -webkit-user-select: none; }
+        .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
 
     // Ждем полной загрузки DOM и оригинального скрипта
     window.addEventListener('DOMContentLoaded', () => {
-        ;
+        initMobileControls();
         initMobileKonami();
         initMobileAccelerometer();
     });
 
+    /**
+     * 1. АДАПТАЦИЯ ТАЧ-УПРАВЛЕНИЯ (Вытаскивание и перемещение)
+     */
     function initMobileControls() {
         const workspace = document.getElementById('workspace');
         if (!workspace) return;
@@ -68,26 +74,29 @@
                 const itemElement = e.target.closest('.item');
                 if (!itemElement || itemElement.closest('.on-desk')) return;
 
-                const startX = e.touches[0].clientX;
-                const startY = e.touches[0].clientY;
+                const touch = e.touches[0];
+                const startX = touch.clientX;
+                const startY = touch.clientY;
                 let hasMovedSignificantly = false;
 
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
                 function onTouchMove(moveEvent) {
-                    const diffX = Math.abs(moveEvent.touches[0].clientX - startX);
-                    const diffY = Math.abs(moveEvent.touches[0].clientY - startY);
+                    const moveTouch = moveEvent.touches[0];
+                    const diffX = Math.abs(moveTouch.clientX - startX);
+                    const diffY = Math.abs(moveTouch.clientY - startY);
 
                     // Если палец потянули вбок (на стол) — вытаскиваем элемент
                     if (diffX > 20 && diffX > diffY && !hasMovedSignificantly) {
                         hasMovedSignificantly = true;
                         moveEvent.preventDefault();
                         
+                        // Передаем координаты первого конкретного касания [0] в оригинальный спавнер
                         const fakeEvent = {
                             preventDefault: () => {},
-                            clientX: moveEvent.touches[0].clientX,
-                            clientY: moveEvent.touches[0].clientY
+                            clientX: moveTouch.clientX,
+                            clientY: moveTouch.clientY
                         };
 
                         // Спавним на стол через оригинальный скрипт
@@ -140,7 +149,7 @@
             const shiftX = touch.clientX - rect.left;
             const shiftY = touch.clientY - rect.top;
 
-            // Баг с Императором (LongPress)
+            // Баг с Императором (LongPress вместо клика колесиком)
             if (targetItem.dataset.name === "Император") {
                 clearTimeout(longPressTimeout);
                 longPressTimeout = setTimeout(() => {
@@ -160,7 +169,8 @@
         window.addEventListener('touchmove', function(e) {
             if (!activeDraggedElement) {
                 // Логика ачивки Slime Touch
-                const overElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                const touch = e.touches[0];
+                const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
                 const listItem = overElement ? overElement.closest('#items-tab .item') : null;
                 if (listItem && !stats.unlockedQuests.includes("slime_touch")) {
                     window.slimeHovers = (window.slimeHovers || 0) + 1;
@@ -209,7 +219,7 @@
             checkQuests();
         });
 
-        // Мобильный поиск через Prompt (Защита от зума)
+        // Мобильный поиск через Prompt (Полная защита от зума)
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
             searchBox.addEventListener('touchstart', function(e) {
@@ -219,6 +229,8 @@
                 const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
+                    if (userQuery !== null) {
+                    searchBox.value = userQuery;
                     if (typeof searchBox.oninput === 'function') {
                         searchBox.oninput();
                     }
@@ -227,119 +239,31 @@
         }
     }
 
-            if (isDraggingNow) return;
-            const targetItem = e.target.closest('.item.on-desk');
-            if (!targetItem) return;
-
-            e.preventDefault();
-            
-            const touch = e.touches[0];
-            const rect = targetItem.getBoundingClientRect();
-            const shiftX = touch.clientX - rect.left;
-            const shiftY = touch.clientY - rect.top;
-
-            // Обработка ачивки «ЗА ИМПЕРАТОРА!!!» (LongPress вместо клика колесиком)
-            if (targetItem.dataset.name === "Император") {
-                clearTimeout(longPressTimeout);
-                longPressTimeout = setTimeout(() => {
-                    window.emperorMiddleClicks = (window.emperorMiddleClicks || 0) + 1;
-                    if (window.emperorMiddleClicks >= 10) {
-                        checkQuests("emperor_click_trigger");
-                    }
-                    // Визуальный отклик долгого нажатия
-                    targetItem.style.transform = "scale(1.3)";
-                    setTimeout(() => targetItem.style.transform = "none", 150);
-                }, 800); // 0.8 секунды удержания заменяют среднюю кнопку мыши
-            }
-
-            startMobileDrag(touch, targetItem, shiftX, shiftY);
-        }, { passive: false });
-
-        // Непрерывное движение пальца по экрану
-        window.addEventListener('touchmove', function(e) {
-            if (!activeDraggedElement) {
-                // Если мы ничего не тащим, проверяем ачивку «Slime touch» (провести пальцем по меню)
-                const overElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-                const listItem = overElement ? overElement.closest('#items-tab .item') : null;
-                
-                if (listItem && !stats.unlockedQuests.includes("slime_touch")) {
-                    window.slimeHovers = (window.slimeHovers || 0) + 1;
-                    if (window.slimeHovers >= 50) {
-                        checkQuests("slime_hover_trigger");
-                        window.slimeHovers = 0;
-                    }
-                    clearTimeout(window.slimeHoverTimeout);
-                    window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
-                }
-                return;
-            }
-
-            e.preventDefault(); // Запрещаем скролл страницы во время перетаскивания элементов
-            
-            const touch = e.touches[0];
-            const rect = workspace.getBoundingClientRect();
-            
-            let x = touch.clientX - rect.left - touchShiftX;
-            let y = touch.clientY - rect.top - touchShiftY;
-
-            // Ограничения стола (фиксация внутри workspace)
-            x = Math.max(0, Math.min(x, workspace.clientWidth - activeDraggedElement.clientWidth));
-            y = Math.max(0, Math.min(y, workspace.clientHeight - activeDraggedElement.clientHeight));
-
-            activeDraggedElement.style.left = `${x}px`;
-            activeDraggedElement.style.top = `${y}px`;
-
-            // Дублирующий алгоритм "встряхивания" пальцем (на случай, если гироскоп отключен)
-            handleFingerShake(touch, activeDraggedElement);
-        }, { passive: false });
-
-        // Отпускание пальца
-        window.addEventListener('touchend', function(e) {
-            clearTimeout(longPressTimeout); // Сбрасываем лонгпресс Императора
-
-            if (!activeDraggedElement) return;
-
-            const element = activeDraggedElement;
-            activeDraggedElement = null;
-            isDraggingNow = false;
-
-            if (element.dataset.name === "Гнев") {
-                window.isHoldingHulkNow = false;
-            }
-
-            // Вызываем оригинальный метод проверки коллизий и квестов из script.js
-            checkCollisions(element);
-            checkQuests();
-        });
-    }
-
-    // Вспомогательная функция старта тач-перетаскивания
     function startMobileDrag(touch, element, shiftX, shiftY) {
         activeDraggedElement = element;
         touchShiftX = shiftX;
         touchShiftY = shiftY;
         isDraggingNow = true;
-
         if (element.dataset.name === "Гнев") {
             window.isHoldingHulkNow = true;
         }
-
-        // Данные для отслеживания ручной тряски пальцем
         touchStartData = {
-            lastX: touch.clientX,
+            // Исправлено: считываем clientX из первого активного тача массива touches
+            lastX: touch[0] ? touch[0].clientX : touch.clientX,
             lastTime: Date.now(),
             shakeScore: 0
         };
     }
 
-    // Алгоритм быстрой тряски зажатого элемента влево-вправо пальцем
     function handleFingerShake(touch, element) {
         if (!touchStartData) return;
         const nameAttr = element.dataset.name;
         if (nameAttr === "Вишенка" || nameAttr === "Сладость" || nameAttr === "Мрак" || nameAttr === "Mрак") {
             let currentTime = Date.now();
             if (currentTime - touchStartData.lastTime > 40) {
-                let speed = Math.abs(touch.clientX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
+                // Исправлено: безопасное чтение координаты для симуляции встряски пальцем
+                const currentX = touch[0] ? touch[0].clientX : touch.clientX;
+                let speed = Math.abs(currentX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
                 if (speed > 1.1) {
                     touchStartData.shakeScore++;
                     if (touchStartData.shakeScore >= 12) {
@@ -349,11 +273,10 @@
                     }
                 }
                 touchStartData.lastTime = currentTime;
-                touchStartData.lastX = touch.clientX;
+                touchStartData.lastX = currentX;
             }
         }
     }
-
 
     /**
      * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ
@@ -361,23 +284,19 @@
     function initMobileKonami() {
         let xDown = null;
         let yDown = null;
-
         document.addEventListener('touchstart', function(e) {
-            // Если тач двумя пальцами — это заменяет кнопки B или A Конами-кода
             if (e.touches.length === 2) {
                 checkMobileKonamiSequence("two-tap");
                 return;
-              }
+            }
             xDown = e.touches[0].clientX;
             yDown = e.touches[0].clientY;
         }, false);
 
         document.addEventListener('touchmove', function(e) {
             if (!xDown || !yDown || activeDraggedElement) return;
-
             let xUp = e.touches[0].clientX;
             let yUp = e.touches[0].clientY;
-
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
 
@@ -409,17 +328,17 @@
         }
     }
 
+    /**
+     * 3. РЕАЛИЗАЦИЯ ТРЯСКИ ТЕЛЕФОНА (DeviceMotion API)
+     */
     function initMobileAccelerometer() {
         let lastX = null, lastY = null, lastZ = null;
         let threshold = 25;
-
-        // Просто вешаем событие напрямую без генерации раздражающих кнопок
         window.addEventListener('devicemotion', handleMotion, false);
 
         function handleMotion(event) {
             let acceleration = event.accelerationIncludingGravity;
             if (!acceleration || !activeDraggedElement) return;
-
             let currentX = acceleration.x;
             let currentY = acceleration.y;
             let currentZ = acceleration.z;
@@ -431,7 +350,6 @@
 
                 if ((deltaX > threshold && deltaY > threshold) || deltaZ > threshold + 10) {
                     const nameAttr = activeDraggedElement.dataset.name;
-                    
                     if (nameAttr === "Вишенка") {
                         checkQuests("shake_cherry");
                         playMobileVibrate();
@@ -446,7 +364,6 @@
                     }
                 }
             }
-
             lastX = currentX;
             lastY = currentY;
             lastZ = currentZ;
@@ -458,5 +375,4 @@
             navigator.vibrate([100, 50, 100]);
         }
     }
-
 })();
