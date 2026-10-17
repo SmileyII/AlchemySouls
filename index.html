@@ -96,159 +96,170 @@
 }
         
 @media screen and (max-width: 768px) {
-    /* Перестраиваем всё строго в один вертикальный некопируемый экран */
-    body {
+    /* Принудительно разворачиваем контейнер вертикально: шапка -> стол -> инвентарь */
+    body, html {
         overflow: hidden !important;
         height: 100vh !important;
-        margin: 0; padding: 0;
+        width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .game-container {
-        flex-direction: column !important;
-        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important; /* Столбцом: стол сверху, инвентарь снизу */
         width: 100% !important;
+        height: 100vh !important;
     }
 
-    /* Сжимаем гигантскую верхнюю шапку игры под мобильный экран */
+    /* Компактная мобильная шапка (Плашка с названием чуть выше) */
     header {
-        padding: 4px !important;
+        width: 100% !important;
+        padding: 4px 8px !important;
         min-height: auto !important;
+        box-sizing: border-box !important;
+        background: #09090d !important;
     }
 
     header h1 {
         font-size: 16px !important;
         margin: 2px 0 !important;
+        display: inline-block !important;
     }
 
     header p {
-        font-size: 10px !important;
+        font-size: 9px !important;
         margin: 0 !important;
+        opacity: 0.7;
     }
 
-    /* Музыкальный ползунок в шапке */
+    /* Ужимаем громкость, чтобы не налезала на текст */
     .volume-container {
-        scale: 0.8;
-        margin: 2px 0 !important;
+        float: right !important;
+        scale: 0.75 !important;
+        margin-top: -2px !important;
     }
 
-    /* 1. Рабочий стол (Верхняя зона — занимает ровно половину свободного места) */
+    /* 1. РАБОЧИЙ СТОЛ (В середине экрана — под шапкой, но над инвентарем) */
     #workspace {
         width: 100% !important;
-        height: 50vh !important; 
+        height: 50vh !important; /* Занимает ровно половину высоты экрана */
         position: relative !important;
-        border-bottom: 2px solid #ff007f;
+        border-bottom: 2px solid #ff007f !important;
         border-right: none !important;
         background-color: #12121c !important;
+        order: 1 !important; /* Чётко фиксируем позицию */
     }
 
-    /* Текст-подсказка на пустом столе */
     .workspace-hint {
-        font-size: 12px !important;
+        font-size: 11px !important;
+        bottom: 10px !important;
     }
 
-    /* 2. Нижняя панель инвентаря */
+    /* 2. НИЖНЯЯ ПАНЕЛЬ ИНВЕНТАРЯ */
     .sidebar {
         width: 100% !important;
-        height: 50vh !important;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+        height: 44vh !important; /* Аккуратная нижняя часть */
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
         background: #0d0d13 !important;
         padding: 6px !important;
+        order: 2 !important; /* Всегда под столом */
     }
 
-    /* Счётчик открытых художников */
+    /* Информационные плашки внутри инвентаря */
     .sidebar h2, .sidebar p {
-        font-size: 12px !important;
-        margin: 2px 0 !important;
-        text-align: center;
+        font-size: 11px !important;
+        margin: 1px 0 !important;
+        text-align: center !important;
     }
 
-    /* Поле поиска */
+    /* Контейнер поиска */
     .search-container {
-        margin: 4px 0 !important;
+        margin: 2px 0 !important;
     }
     
     #search-box {
-        padding: 6px !important;
-        font-size: 12px !important;
+        padding: 5px !important;
+        font-size: 11px !important;
+        height: auto !important;
     }
 
-    /* Кнопки Очистить стол и Сброс */
+    /* Кнопки управления */
     .control-btns {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 4px !important;
+        display: flex !important;
+        gap: 4px !important;
+        margin-bottom: 2px !important;
     }
 
     .control-btns button {
-        flex: 1;
-        padding: 6px 2px !important;
-        font-size: 11px !important;
+        flex: 1 !important;
+        padding: 5px 2px !important;
+        font-size: 10px !important;
     }
 
-    /* Кнопки вкладок (Элементы, Художники, Достижения) */
+    /* Переключатели вкладок */
     .tabs {
-        display: flex;
-        justify-content: space-around;
+        display: flex !important;
+        justify-content: space-around !important;
         margin: 4px 0 !important;
-        gap: 2px;
+        gap: 2px !important;
     }
 
     .tab-btn {
-        flex: 1;
-        padding: 8px 2px !important;
-        font-size: 11px !important;
-        text-align: center;
-        white-space: nowrap;
+        flex: 1 !important;
+        padding: 6px 2px !important;
+        font-size: 10px !important;
+        text-align: center !important;
     }
 
-    /* Мобильная сетка инвентаря скроллится внутри своей половины */
+    /* ИСПРАВЛЕНО: Уменьшенная компактная сетка материалов (теперь всё поместится!) */
     .tab-content {
-        flex: 1;
+        flex: 1 !important;
         overflow-y: auto !important;
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)) !important; /* Элементы стали меньше и аккуратнее */
         gap: 4px !important;
         padding: 2px !important;
     }
 
-    /* Элементы внутри сетки инвентаря */
+    /* Карточки элементов в инвентаре */
     .tab-content .item {
         width: auto !important;
-        height: 75px !important;
+        height: 68px !important; /* Уменьшили высоту карточки */
         padding: 2px !important;
-        font-size: 9px !important;
+        font-size: 8px !important; /* Компактный шрифт подписи */
     }
 
     .tab-content .item img {
-        width: 32px !important;
-        height: 32px !important;
+        width: 26px !important; /* Уменьшили саму иконку */
+        height: 26px !important;
     }
 
-    /* Сетка для достижений, чтобы карточки не ломались в узком ряду */
+    /* Карточки достижений (внутри мобильного инвентаря) */
     #achievements-tab {
         display: flex !important;
         flex-direction: column !important;
-        gap: 6px !important;
+        gap: 4px !important;
     }
 
     .ach-card {
-        padding: 6px !important;
-        font-size: 11px !important;
+        padding: 4px !important;
+        font-size: 10px !important;
     }
 
-    /* Предметы и авторы непосредственно НА РАБОЧЕМ СТОЛЕ */
+    /* Предметы, когда игрок вытащил их НА РАБОЧИЙ СТОЛ */
     .item.on-desk {
-        width: 70px !important;
-        height: 75px !important;
-        font-size: 9px !important;
-        position: absolute;
+        width: 65px !important;
+        height: 70px !important;
+        font-size: 8px !important;
+        position: absolute !important;
     }
 
     .item.on-desk img {
-        width: 38px !important;
-        height: 38px !important;
+        width: 32px !important;
+        height: 32px !important;
     }
 }
 </style>
