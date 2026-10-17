@@ -57,40 +57,32 @@
         initMobileAccelerometer();
     });
 
-    /**
-     * 1. АДАПТАЦИЯ ТАЧ-УПРАВЛЕНИЯ (Вытаскивание и перемещение)
-     */
     function initMobileControls() {
         const workspace = document.getElementById('workspace');
         if (!workspace) return;
 
-        // Перехват кликов/тачей в боковом меню с поддержкой скролла и тапов
-        document.addEventListener('touchstart', function(e) {
-            const itemElement = e.target.closest('#items-tab .item, #artists-tab .item');
-            if (itemElement && !e.target.closest('.on-desk')) {
-                
-                // Фиксируем начальные координаты тача для вычисления скролла
+        // Фикс Бага №5 и №2: Нажатие пальцем в боковом меню элементов/художников
+        const menuTabs = document.querySelectorAll('#items-tab, #artists-tab');
+        menuTabs.forEach(tab => {
+            tab.addEventListener('touchstart', function(e) {
+                const itemElement = e.target.closest('.item');
+                if (!itemElement || itemElement.closest('.on-desk')) return;
+
                 const startX = e.touches[0].clientX;
                 const startY = e.touches[0].clientY;
-                let isScrolling = false;
+                let hasMovedSignificantly = false;
 
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
-                // Временный обработчик для разделения скролла меню и вытаскивания элемента
-                function onTouchMoveCheck(moveEvent) {
+                function onTouchMove(moveEvent) {
                     const diffX = Math.abs(moveEvent.touches[0].clientX - startX);
                     const diffY = Math.abs(moveEvent.touches[0].clientY - startY);
 
-                    // Если палец двигается преимущественно вертикально — это скролл меню
-                    if (diffY > diffX && diffY > 10) {
-                        isScrolling = true;
-                        cleanup();
-                    } 
-                    // Если движение вбок на стол — активируем вытаскивание
-                    else if (diffX > 15) {
+                    // Если палец потянули вбок (на стол) — вытаскиваем элемент
+                    if (diffX > 20 && diffX > diffY && !hasMovedSignificantly) {
+                        hasMovedSignificantly = true;
                         moveEvent.preventDefault();
-                        cleanup();
                         
                         const fakeEvent = {
                             preventDefault: () => {},
@@ -98,55 +90,143 @@
                             clientY: moveEvent.touches[0].clientY
                         };
 
+                        // Спавним на стол через оригинальный скрипт
                         spawnItemOnDesk(fakeEvent, originalData);
                         
+                        // Сразу подхватываем его для движения пальцем
                         const deskItems = workspace.querySelectorAll('.item.on-desk');
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
+                            removeListeners();
                             startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
                         }
                     }
                 }
 
-                function onTouchEndCheck() {
-                    // Баг №2: Если это был просто короткий быстрый тап без скролла и перетаскивания
-                    if (!isScrolling && itemElement.classList.contains('artist-card')) {
-                        showArtistModal(originalData); // Открываем модалку художника перед глазами
+                function onTouchEnd() {
+                    // Баг №2: Если это просто короткий тап без движения и это карта художника — открываем модалку перед глазами
+                    if (!hasMovedSignificantly && itemElement.classList.contains('artist-card')) {
+                        showArtistModal(originalData);
                     }
-                    cleanup();
+                    removeListeners();
                 }
 
-                function cleanup() {
-                    document.removeEventListener('touchmove', onTouchMoveCheck);
-                    document.removeEventListener('touchend', onTouchEndCheck);
+                function removeListeners() {
+                    tab.removeEventListener('touchmove', onTouchMove);
+                    tab.removeEventListener('touchend', onTouchEnd);
                 }
 
-                document.addEventListener('touchmove', onTouchMoveCheck, { passive: false });
-                document.addEventListener('touchend', onTouchEndCheck);
+                tab.addEventListener('touchmove', onTouchMove, { passive: false });
+                tab.addEventListener('touchend', onTouchEnd);
+            }, { passive: true });
+        });
+
+        // ДВИЖЕНИЕ НА СТОЛЕ: Перехват тачей на самом воркспейсе
+        workspace.addEventListener('touchstart', function(e) {
+            // Баг №3: Прячем клавиатуру при тапе по столу
+            const searchBox = document.getElementById('search-box');
+            if (searchBox && document.activeElement === searchBox) {
+                searchBox.blur();
             }
+
+            if (isDraggingNow) return;
+            const targetItem = e.target.closest('.item.on-desk');
+            if (!targetItem) return;
+
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            const rect = targetItem.getBoundingClientRect();
+            const shiftX = touch.clientX - rect.left;
+            const shiftY = touch.clientY - rect.top;
+
+            // Баг с Императором (LongPress)
+            if (targetItem.dataset.name === "Император") {
+                clearTimeout(longPressTimeout);
+                longPressTimeout = setTimeout(() => {
+                    window.emperorMiddleClicks = (window.emperorMiddleClicks || 0) + 1;
+                    if (window.emperorMiddleClicks >= 10) {
+                        checkQuests("emperor_click_trigger");
+                    }
+                    targetItem.style.transform = "scale(1.3)";
+                    setTimeout(() => targetItem.style.transform = "none", 150);
+                }, 800);
+            }
+
+            startMobileDrag(touch, targetItem, shiftX, shiftY);
         }, { passive: false });
 
-        workspace.addEventListener('touchstart', function(e) {
+        // Непрерывное движение зажатого элемента по столу
+        window.addEventListener('touchmove', function(e) {
+            if (!activeDraggedElement) {
+                // Логика ачивки Slime Touch
+                const overElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                const listItem = overElement ? overElement.closest('#items-tab .item') : null;
+                if (listItem && !stats.unlockedQuests.includes("slime_touch")) {
+                    window.slimeHovers = (window.slimeHovers || 0) + 1;
+                    if (window.slimeHovers >= 50) {
+                        checkQuests("slime_hover_trigger");
+                        window.slimeHovers = 0;
+                    }
+                    clearTimeout(window.slimeHoverTimeout);
+                    window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
+                }
+                return;
+            }
+
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            const rect = workspace.getBoundingClientRect();
+            
+            let x = touch.clientX - rect.left - touchShiftX;
+            let y = touch.clientY - rect.top - touchShiftY;
+
+            x = Math.max(0, Math.min(x, workspace.clientWidth - activeDraggedElement.clientWidth));
+            y = Math.max(0, Math.min(y, workspace.clientHeight - activeDraggedElement.clientHeight));
+
+            activeDraggedElement.style.left = `${x}px`;
+            activeDraggedElement.style.top = `${y}px`;
+
+            handleFingerShake(touch, activeDraggedElement);
+        }, { passive: false });
+
+        // Отпускание пальца
+        window.addEventListener('touchend', function(e) {
+            clearTimeout(longPressTimeout);
+
+            if (!activeDraggedElement) return;
+
+            const element = activeDraggedElement;
+            activeDraggedElement = null;
+            isDraggingNow = false;
+
+            if (element.dataset.name === "Гнев") {
+                window.isHoldingHulkNow = false;
+            }
+
+            checkCollisions(element);
+            checkQuests();
+        });
+
+        // Мобильный поиск через Prompt (Защита от зума)
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
-            // Отключаем стандартное появление клавиатуры при таче
             searchBox.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Вызываем системное окно ввода
                 const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
-                
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
-                    // Триггерим оригинальное событие oninput из script.js, чтобы запустился поиск игры
                     if (typeof searchBox.oninput === 'function') {
                         searchBox.oninput();
                     }
                 }
             }, { passive: false });
         }
-            
+    }
+
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
