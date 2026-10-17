@@ -10,7 +10,14 @@
 
     console.log("Alchemy Souls: Mobile Mode Activated 📱");
 
-    // Глобальные переменные для мобильных жестов
+    let viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (!viewportMeta) {
+        viewportMeta = document.createElement('meta');
+        viewportMeta.name = 'viewport';
+        document.head.appendChild(viewportMeta);
+    }
+    viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+
     let touchStartData = null;
     let longPressTimeout = null;
     let activeDraggedElement = null;
@@ -24,24 +31,26 @@
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
      const style = document.createElement('style');
     style.innerHTML = `
-        /* Исправление поисковой строки */
+        /* Запрет зума для полей ввода */
         #search-box { font-size: 16px !important; }
         
-        /* Выравниваем нижнюю границу стола по уровню вкладок */
+        /* Выравниваем и фиксируем игровой стол */
         #workspace { 
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
-            height: 50vh !important; /* Корректируем высоту под уровень боковых вкладок */
+            height: 45vh !important; /* Уменьшаем высоту, чтобы гарантированно влезть в экран */
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
         
-        /* Разрешаем скролл в меню элементов и художников */
+        /* Исправляем скролл меню и выталкиваем скрытый последний элемент */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 50vh !important; /* Меню и стол теперь строго одной высоты */
+            height: 45vh !important; /* Строго равна высоте воркспейса */
+            padding-bottom: 90px !important; /* Решает баг скрытого элемента: добавляет пустоту внизу списка */
+            box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -128,9 +137,13 @@
 
         workspace.addEventListener('touchstart', function(e) {
             const searchBox = document.getElementById('search-box');
-            if (searchBox && document.activeElement === searchBox) {
-                searchBox.blur();
-            }
+            if (searchBox) {
+            searchBox.addEventListener('blur', function() {
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                }, 100);
+            });
+        }
 
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
