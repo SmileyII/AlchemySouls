@@ -23,27 +23,34 @@
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
      const style = document.createElement('style');
     style.innerHTML = `
-        /* Безопасное отображение поисковой строки без вызова автозума */
+        /* Обман мобильного автозума: для браузера шрифт 16px, но визуально уменьшен до 85% */
         #search-box { 
             font-size: 16px !important; 
+            transform: scale(0.85) !important;
+            transform-origin: left center !important;
+            width: 115% !important; /* Компенсируем уменьшение ширины после scale */
         }
         
+        /* Задаем безопасную зону для игрового стола */
         #workspace { 
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
-            height: 50vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
         
+        /* Разрешаем мягкий нативный мобильный скролл */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 50vh !important; 
-            padding-bottom: 120px !important; /* Увеличили отступ для 100% гарантии видимости последнего элемента */
-            box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* Выталкиваем последний элемент из-за нижней границы экрана */
+        #items-tab > div:last-child, 
+        #artists-tab > div:last-child {
+            margin-bottom: 140px !important; /* Безопасный отступ для последнего элемента */
         }
 
         .item { user-select: none; -webkit-user-select: none; }
@@ -129,20 +136,12 @@
 
         workspace.addEventListener('touchstart', function(e) {
             const searchBox = document.getElementById('search-box');
-        if (searchBox) {
+            if (searchBox) {
             searchBox.addEventListener('blur', function() {
-                // Силовой откат масштаба страницы
-                setTimeout(() => {
-                    window.scrollTo(0, 0);
-                    document.body.scrollTop = 0;
-
-                    document.documentElement.style.height = '100.1%';
-                    setTimeout(() => {document.documentElement.style.height = '100%';
-                    }, 50);
-                }, 100);
-            });
-        }
-
+        setTimeout(() => { window.scrollTo(0, 0); }, 100);
+    });
+}
+            
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
