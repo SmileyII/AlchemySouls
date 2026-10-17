@@ -743,10 +743,7 @@ function spawnItemOnDesk(e, itemData) {
 function startDragProcess(e, element, shiftX, shiftY) {
     const workspace = document.getElementById('workspace');
     const rect = workspace.getBoundingClientRect();
-    
-    if (currentMoveHandler) {
-        document.removeEventListener('pointermove', currentMoveHandler);
-    }
+    if (currentMoveHandler) document.removeEventListener('mousemove', currentMoveHandler);
     
     if (element.dataset.name === "Гнев") {
         window.isHoldingHulkNow = true;
@@ -782,22 +779,12 @@ function startDragProcess(e, element, shiftX, shiftY) {
         }
     }
     
-    // Универсальное движение
-    currentMoveHandler = function(event) { 
-        moveAt(event.clientX, event.clientY); 
-    };
+    currentMoveHandler = function(event) { moveAt(event.clientX, event.clientY); };
+    document.addEventListener('mousemove', currentMoveHandler);
     
-    document.addEventListener('pointermove', currentMoveHandler);
-    
-    // Универсальное отпускание
-    const endDrag = function() {
-        if (currentMoveHandler) { 
-            document.removeEventListener('pointermove', currentMoveHandler); 
-            currentMoveHandler = null; 
-        }
-        window.onpointerup = null; 
-        element.onpointerup = null; 
-        isDraggingNow = false; 
+    window.onmouseup = function() {
+        if (currentMoveHandler) { document.removeEventListener('mousemove', currentMoveHandler); currentMoveHandler = null; }
+        window.onmouseup = null; element.onmouseup = null; isDraggingNow = false; 
         
         if (element.dataset.name === "Гнев") {
             window.isHoldingHulkNow = false;
@@ -806,27 +793,19 @@ function startDragProcess(e, element, shiftX, shiftY) {
         checkCollisions(element);
         checkQuests();
     };
-    
-    window.onpointerup = endDrag;
-    element.onpointerup = endDrag;
+    element.onmouseup = window.onmouseup;
 }
 
-document.getElementById('workspace').onpointerdown = handleWorkspaceStart;
-
-function handleWorkspaceStart(e) {
+document.getElementById('workspace').onmousedown = function(e) {
     if (isDraggingNow) return; 
     const targetItem = e.target.closest('.item.on-desk');
     if (!targetItem) return;
-    
     e.preventDefault();
     isDraggingNow = true; 
-    
-    // Pointer Events считывает координаты clientX/clientY одинаково и для мыши, и для пальца!
     let shiftX = e.clientX - targetItem.getBoundingClientRect().left;
     let shiftY = e.clientY - targetItem.getBoundingClientRect().top;
-    
     startDragProcess(e, targetItem, shiftX, shiftY);
-}
+};
 
 function checkCollisions(draggedElement) {
     if (!draggedElement.parentNode) return;
