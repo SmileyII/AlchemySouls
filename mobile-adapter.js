@@ -10,14 +10,6 @@
 
     console.log("Alchemy Souls: Mobile Mode Activated 📱");
 
-    let viewportMeta = document.querySelector('meta[name="viewport"]');
-    if (!viewportMeta) {
-        viewportMeta = document.createElement('meta');
-        viewportMeta.name = 'viewport';
-        document.head.appendChild(viewportMeta);
-    }
-    viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-
     let touchStartData = null;
     let longPressTimeout = null;
     let activeDraggedElement = null;
@@ -31,25 +23,25 @@
     // Инициализация кастомных стилей для удобства тачей (без изменения HTML/CSS игры)
      const style = document.createElement('style');
     style.innerHTML = `
-        /* Запрет зума для полей ввода */
-        #search-box { font-size: 16px !important; }
+        /* Безопасное отображение поисковой строки без вызова автозума */
+        #search-box { 
+            font-size: 16px !important; 
+        }
         
-        /* Выравниваем и фиксируем игровой стол */
         #workspace { 
             touch-action: none; 
             position: relative; 
             overflow: hidden; 
-            height: 45vh !important; /* Уменьшаем высоту, чтобы гарантированно влезть в экран */
+            height: 50vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
         
-        /* Исправляем скролл меню и выталкиваем скрытый последний элемент */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 45vh !important; /* Строго равна высоте воркспейса */
-            padding-bottom: 90px !important; /* Решает баг скрытого элемента: добавляет пустоту внизу списка */
+            height: 50vh !important; 
+            padding-bottom: 120px !important; /* Увеличили отступ для 100% гарантии видимости последнего элемента */
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
@@ -61,7 +53,7 @@
 
     // Ждем полной загрузки DOM и оригинального скрипта
     window.addEventListener('DOMContentLoaded', () => {
-        initMobileControls();
+        ;
         initMobileKonami();
         initMobileAccelerometer();
     });
@@ -137,10 +129,17 @@
 
         workspace.addEventListener('touchstart', function(e) {
             const searchBox = document.getElementById('search-box');
-            if (searchBox) {
+        if (searchBox) {
             searchBox.addEventListener('blur', function() {
+                // Силовой откат масштаба страницы
                 setTimeout(() => {
-                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+
+                    document.documentElement.style.height = '100.1%';
+                    setTimeout(() => {
+                        document.documentElement.style.height = '100%';
+                    }, 50);
                 }, 100);
             });
         }
