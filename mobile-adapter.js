@@ -1,12 +1,12 @@
 /**
  * Alchemy Souls — Mobile Adapter Monolith (2026)
- * Полная изоляция мобильного управления: фикс зума, скролла и тач-перетаскивания.
+ * Полная изоляция мобильного порта: нативный скролл, тач-крафты и защита от автозума.
  */
 (function() {
     // Проверка: мобильное устройство по разрешению ИЛИ по userAgent
     const isMobileDevice = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    if (!isMobileDevice) return; // Если десктоп — адаптер полностью засыпает
+    if (!isMobileDevice) return; // Если открыто на ПК — адаптер полностью засыпает
 
     console.log("Alchemy Souls: Mobile Mode Activated 📱");
 
@@ -21,60 +21,84 @@
     const mobileKonamiCode = ["up", "up", "down", "down", "left", "right", "left", "right", "two-tap", "two-tap"];
     let mobileKonamiIndex = 0;
 
-    // Внедрение жестких мобильных стилей для полной блокировки браузерного зума и скролла страницы
+    // Внедрение жестких мобильных CSS-правил для идеальной верстки
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Блокируем зум и системные жесты только на столе и уже вытащенных предметах */
+        /* Блокируем системный зум браузера ТОЛЬКО на игровом столе и активных элементах */
         #workspace, .item.on-desk { 
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
         }
         
-        /* Разрешаем элементам в боковом меню свободно скроллиться вверх и вниз */
+        /* Фиксируем высоту стола */
+        #workspace { 
+            position: relative; 
+            overflow: hidden; 
+            height: 48vh !important; 
+            border: 2px dashed #ff007f;
+            box-sizing: border-box;
+        }
+        
+        /* Разрешаем боковым спискам нативный вертикальный скролл */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 120px !important; /* Безопасный отступ для последнего элемента */
+            height: 48vh !important;
+            padding-bottom: 140px !important; /* Гарантия видимости самого последнего элемента */
             box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
         }
 
         #items-tab .item, #artists-tab .item {
-            touch-action: pan-y !important; /* Палец мягко листает список, не заедая */
+            touch-action: pan-y !important; /* Элементы в меню мягко скользят вверх/вниз */
         }
+
+        /* Имитация кнопки для поисковой строки без нативного зума клавиатуры */
+        #search-box {
+            cursor: pointer;
+            caret-color: transparent !important;
+            font-size: 16px !important;
+        }
+
+        .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
 
-    // Ждем полной загрузки DOM и оригинального скрипта
+    // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
         initMobileControls();
         initMobileKonami();
         initMobileAccelerometer();
-        
+
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (e) {
-    let now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) {
-        e.preventDefault(); // Глушим системный зум браузера
-    }
-    lastTouchEnd = now;
-}, { passive: false });
+            let now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault(); // На корню режем системное приближение экрана
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
     });
 
     /**
      * 1. АДАПТАЦИЯ ТАЧ-УПРАВЛЕНИЯ (Вытаскивание и перемещение)
      */
-            // Четкое разделение: скролл меню — вверх/вниз, вытаскивание на стол — вбок
+    function initMobileControls() {
+        const workspace = document.getElementById('workspace');
+        if (!workspace) return;
+
+        // Контроль тачей в боковом меню: скролл — вертикально, вытаскивание — строго вбок
         const menuTabs = document.querySelectorAll('#items-tab, #artists-tab');
         menuTabs.forEach(tab => {
             tab.addEventListener('touchstart', function(e) {
                 const itemElement = e.target.closest('.item');
                 if (!itemElement || itemElement.closest('.on-desk')) return;
 
-                // Запоминаем стартовую точку касания пальца
-                const startX = e.touches[0].clientX;
-                const startY = e.touches[0].clientY;
+                const startTouch = e.touches[0];
+                const startX = startTouch.clientX;
+                const startY = startTouch.clientY;
                 let itemSpawned = false;
 
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
@@ -83,42 +107,38 @@
                 function onTouchMove(moveEvent) {
                     if (itemSpawned) return;
 
-                    const currentX = moveEvent.touches[0].clientX;
-                    const currentY = moveEvent.touches[0].clientY;
+                    const moveTouch = moveEvent.touches[0];
+                    const diffX = Math.abs(moveTouch.clientX - startX);
+                    const diffY = Math.abs(moveTouch.clientY - startY);
 
-                    const diffX = Math.abs(currentX - startX);
-                    const diffY = Math.abs(currentY - startY);
-
-                    // Если палец движется преимущественно по горизонтали (вбок на стол)
+                    // Если палец явно потянули по горизонтали на игровой стол
                     if (diffX > 20 && diffX > diffY) {
                         itemSpawned = true;
-                        moveEvent.preventDefault(); // Блокируем вертикальный скролл меню только сейчас
+                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка, так как пошел вынос
 
-                        // Передаем координаты в оригинальный спавнер строго на игровой стол
                         const fakeEvent = {
                             preventDefault: () => {},
-                            clientX: currentX,
-                            clientY: currentY
+                            clientX: moveTouch.clientX,
+                            clientY: moveTouch.clientY
                         };
 
-                        // Спавним элемент на воркспейс через оригинальную функцию
+                        // Вызываем оригинальный метод создания предмета из script.js
                         spawnItemOnDesk(fakeEvent, originalData);
                         
-                        // Принудительно корректируем координаты нового элемента, чтобы он не улетал под меню
+                        // Мгновенно подхватываем созданный элемент на воркспейсе
                         const deskItems = workspace.querySelectorAll('.item.on-desk');
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
                             cleanup();
-                            // Подхватываем палец и тащим элемент по столу
-                            startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
+                            startMobileDrag(moveTouch, lastSpawned, 50, 55);
                         }
                     }
                 }
 
                 function onTouchEnd() {
-                    // Если это был просто короткий тап без скролла и это карточка художника
+                    // Короткий быстрый тап по художнику открывает оригинальное окно портфолио
                     if (!itemSpawned && itemElement.classList.contains('artist-card')) {
-                        showArtistModal(originalData); // Открываем модалку портфолио перед глазами
+                        showArtistModal(originalData);
                     }
                     cleanup();
                 }
@@ -133,26 +153,25 @@
             }, { passive: true });
         });
 
-        // ДВИЖЕНИЕ НА СТОЛЕ: Перехват тачей на самом воркспейсе
+        // ПЕРЕМЕЩЕНИЕ НА СТОЛЕ: Перехват тачей на воркспейсе
         workspace.addEventListener('touchstart', function(e) {
-            // Прячем клавиатуру при тапе по столу
             const searchBox = document.getElementById('search-box');
             if (searchBox && document.activeElement === searchBox) {
-                searchBox.blur();
+                searchBox.blur(); // Сворачиваем поиск при клике на стол
             }
 
             if (isDraggingNow) return;
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
 
-            e.preventDefault(); // Полная изоляция от системных жестов браузера
+            e.preventDefault();
             
             const touch = e.touches[0];
             const rect = targetItem.getBoundingClientRect();
             const shiftX = touch.clientX - rect.left;
             const shiftY = touch.clientY - rect.top;
 
-            // Логика LongPress для ачивки «ЗА ИМПЕРАТОРА!!!»
+            // Долгий тап (LongPress) заменяет щелчок колесиком для Императора
             if (targetItem.dataset.name === "Император") {
                 clearTimeout(longPressTimeout);
                 longPressTimeout = setTimeout(() => {
@@ -168,10 +187,10 @@
             startMobileDrag(touch, targetItem, shiftX, shiftY);
         }, { passive: false });
 
-        // Непрерывное перемещение зажатого элемента по столу
+        // Тянем зажатый элемент пальцем по столу
         window.addEventListener('touchmove', function(e) {
             if (!activeDraggedElement) {
-                // Логика ачивки Slime Touch
+                // Ачивка Slime Touch (провести пальцем по меню не беря в руки)
                 const touch = e.touches[0];
                 const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
                 const listItem = overElement ? overElement.closest('#items-tab .item') : null;
@@ -187,7 +206,7 @@
                 return;
             }
 
-            e.preventDefault(); // Намертво блокируем скролл страницы во время игры
+            e.preventDefault();
             
             const touch = e.touches[0];
             const rect = workspace.getBoundingClientRect();
@@ -195,6 +214,7 @@
             let x = touch.clientX - rect.left - touchShiftX;
             let y = touch.clientY - rect.top - touchShiftY;
 
+            // Жесткие рамки рабочей зоны стола
             x = Math.max(0, Math.min(x, workspace.clientWidth - activeDraggedElement.clientWidth));
             y = Math.max(0, Math.min(y, workspace.clientHeight - activeDraggedElement.clientHeight));
 
@@ -204,12 +224,11 @@
             handleFingerShake(touch, activeDraggedElement);
         }, { passive: false });
 
-        // Отпускание пальца с расчетом оригинального крафта
+        // Отпускаем палец: запускается оригинальная десктопная проверка скрещиваний
         window.addEventListener('touchend', function(e) {
             clearTimeout(longPressTimeout);
 
             if (!activeDraggedElement) return;
-
             const element = activeDraggedElement;
             activeDraggedElement = null;
             isDraggingNow = false;
@@ -221,12 +240,14 @@
             checkCollisions(element);
             checkQuests();
         });
-        // Безопасный мобильный поиск через Prompt (Защита от зума)
+
+        // Мобильный поиск через Prompt: 100% спасение от ломающих зумов клавиатуры
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
             searchBox.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                
                 const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
@@ -243,12 +264,15 @@
         touchShiftX = shiftX;
         touchShiftY = shiftY;
         isDraggingNow = true;
+
         if (element.dataset.name === "Гнев") {
             window.isHoldingHulkNow = true;
         }
+
+        // Исправлено: берем координаты из первого активного тача массива touches
+        const activeTouch = touch && touch[0] ? touch[0] : touch;
         touchStartData = {
-            // Исправлено: если передан массив touches, берем координаты первого пальца [0]
-            lastX: touch[0] ? touch[0].clientX : touch.clientX,
+            lastX: activeTouch ? activeTouch.clientX : 0,
             lastTime: Date.now(),
             shakeScore: 0
         };
@@ -260,8 +284,10 @@
         if (nameAttr === "Вишенка" || nameAttr === "Сладость" || nameAttr === "Мрак" || nameAttr === "Mрак") {
             let currentTime = Date.now();
             if (currentTime - touchStartData.lastTime > 40) {
-                // Исправлено: если передан массив touches, берем clientX первого пальца [0]
-                const currentX = touch[0] ? touch[0].clientX : touch.clientX;
+                // Исправлено: безопасное чтение первого пальца для алгоритма ручной встряски
+                const activeTouch = touch && touch[0] ? touch[0] : touch;
+                const currentX = activeTouch ? activeTouch.clientX : 0;
+                
                 let speed = Math.abs(currentX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
                 if (speed > 1.1) {
                     touchStartData.shakeScore++;
@@ -283,19 +309,27 @@
     function initMobileKonami() {
         let xDown = null;
         let yDown = null;
-        document.addEventListener('touchstart', function(e) {
+        
+        // Ловим свайпы Конами строго на верхней шапке меню (исключаем конфликты со столом)
+        const topPanel = document.querySelector('.tabs') || document.body;
+
+        topPanel.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
                 checkMobileKonamiSequence("two-tap");
                 return;
             }
-            xDown = e.touches[0].clientX;
-            yDown = e.touches[0].clientY;
-        }, false);
+            const firstTouch = e.touches[0];
+            xDown = firstTouch.clientX;
+            yDown = firstTouch.clientY;
+        }, { passive: true });
 
-        document.addEventListener('touchmove', function(e) {
+        topPanel.addEventListener('touchmove', function(e) {
             if (!xDown || !yDown || activeDraggedElement) return;
-            let xUp = e.touches[0].clientX;
-            let yUp = e.touches[0].clientY;
+
+            const firstTouch = e.touches[0];
+            let xUp = firstTouch.clientX;
+            let yUp = firstTouch.clientY;
+
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
 
@@ -312,7 +346,7 @@
                     xDown = null; yDown = null;
                 }
             }
-        }, false);
+        }, { passive: true });
     }
 
     function checkMobileKonamiSequence(gesture) {
@@ -321,6 +355,7 @@
             if (mobileKonamiIndex === mobileKonamiCode.length) {
                 checkQuests("konami_trigger");
                 mobileKonamiIndex = 0;
+                if (navigator.vibrate) navigator.vibrate(100);
             }
         } else {
             mobileKonamiIndex = 0;
@@ -328,16 +363,18 @@
     }
 
     /**
-     * 3. РЕАЛИЗАЦИЯ ТРЯСКИ ТЕЛЕФОНА (DeviceMotion API)
+     * 3. РЕАЛИЗА─ИЯ ТРЯСКИ ТЕЛЕФОНА (DeviceMotion API)
      */
     function initMobileAccelerometer() {
         let lastX = null, lastY = null, lastZ = null;
         let threshold = 25;
+
         window.addEventListener('devicemotion', handleMotion, false);
 
         function handleMotion(event) {
             let acceleration = event.accelerationIncludingGravity;
             if (!acceleration || !activeDraggedElement) return;
+
             let currentX = acceleration.x;
             let currentY = acceleration.y;
             let currentZ = acceleration.z;
@@ -349,6 +386,7 @@
 
                 if ((deltaX > threshold && deltaY > threshold) || deltaZ > threshold + 10) {
                     const nameAttr = activeDraggedElement.dataset.name;
+                    
                     if (nameAttr === "Вишенка") {
                         checkQuests("shake_cherry");
                         playMobileVibrate();
@@ -363,6 +401,7 @@
                     }
                 }
             }
+
             lastX = currentX;
             lastY = currentY;
             lastZ = currentZ;
@@ -371,7 +410,7 @@
 
     function playMobileVibrate() {
         if (navigator.vibrate) {
-            navigator.vibrate([80, 50, 80]);
+            navigator.vibrate(60);
         }
     }
 })();
