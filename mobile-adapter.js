@@ -48,6 +48,10 @@
             box-sizing: border-box;
         }
 
+        #workspace, .item, .item.on-desk {
+        touch-action: none !important;
+        }
+
         .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
@@ -58,10 +62,14 @@
         initMobileKonami();
         initMobileAccelerometer();
         
-        // Дополнительный жесткий запрет pinch-to-zoom на всем документе игры
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        }, { passive: false });
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (e) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        e.preventDefault(); // Глушим системный зум браузера
+    }
+    lastTouchEnd = now;
+}, { passive: false });
     });
 
     /**
