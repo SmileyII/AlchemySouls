@@ -24,34 +24,33 @@
     // Внедрение жестких мобильных стилей для полной блокировки браузерного зума и скролла страницы
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Запрещаем зум и системные жесты браузера только на игровом столе и активных элементах */
         #workspace, .item.on-desk { 
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
         }
         
-        /* Исправление Бага №3: Поднимаем нижнюю границу стола чуть выше */
+        /* Жестко поднимаем нижний край стола для ачивок на углы */
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 43vh !important; 
+            height: 42vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
         
-        /* Исправление Бага №1: Возвращаем элементам в боковом меню нативный вертикальный скролл пальцем */
+        /* Исправляем вертикальный скролл панели элементов */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 43vh !important;
-            padding-bottom: 120px !important;
+            height: 42vh !important;
+            padding-bottom: 150px !important;
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
 
         #items-tab .item, #artists-tab .item {
-            touch-action: pan-y !important; /* Дает элементам в меню свободно скользить вверх/вниз */
+            touch-action: pan-y !important;
         }
     `;
     document.head.appendChild(style);
@@ -160,29 +159,34 @@
     }
 
     function startMobileDrag(touch, element, shiftX, shiftY) {
+        if (!touch || !element) return;
         activeDraggedElement = element;
         touchShiftX = shiftX;
         touchShiftY = shiftY;
         isDraggingNow = true;
+
         if (element.dataset.name === "Гнев") {
             window.isHoldingHulkNow = true;
         }
+
+        // Исправлено: жестко берем первый тач из объекта, если это список touch List
+        const activeTouch = touch.touches ? touch.touches[0] : (touch[0] || touch);
         touchStartData = {
-            // Исправлено: корректно считываем первый палец
-            lastX: touch ? (touch[0] ? touch[0].clientX : touch.clientX) : 0,
+            lastX: activeTouch ? activeTouch.clientX : 0,
             lastTime: Date.now(),
             shakeScore: 0
         };
     }
 
     function handleFingerShake(touch, element) {
-        if (!touchStartData) return;
+        if (!touchStartData || !touch) return;
         const nameAttr = element.dataset.name;
         if (nameAttr === "Вишенка" || nameAttr === "Сладость" || nameAttr === "Мрак" || nameAttr === "Mрак") {
             let currentTime = Date.now();
             if (currentTime - touchStartData.lastTime > 40) {
-                // Исправлено: корректно считываем первый палец для ручной тряски
-                const currentX = touch ? (touch[0] ? touch[0].clientX : touch.clientX) : 0;
+                const activeTouch = touch.touches ? touch.touches[0] : (touch[0] || touch);
+                const currentX = activeTouch ? activeTouch.clientX : 0;
+                
                 let speed = Math.abs(currentX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
                 if (speed > 1.1) {
                     touchStartData.shakeScore++;
@@ -199,43 +203,49 @@
     }
 
     /**
-     * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ
+     * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ (Изолировано в шапке игры)
      */
     function initMobileKonami() {
         let xDown = null;
         let yDown = null;
-        document.addEventListener('touchstart', function(e) {
+        
+        // Вешаем считывание жестов Конами только на верхнюю панель меню, чтобы не было конфликтов со столом
+        const topPanel = document.querySelector('.tabs') || document.body;
+
+        topPanel.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
                 checkMobileKonamiSequence("two-tap");
                 return;
             }
-            if (e.touches[0]) {
-                xDown = e.touches[0].clientX;
-                yDown = e.touches[0].clientY;
-            }
-        }, false);
+            const firstTouch = e.touches[0];
+            xDown = firstTouch.clientX;
+            yDown = firstTouch.clientY;
+        }, { passive: true });
 
-        document.addEventListener('touchmove', function(e) {
-            if (!xDown || !yDown || activeDraggedElement || !e.touches[0]) return;
-            let xUp = e.touches[0].clientX;
-            let yUp = e.touches[0].clientY;
+        topPanel.addEventListener('touchmove', function(e) {
+            if (!xDown || !yDown || activeDraggedElement) return;
+
+            const firstTouch = e.touches[0];
+            let xUp = firstTouch.clientX;
+            let yUp = firstTouch.clientY;
+
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
 
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                if (Math.abs(xDiff) > 40) {
+                if (Math.abs(xDiff) > 30) {
                     if (xDiff > 0) checkMobileKonamiSequence("left");
                     else checkMobileKonamiSequence("right");
                     xDown = null; yDown = null;
                 }
             } else {
-                if (Math.abs(yDiff) > 40) {
+                if (Math.abs(yDiff) > 30) {
                     if (yDiff > 0) checkMobileKonamiSequence("up");
                     else checkMobileKonamiSequence("down");
                     xDown = null; yDown = null;
                 }
             }
-        }, false);
+        }, { passive: true });
     }
 
     function checkMobileKonamiSequence(gesture) {
@@ -244,6 +254,7 @@
             if (mobileKonamiIndex === mobileKonamiCode.length) {
                 checkQuests("konami_trigger");
                 mobileKonamiIndex = 0;
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Победный виброотклик
             }
         } else {
             mobileKonamiIndex = 0;
@@ -294,7 +305,7 @@
 
     function playMobileVibrate() {
         if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]); // Мягкая двойная вибрация при успехе
+            navigator.vibrate(60);
         }
     }
 })();
