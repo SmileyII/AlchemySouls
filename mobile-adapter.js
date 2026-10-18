@@ -30,21 +30,21 @@
             -webkit-user-select: none !important;
         }
         
-        /* Жестко поднимаем нижний край стола для ачивок на углы */
+        /* Безопасное ограничение стола: углы теперь четко на экране, без каши */
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 42vh !important; 
+            max-height: 45vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
         
-        /* Исправляем вертикальный скролл панели элементов */
+        /* Полностью восстанавливаем нативный вертикальный скролл меню элементов */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
-            overflow-y: auto !important;
-            height: 42vh !important;
-            padding-bottom: 150px !important;
+            overflow-y: scroll !important;
+            max-height: 45vh !important;
+            padding-bottom: 130px !important;
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
@@ -169,8 +169,8 @@
             window.isHoldingHulkNow = true;
         }
 
-        // Исправлено: жестко берем первый тач из объекта, если это список touch List
-        const activeTouch = touch.touches ? touch.touches[0] : (touch[0] || touch);
+        // Безопасное извлечение координат без риска получить NaN
+        const activeTouch = touch[0] || touch;
         touchStartData = {
             lastX: activeTouch ? activeTouch.clientX : 0,
             lastTime: Date.now(),
@@ -184,7 +184,7 @@
         if (nameAttr === "Вишенка" || nameAttr === "Сладость" || nameAttr === "Мрак" || nameAttr === "Mрак") {
             let currentTime = Date.now();
             if (currentTime - touchStartData.lastTime > 40) {
-                const activeTouch = touch.touches ? touch.touches[0] : (touch[0] || touch);
+                const activeTouch = touch[0] || touch;
                 const currentX = activeTouch ? activeTouch.clientX : 0;
                 
                 let speed = Math.abs(currentX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
@@ -203,43 +203,43 @@
     }
 
     /**
-     * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ (Изолировано в шапке игры)
+     * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ (Привязан к логотипу/шапке игры)
      */
     function initMobileKonami() {
         let xDown = null;
         let yDown = null;
         
-        // Вешаем считывание жестов Конами только на верхнюю панель меню, чтобы не было конфликтов со столом
-        const topPanel = document.querySelector('.tabs') || document.body;
+        // Считываем жесты Конами только на самом верхнем контейнере (заголовке) во избежание сбросов
+        const topHeader = document.querySelector('header') || document.body;
 
-        topPanel.addEventListener('touchstart', function(e) {
+        topHeader.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
                 checkMobileKonamiSequence("two-tap");
                 return;
             }
-            const firstTouch = e.touches[0];
-            xDown = firstTouch.clientX;
-            yDown = firstTouch.clientY;
+            const t = e.touches[0];
+            xDown = t.clientX;
+            yDown = t.clientY;
         }, { passive: true });
 
-        topPanel.addEventListener('touchmove', function(e) {
+        topHeader.addEventListener('touchmove', function(e) {
             if (!xDown || !yDown || activeDraggedElement) return;
 
-            const firstTouch = e.touches[0];
-            let xUp = firstTouch.clientX;
-            let yUp = firstTouch.clientY;
+            const t = e.touches[0];
+            let xUp = t.clientX;
+            let yUp = t.clientY;
 
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
 
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                if (Math.abs(xDiff) > 30) {
+                if (Math.abs(xDiff) > 45) {
                     if (xDiff > 0) checkMobileKonamiSequence("left");
                     else checkMobileKonamiSequence("right");
                     xDown = null; yDown = null;
                 }
             } else {
-                if (Math.abs(yDiff) > 30) {
+                if (Math.abs(yDiff) > 45) {
                     if (yDiff > 0) checkMobileKonamiSequence("up");
                     else checkMobileKonamiSequence("down");
                     xDown = null; yDown = null;
@@ -254,7 +254,7 @@
             if (mobileKonamiIndex === mobileKonamiCode.length) {
                 checkQuests("konami_trigger");
                 mobileKonamiIndex = 0;
-                if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Победный виброотклик
+                if (navigator.vibrate) navigator.vibrate([50, 50]);
             }
         } else {
             mobileKonamiIndex = 0;
