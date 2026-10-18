@@ -67,72 +67,60 @@
         const workspace = document.getElementById('workspace');
         if (!workspace) return;
 
-        // Фикс Бага №5 и №2: Нажатие пальцем в боковом меню элементов/художников
-        const menuTabs = document.querySelectorAll('#items-tab, #artists-tab');
-        menuTabs.forEach(tab => {
-            tab.addEventListener('touchstart', function(e) {
-                const itemElement = e.target.closest('.item');
-                if (!itemElement || itemElement.closest('.on-desk')) return;
+        // Возврат к первому рабочему билду: мгновенный перехват тача в меню без блокировок
+        document.addEventListener('touchstart', function(e) {
+            const itemElement = e.target.closest('#items-tab .item, #artists-tab .item');
+            
+            // Если тач пришелся на меню и элемент еще не на столе
+            if (itemElement && !e.target.closest('.on-desk')) {
+                // Если это карточка художника и по ней просто быстро тапнули — открываем оригинальную модалку
+                if (itemElement.classList.contains('artist-card') && e.touches.length === 1) {
+                    // Страхуем обычный просмотр карточки автора перед глазами
+                    const checkTapName = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
+                    const artistData = discoveredItems.find(i => i.name === checkTapName);
+                    
+                    // Запоминаем время тача, чтобы отличить короткий тап от долгого зажатия
+                    let tapTimer = setTimeout(() => {
+                        // Если палец задержался дольше 150мс — это уже вытаскивание на стол, модалку не открываем
+                        itemElement.dataset.isDragging = "true";
+                    }, 150);
 
-                const touch = e.touches[0];
-                const startX = touch.clientX;
-                const startY = touch.clientY;
-                let hasMovedSignificantly = false;
+                    itemElement.addEventListener('touchend', function onArtistTapEnd() {
+                        clearTimeout(tapTimer);
+                        if (itemElement.dataset.isDragging !== "true" && artistData) {
+                            showArtistModal(artistData); // Открываем просмотр портфолио перед глазами
+                        }
+                        delete itemElement.dataset.isDragging;
+                        itemElement.removeEventListener('touchend', onArtistTapEnd);
+                    });
+                }
 
+                // Симулируем оригинальный десктопный ивент спавна элемента на стол
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
+                
+                const touchInfo = e.touches[0];
+                const fakeEvent = {
+                    preventDefault: () => {},
+                    clientX: touchInfo.clientX,
+                    clientY: touchInfo.clientY
+                };
 
-                function onTouchMove(moveEvent) {
-                    const moveTouch = moveEvent.touches[0];
-                    const diffX = Math.abs(moveTouch.clientX - startX);
-                    const diffY = Math.abs(moveTouch.clientY - startY);
-
-                    // Если палец потянули вбок (на стол) — вытаскиваем элемент
-                    if (diffX > 20 && diffX > diffY && !hasMovedSignificantly) {
-                        hasMovedSignificantly = true;
-                        moveEvent.preventDefault();
-                        
-                        // Передаем координаты первого конкретного касания [0] в оригинальный спавнер
-                        const fakeEvent = {
-                            preventDefault: () => {},
-                            clientX: moveTouch.clientX,
-                            clientY: moveTouch.clientY
-                        };
-
-                        // Спавним на стол через оригинальный скрипт
-                        spawnItemOnDesk(fakeEvent, originalData);
-                        
-                        // Сразу подхватываем его для движения пальцем
-                        const deskItems = workspace.querySelectorAll('.item.on-desk');
-                        const lastSpawned = deskItems[deskItems.length - 1];
-                        if (lastSpawned) {
-                            removeListeners();
-                            startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
-                        }
-                    }
+                // Вызываем оригинальный метод из script.js
+                spawnItemOnDesk(fakeEvent, originalData);
+                
+                // Мгновенно находим созданный элемент на столе и привязываем его к пальцу
+                const deskItems = workspace.querySelectorAll('.item.on-desk');
+                const lastSpawned = deskItems[deskItems.length - 1];
+                if (lastSpawned) {
+                    // Передаем ивент и рассчитываем смещение строго по первому пальцу (индекс 0)
+                    startMobileDrag(e.touches[0], lastSpawned, 50, 55);
                 }
+            }
+        }, { passive: true });
 
-                function onTouchEnd() {
-                    // Баг №2: Если это просто короткий тап без движения и это карта художника — открываем модалку перед глазами
-                    if (!hasMovedSignificantly && itemElement.classList.contains('artist-card')) {
-                        showArtistModal(originalData);
-                    }
-                    removeListeners();
-                }
-
-                function removeListeners() {
-                    tab.removeEventListener('touchmove', onTouchMove);
-                    tab.removeEventListener('touchend', onTouchEnd);
-                }
-
-                tab.addEventListener('touchmove', onTouchMove, { passive: false });
-                tab.addEventListener('touchend', onTouchEnd);
-            }, { passive: true });
-        });
-
-        // ДВИЖЕНИЕ НА СТОЛЕ: Перехват тачей на самом воркспейсе
+        // Перехват тачей на самом воркспейсе для перемещения уже созданных элементов
         workspace.addEventListener('touchstart', function(e) {
-            // Баг №3: Прячем клавиатуру при тапе по столу
             const searchBox = document.getElementById('search-box');
             if (searchBox && document.activeElement === searchBox) {
                 searchBox.blur();
@@ -144,12 +132,12 @@
 
             e.preventDefault();
             
-            const touch = e.touches[0];
+            const touchInfo = e.touches[0];
             const rect = targetItem.getBoundingClientRect();
-            const shiftX = touch.clientX - rect.left;
-            const shiftY = touch.clientY - rect.top;
+            const shiftX = touchInfo.clientX - rect.left;
+            const shiftY = touchInfo.clientY - rect.top;
 
-            // Баг с Императором (LongPress вместо клика колесиком)
+            // LongPress для ачивки «ЗА ИМПЕРАТОРА!!!»
             if (targetItem.dataset.name === "Император") {
                 clearTimeout(longPressTimeout);
                 longPressTimeout = setTimeout(() => {
@@ -162,35 +150,20 @@
                 }, 800);
             }
 
-            startMobileDrag(touch, targetItem, shiftX, shiftY);
+            startMobileDrag(touchInfo, targetItem, shiftX, shiftY);
         }, { passive: false });
 
-        // Непрерывное движение зажатого элемента по столу
+        // Движение пальца по экрану во время перетаскивания
         window.addEventListener('touchmove', function(e) {
-            if (!activeDraggedElement) {
-                // Логика ачивки Slime Touch
-                const touch = e.touches[0];
-                const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
-                const listItem = overElement ? overElement.closest('#items-tab .item') : null;
-                if (listItem && !stats.unlockedQuests.includes("slime_touch")) {
-                    window.slimeHovers = (window.slimeHovers || 0) + 1;
-                    if (window.slimeHovers >= 50) {
-                        checkQuests("slime_hover_trigger");
-                        window.slimeHovers = 0;
-                    }
-                    clearTimeout(window.slimeHoverTimeout);
-                    window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
-                }
-                return;
-            }
+            if (!activeDraggedElement) return;
 
-            e.preventDefault();
+            e.preventDefault(); // Полностью блокируем скролл всей страницы, пока тащим элемент по столу
             
-            const touch = e.touches[0];
+            const touchInfo = e.touches[0];
             const rect = workspace.getBoundingClientRect();
             
-            let x = touch.clientX - rect.left - touchShiftX;
-            let y = touch.clientY - rect.top - touchShiftY;
+            let x = touchInfo.clientX - rect.left - touchShiftX;
+            let y = touchInfo.clientY - rect.top - touchShiftY;
 
             x = Math.max(0, Math.min(x, workspace.clientWidth - activeDraggedElement.clientWidth));
             y = Math.max(0, Math.min(y, workspace.clientHeight - activeDraggedElement.clientHeight));
@@ -198,10 +171,10 @@
             activeDraggedElement.style.left = `${x}px`;
             activeDraggedElement.style.top = `${y}px`;
 
-            handleFingerShake(touch, activeDraggedElement);
+            handleFingerShake(touchInfo, activeDraggedElement);
         }, { passive: false });
 
-        // Отпускание пальца
+        // Отпускание пальца с фиксацией коллизий крафтов
         window.addEventListener('touchend', function(e) {
             clearTimeout(longPressTimeout);
 
