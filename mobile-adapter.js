@@ -24,35 +24,25 @@
     // Внедрение жестких мобильных стилей для полной блокировки браузерного зума и скролла страницы
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Запрещаем браузеру перехватывать жесты на игровом столе и элементах */
-        #workspace, .item, .item.on-desk { 
+        /* Блокируем зум и системные жесты только на столе и уже вытащенных предметах */
+        #workspace, .item.on-desk { 
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
-            -webkit-touch-callout: none !important; /* Отключает контекстное меню при долгом тапе */
         }
         
-        /* Исправление поисковой строки для имитации кнопки без вызова клавиатуры */
-        #search-box {
-            cursor: pointer;
-            caret-color: transparent !important;
-            font-size: 16px !important;
-        }
-        
-        /* Разрешаем боковым вкладкам скроллиться ТОЛЬКО строго по вертикали */
+        /* Разрешаем элементам в боковом меню свободно скроллиться вверх и вниз */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 120px !important; /* Выталкиваем скрытый последний элемент */
+            padding-bottom: 120px !important; /* Безопасный отступ для последнего элемента */
             box-sizing: border-box;
         }
 
-        #workspace, .item, .item.on-desk {
-        touch-action: none !important;
+        #items-tab .item, #artists-tab .item {
+            touch-action: pan-y !important; /* Палец мягко листает список, не заедая */
         }
-
-        .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
 
@@ -75,66 +65,65 @@
     /**
      * 1. АДАПТАЦИЯ ТАЧ-УПРАВЛЕНИЯ (Вытаскивание и перемещение)
      */
-    function initMobileControls() {
-        const workspace = document.getElementById('workspace');
-        if (!workspace) return;
-
-        // Фикс Бага №5 и №2: Контроль тачей внутри бокового меню элементов/художников
+            // Четкое разделение: скролл меню — вверх/вниз, вытаскивание на стол — вбок
         const menuTabs = document.querySelectorAll('#items-tab, #artists-tab');
         menuTabs.forEach(tab => {
             tab.addEventListener('touchstart', function(e) {
                 const itemElement = e.target.closest('.item');
                 if (!itemElement || itemElement.closest('.on-desk')) return;
 
-                // Запоминаем координаты первого касания из массива touches
-                const startTouch = e.touches[0];
-                const startX = startTouch.clientX;
-                const startY = startTouch.clientY;
-                let hasMovedSignificantly = false;
+                // Запоминаем стартовую точку касания пальца
+                const startX = e.touches[0].clientX;
+                const startY = e.touches[0].clientY;
+                let itemSpawned = false;
 
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
                 function onTouchMove(moveEvent) {
-                    const moveTouch = moveEvent.touches[0];
-                    const diffX = Math.abs(moveTouch.clientX - startX);
-                    const diffY = Math.abs(moveTouch.clientY - startY);
+                    if (itemSpawned) return;
 
-                    // Если палец явно потянули вбок (на игровой стол) — отменяем вертикальный скролл меню и создаем элемент
-                    if (diffX > 15 && diffX > diffY && !hasMovedSignificantly) {
-                        hasMovedSignificantly = true;
-                        moveEvent.preventDefault(); // Запрещаем скролл меню
-                        
-                        // Передаем точные координаты первого касания в оригинальный спавнер
+                    const currentX = moveEvent.touches[0].clientX;
+                    const currentY = moveEvent.touches[0].clientY;
+
+                    const diffX = Math.abs(currentX - startX);
+                    const diffY = Math.abs(currentY - startY);
+
+                    // Если палец движется преимущественно по горизонтали (вбок на стол)
+                    if (diffX > 20 && diffX > diffY) {
+                        itemSpawned = true;
+                        moveEvent.preventDefault(); // Блокируем вертикальный скролл меню только сейчас
+
+                        // Передаем координаты в оригинальный спавнер строго на игровой стол
                         const fakeEvent = {
                             preventDefault: () => {},
-                            clientX: moveTouch.clientX,
-                            clientY: moveTouch.clientY
+                            clientX: currentX,
+                            clientY: currentY
                         };
 
-                        // Вызываем оригинальный метод из script.js
+                        // Спавним элемент на воркспейс через оригинальную функцию
                         spawnItemOnDesk(fakeEvent, originalData);
                         
-                        // Находим созданный элемент на столе
+                        // Принудительно корректируем координаты нового элемента, чтобы он не улетал под меню
                         const deskItems = workspace.querySelectorAll('.item.on-desk');
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
-                            removeListeners();
-                            // Подхватываем элемент для перетаскивания
-                            startMobileDrag(moveTouch, lastSpawned, 50, 55);
+                            cleanup();
+                            // Подхватываем палец и тащим элемент по столу
+                            startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
                         }
                     }
                 }
 
                 function onTouchEnd() {
-                    // Баг №2: Быстрый тап по художнику открывает модальное окно просмотра
-                    if (!hasMovedSignificantly && itemElement.classList.contains('artist-card')) {
-                        showArtistModal(originalData);
+                    // Если это был просто короткий тап без скролла и это карточка художника
+                    if (!itemSpawned && itemElement.classList.contains('artist-card')) {
+                        showArtistModal(originalData); // Открываем модалку портфолио перед глазами
                     }
-                    removeListeners();
+                    cleanup();
                 }
 
-                function removeListeners() {
+                function cleanup() {
                     tab.removeEventListener('touchmove', onTouchMove);
                     tab.removeEventListener('touchend', onTouchEnd);
                 }
