@@ -24,35 +24,31 @@
     // Внедрение жестких мобильных стилей для полной блокировки браузерного зума и скролла страницы
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Запрещаем зум и системные жесты браузера только на игровом столе и активных элементах */
-        #workspace, .item.on-desk { 
+        /* Запрещаем браузеру перехватывать жесты на игровом столе и элементах */
+        #workspace, .item, .item.on-desk { 
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important; /* Отключает контекстное меню при долгом тапе */
         }
         
-        /* Исправление Бага №3: Поднимаем нижнюю границу стола чуть выше */
-        #workspace { 
-            position: relative; 
-            overflow: hidden; 
-            height: 43vh !important; 
-            border: 2px dashed #ff007f;
-            box-sizing: border-box;
+        /* Исправление поисковой строки для имитации кнопки без вызова клавиатуры */
+        #search-box {
+            cursor: pointer;
+            caret-color: transparent !important;
+            font-size: 16px !important;
         }
         
-        /* Исправление Бага №1: Возвращаем элементам в боковом меню нативный вертикальный скролл пальцем */
+        /* Разрешаем боковым вкладкам скроллиться ТОЛЬКО строго по вертикали */
         #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 43vh !important;
-            padding-bottom: 120px !important;
-            box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
+            padding-bottom: 120px !important; /* Выталкиваем скрытый последний элемент */
+            box-sizing: border-box;
         }
 
-        #items-tab .item, #artists-tab .item {
-            touch-action: pan-y !important; /* Дает элементам в меню свободно скользить вверх/вниз */
-        }
+        .item img { transform: scale(1.05); }
     `;
     document.head.appendChild(style);
 
@@ -143,6 +139,92 @@
         // ДВИЖЕНИЕ НА СТОЛЕ: Перехват тачей на самом воркспейсе
         workspace.addEventListener('touchstart', function(e) {
             // Прячем клавиатуру при тапе по столу
+            const searchBox = document.getElementById('search-box');
+            if (searchBox && document.activeElement === searchBox) {
+                searchBox.blur();
+            }
+
+            if (isDraggingNow) return;
+            const targetItem = e.target.closest('.item.on-desk');
+            if (!targetItem) return;
+
+            e.preventDefault(); // Полная изоляция от системных жестов браузера
+            
+            const touch = e.touches[0];
+            const rect = targetItem.getBoundingClientRect();
+            const shiftX = touch.clientX - rect.left;
+            const shiftY = touch.clientY - rect.top;
+
+            // Логика LongPress для ачивки «ЗА ИМПЕРАТОРА!!!»
+            if (targetItem.dataset.name === "Император") {
+                clearTimeout(longPressTimeout);
+                longPressTimeout = setTimeout(() => {
+                    window.emperorMiddleClicks = (window.emperorMiddleClicks || 0) + 1;
+                    if (window.emperorMiddleClicks >= 10) {
+                        checkQuests("emperor_click_trigger");
+                    }
+                    targetItem.style.transform = "scale(1.3)";
+                    setTimeout(() => targetItem.style.transform = "none", 150);
+                }, 800);
+            }
+
+            startMobileDrag(touch, targetItem, shiftX, shiftY);
+        }, { passive: false });
+
+        // Непрерывное перемещение зажатого элемента по столу
+        window.addEventListener('touchmove', function(e) {
+            if (!activeDraggedElement) {
+                // Логика ачивки Slime Touch
+                const touch = e.touches[0];
+                const overElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                const listItem = overElement ? overElement.closest('#items-tab .item') : null;
+                if (listItem && !stats.unlockedQuests.includes("slime_touch")) {
+                    window.slimeHovers = (window.slimeHovers || 0) + 1;
+                    if (window.slimeHovers >= 50) {
+                        checkQuests("slime_hover_trigger");
+                        window.slimeHovers = 0;
+                    }
+                    clearTimeout(window.slimeHoverTimeout);
+                    window.slimeHoverTimeout = setTimeout(() => { window.slimeHovers = 0; }, 4000);
+                }
+                return;
+            }
+
+            e.preventDefault(); // Намертво блокируем скролл страницы во время игры
+            
+            const touch = e.touches[0];
+            const rect = workspace.getBoundingClientRect();
+            
+            let x = touch.clientX - rect.left - touchShiftX;
+            let y = touch.clientY - rect.top - touchShiftY;
+
+            x = Math.max(0, Math.min(x, workspace.clientWidth - activeDraggedElement.clientWidth));
+            y = Math.max(0, Math.min(y, workspace.clientHeight - activeDraggedElement.clientHeight));
+
+            activeDraggedElement.style.left = `${x}px`;
+            activeDraggedElement.style.top = `${y}px`;
+
+            handleFingerShake(touch, activeDraggedElement);
+        }, { passive: false });
+
+        // Отпускание пальца с расчетом оригинального крафта
+        window.addEventListener('touchend', function(e) {
+            clearTimeout(longPressTimeout);
+
+            if (!activeDraggedElement) return;
+
+            const element = activeDraggedElement;
+            activeDraggedElement = null;
+            isDraggingNow = false;
+
+            if (element.dataset.name === "Гнев") {
+                window.isHoldingHulkNow = false;
+            }
+
+            checkCollisions(element);
+            checkQuests();
+        });
+        // Безопасный мобильный поиск через Prompt (Защита от зума)
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
             searchBox.addEventListener('touchstart', function(e) {
@@ -168,8 +250,8 @@
             window.isHoldingHulkNow = true;
         }
         touchStartData = {
-            // Исправлено: корректно считываем первый палец
-            lastX: touch ? (touch[0] ? touch[0].clientX : touch.clientX) : 0,
+            // Исправлено: если передан массив touches, берем координаты первого пальца [0]
+            lastX: touch[0] ? touch[0].clientX : touch.clientX,
             lastTime: Date.now(),
             shakeScore: 0
         };
@@ -181,8 +263,8 @@
         if (nameAttr === "Вишенка" || nameAttr === "Сладость" || nameAttr === "Мрак" || nameAttr === "Mрак") {
             let currentTime = Date.now();
             if (currentTime - touchStartData.lastTime > 40) {
-                // Исправлено: корректно считываем первый палец для ручной тряски
-                const currentX = touch ? (touch[0] ? touch[0].clientX : touch.clientX) : 0;
+                // Исправлено: если передан массив touches, берем clientX первого пальца [0]
+                const currentX = touch[0] ? touch[0].clientX : touch.clientX;
                 let speed = Math.abs(currentX - touchStartData.lastX) / (currentTime - touchStartData.lastTime);
                 if (speed > 1.1) {
                     touchStartData.shakeScore++;
@@ -209,14 +291,12 @@
                 checkMobileKonamiSequence("two-tap");
                 return;
             }
-            if (e.touches[0]) {
-                xDown = e.touches[0].clientX;
-                yDown = e.touches[0].clientY;
-            }
+            xDown = e.touches[0].clientX;
+            yDown = e.touches[0].clientY;
         }, false);
 
         document.addEventListener('touchmove', function(e) {
-            if (!xDown || !yDown || activeDraggedElement || !e.touches[0]) return;
+            if (!xDown || !yDown || activeDraggedElement) return;
             let xUp = e.touches[0].clientX;
             let yUp = e.touches[0].clientY;
             let xDiff = xDown - xUp;
@@ -294,7 +374,7 @@
 
     function playMobileVibrate() {
         if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]); // Мягкая двойная вибрация при успехе
+            navigator.vibrate([80, 50, 80]);
         }
     }
 })();
