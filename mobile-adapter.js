@@ -69,7 +69,7 @@
 
     // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
-        ;
+        initMobileControls();
         initMobileKonami();
         initMobileAccelerometer();
 
@@ -79,10 +79,6 @@
             if (konamiAch) {
                 konamiAch.title = "Не KONAMIт"; // Новое сочное название!
                 konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
-            }
-            const gandalfAch = ALL_ACHIEVEMENTS.find(a => a.id === "gandalf_wheel");
-            if (gandalfAch) {
-                gandalfAch.desc = "Прокрутите мобильный список элементов от души и на максимальной скорости";
             }
         }
 
@@ -96,10 +92,7 @@
             lastTouchEnd = now;
         }, { passive: false });
     });
-
-    /**
-     * 1. АДАПТАЦИЯ ТАЧ-УПРАВЛЕНИЯ (Вытаскивание и перемещение)
-     */
+    
     function initMobileControls() {
         const workspace = document.getElementById('workspace');
         if (!workspace) return;
@@ -119,53 +112,18 @@
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
-                // ФИКС ДОСТИЖЕНИЯ «БЕЗУМНО ЛИ?» ДЛЯ МОБИЛЬНОЙ ВЕРСИИ:
-                // Симулируем десктопный счетчик спам-кликов по элементам в меню
+                // ФИКС ДОСТИЖЕНИЯ «БЕЗУМНО ЛИ?»: Симулируем десктопный счетчик спам-кликов по элементам в меню
                 if (typeof clickCounts !== 'undefined') {
                     clickCounts[originalData.name] = (clickCounts[originalData.name] || 0) + 1;
                     
                     if (clickCounts[originalData.name] >= 10) {
-                        checkQuests("spam_click"); // Вызываем триггер ачивки «Безумно ли?»
+                        checkQuests("spam_click"); // Вызываем оригинальный триггер ачивки «Безумно ли?»
                     }
                     
-                    // Сбрасываем счетчик через 2 секунды, как в оригинальном script.js
                     setTimeout(() => {
                         if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
                     }, 2000);
                 }
-
-                const itemsContainer = document.getElementById('items-tab');
-                if (itemsContainer) {
-                let lastScrollTop = itemsContainer.scrollTop;
-                let mobileWheelTicks = 0;
-                let scrollTimeout = null;
-                    
-                itemsContainer.addEventListener('scroll', function() {
-                const currentScrollTop = itemsContainer.scrollTop;
-                // Считаем абсолютную разницу (скорость) текущего сдвига скролла
-                const scrollSpeed = Math.abs(currentScrollTop - lastScrollTop);
-
-                // Если скорость скролла пальцем высокая — засчитываем за быстрый тик колесика
-                if (scrollSpeed > 25) { 
-                    mobileWheelTicks++;
-                    
-                    // Оригинальный триггер gandalf_wheel_trigger требует 35 тиков (см. script.js)
-                    if (mobileWheelTicks >= 35) {
-                        checkQuests("gandalf_wheel_trigger");
-                        mobileWheelTicks = 0;
-                        if (navigator.vibrate) navigator.vibrate(80); // Виброотклик успеха
-                    }
-                }
-
-                lastScrollTop = currentScrollTop;
-
-                // Сбрасываем накопленные тики, если игрок остановился и не скроллит больше 800мс
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    mobileWheelTicks = 0;
-                }, 800);
-            }, { passive: true });
-        }
 
                 function onTouchMove(moveEvent) {
                     if (itemSpawned) return;
@@ -177,10 +135,9 @@
                     // Если палец явно потянули по горизонтали на игровой стол
                     if (diffX > 20 && diffX > diffY) {
                         itemSpawned = true;
-                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка
+                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка, так как пошел вынос
 
-                        // Задаем безопасные координаты спавна: выталкиваем элемент ВПРАВО за пределы ширины меню
-                        // чтобы избежать скрытых скрещиваний за панелью
+                        // ЗАЩИТА ОТ СЛЕМЫХ КРАФТОВ: Выталкиваем координаты спавна вправо за пределы ширины меню
                         const menuWidth = tab.clientWidth || 120;
                         const safeX = moveTouch.clientX + menuWidth;
 
@@ -199,8 +156,7 @@
                         if (lastSpawned) {
                             cleanup();
                             
-                            // СБРОС ЭФФЕКТА ТЕЛЕПОРТАЦИИ: жестко задаем новые фиксированные отступы 
-                            // для пальца относительно центра нового элемента (50px на 55px)
+                            // СБРОС ЭФФЕКТА ТЕЛЕПОРТАЦИИ: Жестко центрируем палец на новом элементе
                             isDraggingNow = true;
                             activeDraggedElement = lastSpawned;
                             touchShiftX = 50;
@@ -220,6 +176,7 @@
                 }
 
                 function onTouchEnd() {
+                    // Короткий быстрый тап по художнику открывает оригинальное окно портфолио
                     if (!itemSpawned && itemElement.classList.contains('artist-card')) {
                         showArtistModal(originalData);
                     }
@@ -336,7 +293,7 @@
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
                     
-                    // Мобильное условие для получения достижения «Осадки в виде KONAMI»
+                    // Мобильное условие для получения достижения «Не KONAMIт»
                     if (userQuery.toLowerCase().trim() === 'konami') {
                         checkQuests("konami_trigger");
                         if (navigator.vibrate) navigator.vibrate(100); // Виброотклик успеха
@@ -347,6 +304,37 @@
                     }
                 }
             }, { passive: false });
+        }
+
+        const itemsContainer = document.getElementById('items-tab');
+        if (itemsContainer) {
+            let lastScrollTop = itemsContainer.scrollTop;
+            let mobileWheelTicks = 0;
+            let scrollTimeout = null;
+
+            itemsContainer.addEventListener('scroll', function() {
+                const currentScrollTop = itemsContainer.scrollTop;
+                const scrollSpeed = Math.abs(currentScrollTop - lastScrollTop);
+
+                // Если скорость скролла пальцем высокая — засчитываем за быстрый тик колесика мыши
+                if (scrollSpeed > 25) { 
+                    mobileWheelTicks++;
+                    
+                    if (mobileWheelTicks >= 35) {
+                        checkQuests("gandalf_wheel_trigger"); // Триггерим ачивку Гендальфа
+                        mobileWheelTicks = 0;
+                        if (navigator.vibrate) navigator.vibrate(80);
+                    }
+                }
+
+                lastScrollTop = currentScrollTop;
+
+                // Сбрасываем тики при остановке скролла
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    mobileWheelTicks = 0;
+                }, 800);
+            }, { passive: true });
         }
     }
 
