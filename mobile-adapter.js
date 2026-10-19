@@ -316,11 +316,12 @@
                 const currentScrollTop = itemsContainer.scrollTop;
                 const scrollSpeed = Math.abs(currentScrollTop - lastScrollTop);
 
-                // Если скорость скролла пальцем высокая — засчитываем за быстрый тик колесика мыши
-                if (scrollSpeed > 25) { 
+                // Исправлено: снизили требуемую скорость скролла с 25 до 12
+                if (scrollSpeed > 12) { 
                     mobileWheelTicks++;
                     
-                    if (mobileWheelTicks >= 35) {
+                    // Исправлено: снизили общее количество быстрых тиков с 35 до 15
+                    if (mobileWheelTicks >= 15) {
                         checkQuests("gandalf_wheel_trigger"); // Триггерим ачивку Гендальфа
                         mobileWheelTicks = 0;
                         if (navigator.vibrate) navigator.vibrate(80);
