@@ -80,6 +80,11 @@
                 konamiAch.title = "Не KONAMIт"; // Новое сочное название!
                 konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
             }
+
+            const gandalfAch = ALL_ACHIEVEMENTS.find(a => a.id === "gandalf_wheel");
+            if (gandalfAch) {
+                gandalfAch.desc = "Прокрутите мобильный список элементов от души";
+            }
         }
 
         // Защитный глушитель зума
