@@ -70,14 +70,24 @@
     // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
         initMobileControls();
-        ;
+        initMobileKonami();
         initMobileAccelerometer();
 
+        // Находим ачивку Конами в глобальном массиве игры и меняем её данные
+        if (typeof ALL_ACHIEVEMENTS !== 'undefined') {
+            const konamiAch = ALL_ACHIEVEMENTS.find(a => a.id === "konami_code");
+            if (konamiAch) {
+                konamiAch.title = "Не KONAMIт"; // Новое сочное название!
+                konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
+            }
+        }
+
+        // Защитный глушитель зума
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (e) {
             let now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                e.preventDefault(); // На корню режем системное приближение экрана
+                e.preventDefault();
             }
             lastTouchEnd = now;
         }, { passive: false });
