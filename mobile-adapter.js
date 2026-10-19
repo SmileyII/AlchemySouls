@@ -34,22 +34,21 @@
         
         /* Фиксируем высоту стола */
         #workspace { 
-            position: relative; 
-            overflow: hidden; 
-            height: 48vh !important; 
-            border: 2px dashed #ff007f;
-            box-sizing: border-box;
-        }
-        
-        /* Разрешаем боковым спискам нативный вертикальный скролл */
-        #items-tab, #artists-tab {
-            touch-action: pan-y !important;
-            overflow-y: auto !important;
-            height: 48vh !important;
-            padding-bottom: 140px !important; /* Гарантия видимости самого последнего элемента */
-            box-sizing: border-box;
-            -webkit-overflow-scrolling: touch;
-        }
+    position: relative; 
+    overflow: hidden; 
+    height: 52vh !important; /* Было 42vh или 45vh. Увеличьте до 52vh, чтобы опустить низ */
+    border: 2px dashed #ff007f;
+    box-sizing: border-box;
+}
+
+#items-tab, #artists-tab {
+    touch-action: pan-y !important;
+    overflow-y: auto !important;
+    height: 52vh !important; /* Значение должно строго совпадать с высотой #workspace */
+    padding-bottom: 130px !important;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
 
         #items-tab .item, #artists-tab .item {
             touch-action: pan-y !important; /* Элементы в меню мягко скользят вверх/вниз */
@@ -303,57 +302,43 @@
         }
     }
 
-    /**
-     * 2. КОНАМИ-КОД ЧЕРЕЗ МОБИЛЬНЫЕ СВАЙПЫ
-     */
     function initMobileKonami() {
-        let xDown = null;
-        let yDown = null;
+        // Переопределяем оригинальную десктопную последовательность на простую мобильную:
+        // 4 раза нажать "Элементы", 4 раза нажать "Художники", 2 раза нажать "Достижения"
+        const mobileButtonsSequence = [
+            "items", "items", "items", "items", 
+            "artists", "artists", "artists", "artists", 
+            "achievements", "achievements"
+        ];
         
-        // Панель вкладок сверху — идеальное изолированное место для ввода кода
-        const topPanel = document.querySelector('.tabs') || document.body;
+        // Находим кнопки переключения вкладок в HTML игры
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        
+        tabButtons.forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                // Извлекаем тип вкладки из оригинального атрибута onclick (например, switchTab('items'))
+                const clickAttr = btn.getAttribute('onclick') || '';
+                let tabType = "";
+                
+                if (clickAttr.includes('items')) tabType = "items";
+                if (clickAttr.includes('artists')) tabType = "artists";
+                if (clickAttr.includes('achievements')) tabType = "achievements";
+                
+                if (!tabType) return;
 
-        topPanel.addEventListener('touchstart', function(e) {
-            // Если игрок нажал одновременно двумя пальцами — это B или A кнопки кода
-            if (e.touches.length === 2) {
-                checkMobileKonamiSequence("two-tap");
-                return;
-            }
-            if (e.touches && e.touches[0]) {
-                xDown = e.touches[0].clientX;
-                yDown = e.touches[0].clientY;
-            }
-        }, { passive: true });
-
-        // Переносим регистрацию жеста на touchend, чтобы свайп считался строго ОДИН раз
-        topPanel.addEventListener('touchend', function(e) {
-            if (!xDown || !yDown || activeDraggedElement) return;
-
-            // Считываем финальные координаты из ивента изменения (changedTouches)
-            if (!e.changedTouches || !e.changedTouches[0]) return;
-            let xUp = e.changedTouches[0].clientX;
-            let yUp = e.changedTouches[0].clientY;
-
-            let xDiff = xDown - xUp;
-            let yDiff = yDown - yUp;
-
-            // Задаем порог чувствительности в 40 пикселей, чтобы исключить случайные микродвижения
-            if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                if (Math.abs(xDiff) > 40) {
-                    if (xDiff > 0) checkMobileKonamiSequence("left");
-                    else checkMobileKonamiSequence("right");
+                // Проверяем шаги комбо-кода
+                if (tabType === mobileButtonsSequence[mobileKonamiIndex]) {
+                    mobileKonamiIndex++;
+                    if (mobileKonamiIndex === mobileButtonsSequence.length) {
+                        checkQuests("konami_trigger"); // Вызываем оригинальное достижение
+                        mobileKonamiIndex = 0;
+                        if (navigator.vibrate) navigator.vibrate([80, 50, 80]); // Тройной вибро-отклик триумфа
+                    }
+                } else {
+                    mobileKonamiIndex = 0; // Сброс при ошибке
                 }
-            } else {
-                if (Math.abs(yDiff) > 40) {
-                    if (yDiff > 0) checkMobileKonamiSequence("up");
-                    else checkMobileKonamiSequence("down");
-                }
-            }
-            
-            // Обязательно сбрасываем стартовую точку для следующего свайпа
-            xDown = null;
-            yDown = null;
-        }, { passive: true });
+            }, { passive: true });
+        });
     }
 
     function checkMobileKonamiSequence(gesture) {
