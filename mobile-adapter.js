@@ -38,7 +38,7 @@
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 62vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
+            height: 80vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
@@ -46,7 +46,7 @@
 #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 62vh !important; 
+            height: 80vh !important; 
             padding-bottom: 160px !important; /* Увеличенный отступ, чтобы нижние карточки не прятались */
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
@@ -131,7 +131,7 @@
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
                             cleanup();
-                            startMobileDrag(moveTouch, lastSpawned, 50, 55);
+                            startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
                         }
                     }
                 }
@@ -230,6 +230,7 @@
             clearTimeout(longPressTimeout);
 
             if (!activeDraggedElement) return;
+
             const element = activeDraggedElement;
             activeDraggedElement = null;
             isDraggingNow = false;
@@ -242,7 +243,7 @@
             checkQuests();
         });
 
-        // Мобильный поиск через Prompt: 100% спасение от ломающих зумов клавиатуры
+        // Мобильный поиск через Prompt с секретным кодом KONAMI (Защита от зума)
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
             searchBox.addEventListener('touchstart', function(e) {
@@ -252,6 +253,13 @@
                 const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
+                    
+                    // Мобильное условие для получения достижения «Осадки в виде KONAMI»
+                    if (userQuery.toLowerCase().trim() === 'konami') {
+                        checkQuests("konami_trigger");
+                        if (navigator.vibrate) navigator.vibrate(100); // Виброотклик успеха
+                    }
+
                     if (typeof searchBox.oninput === 'function') {
                         searchBox.oninput();
                     }
