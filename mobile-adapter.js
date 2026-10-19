@@ -69,7 +69,7 @@
 
     // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
-        initMobileControls();
+        ;
         initMobileKonami();
         initMobileAccelerometer();
 
@@ -79,6 +79,10 @@
             if (konamiAch) {
                 konamiAch.title = "Не KONAMIт"; // Новое сочное название!
                 konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
+            }
+            const gandalfAch = ALL_ACHIEVEMENTS.find(a => a.id === "gandalf_wheel");
+            if (gandalfAch) {
+                gandalfAch.desc = "Прокрутите мобильный список элементов от души и на максимальной скорости";
             }
         }
 
@@ -129,6 +133,39 @@
                         if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
                     }, 2000);
                 }
+
+                const itemsContainer = document.getElementById('items-tab');
+                if (itemsContainer) {
+                let lastScrollTop = itemsContainer.scrollTop;
+                let mobileWheelTicks = 0;
+                let scrollTimeout = null;
+                    
+                itemsContainer.addEventListener('scroll', function() {
+                const currentScrollTop = itemsContainer.scrollTop;
+                // Считаем абсолютную разницу (скорость) текущего сдвига скролла
+                const scrollSpeed = Math.abs(currentScrollTop - lastScrollTop);
+
+                // Если скорость скролла пальцем высокая — засчитываем за быстрый тик колесика
+                if (scrollSpeed > 25) { 
+                    mobileWheelTicks++;
+                    
+                    // Оригинальный триггер gandalf_wheel_trigger требует 35 тиков (см. script.js)
+                    if (mobileWheelTicks >= 35) {
+                        checkQuests("gandalf_wheel_trigger");
+                        mobileWheelTicks = 0;
+                        if (navigator.vibrate) navigator.vibrate(80); // Виброотклик успеха
+                    }
+                }
+
+                lastScrollTop = currentScrollTop;
+
+                // Сбрасываем накопленные тики, если игрок остановился и не скроллит больше 800мс
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    mobileWheelTicks = 0;
+                }, 800);
+            }, { passive: true });
+        }
 
                 function onTouchMove(moveEvent) {
                     if (itemSpawned) return;
