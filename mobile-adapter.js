@@ -69,7 +69,7 @@
     // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
         initMobileControls();
-        initMobileKonami();
+        ;
         initMobileAccelerometer();
 
         let lastTouchEnd = 0;
@@ -310,42 +310,49 @@
         let xDown = null;
         let yDown = null;
         
-        // Ловим свайпы Конами строго на верхней шапке меню (исключаем конфликты со столом)
+        // Панель вкладок сверху — идеальное изолированное место для ввода кода
         const topPanel = document.querySelector('.tabs') || document.body;
 
         topPanel.addEventListener('touchstart', function(e) {
+            // Если игрок нажал одновременно двумя пальцами — это B или A кнопки кода
             if (e.touches.length === 2) {
                 checkMobileKonamiSequence("two-tap");
                 return;
             }
-            const firstTouch = e.touches[0];
-            xDown = firstTouch.clientX;
-            yDown = firstTouch.clientY;
+            if (e.touches && e.touches[0]) {
+                xDown = e.touches[0].clientX;
+                yDown = e.touches[0].clientY;
+            }
         }, { passive: true });
 
-        topPanel.addEventListener('touchmove', function(e) {
+        // Переносим регистрацию жеста на touchend, чтобы свайп считался строго ОДИН раз
+        topPanel.addEventListener('touchend', function(e) {
             if (!xDown || !yDown || activeDraggedElement) return;
 
-            const firstTouch = e.touches[0];
-            let xUp = firstTouch.clientX;
-            let yUp = firstTouch.clientY;
+            // Считываем финальные координаты из ивента изменения (changedTouches)
+            if (!e.changedTouches || !e.changedTouches[0]) return;
+            let xUp = e.changedTouches[0].clientX;
+            let yUp = e.changedTouches[0].clientY;
 
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
 
+            // Задаем порог чувствительности в 40 пикселей, чтобы исключить случайные микродвижения
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
                 if (Math.abs(xDiff) > 40) {
                     if (xDiff > 0) checkMobileKonamiSequence("left");
                     else checkMobileKonamiSequence("right");
-                    xDown = null; yDown = null;
                 }
             } else {
                 if (Math.abs(yDiff) > 40) {
                     if (yDiff > 0) checkMobileKonamiSequence("up");
                     else checkMobileKonamiSequence("down");
-                    xDown = null; yDown = null;
                 }
             }
+            
+            // Обязательно сбрасываем стартовую точку для следующего свайпа
+            xDown = null;
+            yDown = null;
         }, { passive: true });
     }
 
