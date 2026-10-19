@@ -125,11 +125,16 @@
                     // Если палец явно потянули по горизонтали на игровой стол
                     if (diffX > 20 && diffX > diffY) {
                         itemSpawned = true;
-                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка, так как пошел вынос
+                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка
+
+                        // Задаем безопасные координаты спавна: выталкиваем элемент ВПРАВО за пределы ширины меню
+                        // чтобы избежать скрытых скрещиваний за панелью
+                        const menuWidth = tab.clientWidth || 120;
+                        const safeX = moveTouch.clientX + menuWidth;
 
                         const fakeEvent = {
                             preventDefault: () => {},
-                            clientX: moveTouch.clientX,
+                            clientX: safeX,
                             clientY: moveTouch.clientY
                         };
 
@@ -141,13 +146,28 @@
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
                             cleanup();
-                            startMobileDrag(moveEvent.touches[0], lastSpawned, 50, 55);
+                            
+                            // СБРОС ЭФФЕКТА ТЕЛЕПОРТАЦИИ: жестко задаем новые фиксированные отступы 
+                            // для пальца относительно центра нового элемента (50px на 55px)
+                            isDraggingNow = true;
+                            activeDraggedElement = lastSpawned;
+                            touchShiftX = 50;
+                            touchShiftY = 55;
+
+                            if (lastSpawned.dataset.name === "Гнев") {
+                                window.isHoldingHulkNow = true;
+                            }
+
+                            touchStartData = {
+                                lastX: moveTouch.clientX,
+                                lastTime: Date.now(),
+                                shakeScore: 0
+                            };
                         }
                     }
                 }
 
                 function onTouchEnd() {
-                    // Короткий быстрый тап по художнику открывает оригинальное окно портфолио
                     if (!itemSpawned && itemElement.classList.contains('artist-card')) {
                         showArtistModal(originalData);
                     }
