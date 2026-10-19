@@ -115,6 +115,21 @@
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
+                // ФИКС ДОСТИЖЕНИЯ «БЕЗУМНО ЛИ?» ДЛЯ МОБИЛЬНОЙ ВЕРСИИ:
+                // Симулируем десктопный счетчик спам-кликов по элементам в меню
+                if (typeof clickCounts !== 'undefined') {
+                    clickCounts[originalData.name] = (clickCounts[originalData.name] || 0) + 1;
+                    
+                    if (clickCounts[originalData.name] >= 10) {
+                        checkQuests("spam_click"); // Вызываем триггер ачивки «Безумно ли?»
+                    }
+                    
+                    // Сбрасываем счетчик через 2 секунды, как в оригинальном script.js
+                    setTimeout(() => {
+                        if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
+                    }, 2000);
+                }
+
                 function onTouchMove(moveEvent) {
                     if (itemSpawned) return;
 
