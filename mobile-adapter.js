@@ -17,8 +17,11 @@
     let touchShiftX = 0;
     let touchShiftY = 0;
 
-    // Переменные для Конами-кода по свайпам
-    const mobileKonamiCode = ["up", "up", "down", "down", "left", "right", "left", "right", "two-tap", "two-tap"];
+    const mobileKonamiCode = [
+        "items", "items", "items", "items", 
+        "artists", "artists", "artists", "artists", 
+        "achievements", "achievements"
+    ];
     let mobileKonamiIndex = 0;
 
     // Внедрение жестких мобильных CSS-правил для идеальной верстки
@@ -29,29 +32,28 @@
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
-            -webkit-touch-callout: none !important;
         }
         
         /* Фиксируем высоту стола */
         #workspace { 
-    position: relative; 
-    overflow: hidden; 
-    height: 52vh !important; /* Было 42vh или 45vh. Увеличьте до 52vh, чтобы опустить низ */
-    border: 2px dashed #ff007f;
-    box-sizing: border-box;
-}
+            position: relative; 
+            overflow: hidden; 
+            height: 62vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
+            border: 2px dashed #ff007f;
+            box-sizing: border-box;
+        }
 
 #items-tab, #artists-tab {
-    touch-action: pan-y !important;
-    overflow-y: auto !important;
-    height: 52vh !important; /* Значение должно строго совпадать с высотой #workspace */
-    padding-bottom: 130px !important;
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch;
-}
+            touch-action: pan-y !important;
+            overflow-y: auto !important;
+            height: 62vh !important; 
+            padding-bottom: 160px !important; /* Увеличенный отступ, чтобы нижние карточки не прятались */
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
 
         #items-tab .item, #artists-tab .item {
-            touch-action: pan-y !important; /* Элементы в меню мягко скользят вверх/вниз */
+            touch-action: pan-y !important;
         }
 
         /* Имитация кнопки для поисковой строки без нативного зума клавиатуры */
