@@ -38,7 +38,7 @@
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 85vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
+            height: 80vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
@@ -46,7 +46,7 @@
 #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 85vh !important; 
+            height: 80vh !important; 
             padding-bottom: 160px !important; /* Увеличенный отступ, чтобы нижние карточки не прятались */
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
@@ -86,11 +86,6 @@
                 gandalfAch.desc = "Прокрутите мобильный список элементов от души";
             }
         }
-
-        const xj9Ach = ALL_ACHIEVEMENTS.find(a => a.id === "xj9_robot");
-            if (xj9Ach) {
-                xj9Ach.desc = "Вытащить на стол Кибернетику, Металл и Душу и быстро прокрутить панель элементов";
-            }
 
         // Защитный глушитель зума
         let lastTouchEnd = 0;
@@ -133,13 +128,6 @@
                     setTimeout(() => {
                         if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
                     }, 2000);
-                }
-
-                if (originalData.name === "Призрачность") {
-                    stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
-                    if (stats.scoobyClicksCount >= 25) {
-                        checkQuests("scooby_doo_trigger"); // Вызываем оригинальный триггер Скуби
-                    }
                 }
 
                 function onTouchMove(moveEvent) {
@@ -352,20 +340,6 @@
                 scrollTimeout = setTimeout(() => {
                     mobileWheelTicks = 0;
                 }, 800);
-
-    const topTabsPanel = document.querySelector('.tabs') || document.body;
-        if (topTabsPanel) {
-            topTabsPanel.addEventListener('touchmove', function() {
-                const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
-                
-                if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
-                    stats.volumeMoveCount = (stats.volumeMoveCount || 0) + 1;
-                    
-                    if (stats.volumeMoveCount >= 30) {
-                        checkQuests("xj9_trigger");
-                        if (navigator.vibrate) navigator.vibrate(60);
-                    }
-                }
             }, { passive: true });
         }
     }
