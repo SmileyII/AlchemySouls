@@ -371,7 +371,6 @@
                 }
             }, { passive: true });
         }
-    }
 
     function startMobileDrag(touch, element, shiftX, shiftY) {
         activeDraggedElement = element;
