@@ -281,12 +281,15 @@
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
 
-            e.preventDefault();
+            e.preventDefault(); // Полная изоляция от системных жестов браузера
             
-            const touch = e.touches[0];
-            const rect = targetItem.getBoundingClientRect();
-            const shiftX = touch.clientX - rect.left;
-            const shiftY = touch.clientY - rect.top;
+            const touch = e.touches[0]; // Жестко берем координаты первого пальца
+
+            // ФИКС ТЕЛЕПОРТАЦИИ: Вместо кривого мобильного getBoundingClientRect()
+            // мы жестко центрируем палец на элементе (50px на 55px), как и при выносе из меню.
+            // Теперь элемент никогда не прыгнет и не телепортируется при подборе со стола!
+            const shiftX = 50;
+            const shiftY = 55;
 
             // Долгий тап (LongPress) заменяет щелчок колесиком для Императора
             if (targetItem.dataset.name === "Император") {
@@ -358,17 +361,6 @@
             checkCollisions(element);
             checkQuests();
         });
-        
-        const topTabsMenu = document.querySelector('.tabs') || document.body;
-        if (topTabsMenu) {
-            topTabsMenu.addEventListener('touchstart', function() {
-                // Полностью стираем память о таскании элементов, чтобы исключить телепортацию
-                activeDraggedElement = null;
-                isDraggingNow = false;
-                window.isHoldingHulkNow = false;
-                clearTimeout(longPressTimeout);
-            }, { passive: true });
-        }
         
         // Мобильный поиск через Prompt с секретным кодом KONAMI (Защита от зума)
         const searchBox = document.getElementById('search-box');
