@@ -87,6 +87,11 @@
             }
         }
 
+        const xj9Ach = ALL_ACHIEVEMENTS.find(a => a.id === "xj9_robot");
+            if (xj9Ach) {
+                xj9Ach.desc = "Вытащить на стол Кибернетику, Металл и Душу и быстро прокрутить панель элементов";
+            }
+
         // Защитный глушитель зума
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (e) {
@@ -128,6 +133,13 @@
                     setTimeout(() => {
                         if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
                     }, 2000);
+                }
+
+                if (originalData.name === "Призрачность") {
+                    stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
+                    if (stats.scoobyClicksCount >= 25) {
+                        checkQuests("scooby_doo_trigger"); // Вызываем оригинальный триггер Скуби
+                    }
                 }
 
                 function onTouchMove(moveEvent) {
@@ -340,6 +352,23 @@
                 scrollTimeout = setTimeout(() => {
                     mobileWheelTicks = 0;
                 }, 800);
+            }, { passive: true });
+        }
+    }
+
+    const topTabsPanel = document.querySelector('.tabs') || document.body;
+        if (topTabsPanel) {
+            topTabsPanel.addEventListener('touchmove', function() {
+                const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
+                
+                if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
+                    stats.volumeMoveCount = (stats.volumeMoveCount || 0) + 1;
+                    
+                    if (stats.volumeMoveCount >= 30) {
+                        checkQuests("xj9_trigger");
+                        if (navigator.vibrate) navigator.vibrate(60);
+                    }
+                }
             }, { passive: true });
         }
     }
