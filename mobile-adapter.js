@@ -28,25 +28,34 @@
     const style = document.createElement('style');
     style.innerHTML = `
         /* Блокируем системный зум браузера ТОЛЬКО на игровом столе и активных элементах */
-        #workspace, .item.on-desk { 
+        #workspace, .item.on-desk, #items-tab { 
             touch-action: none !important; 
             user-select: none !important; 
             -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+        
+        #achievements-tab {
+            touch-action: auto !important; 
+            overflow-y: auto !important;
+            height: 90vh !important;
+            padding-bottom: 240px !important;
+            box-sizing: border-box;
         }
         
         /* Фиксируем высоту стола */
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 85vh !important; 
+            height: 90vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
 
-#items-tab, #artists-tab, #achievements-tab {
+#items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 85vh !important;
+            height: 90vh !important;
             padding-bottom: 240px !important; 
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
@@ -56,7 +65,6 @@
             touch-action: pan-y !important;
         }
 
-        /* Имитация кнопки для поисковой строки без нативного зума клавиатуры */
         #search-box {
             cursor: pointer;
             caret-color: transparent !important;
@@ -155,6 +163,7 @@
         if (!workspace) return;
 
         // Контроль тачей в боковом меню: скролл — вертикально, вытаскивание — строго вбок
+        let artistLongPressTimeout = null;
         const menuTabs = document.querySelectorAll('#items-tab, #artists-tab');
         menuTabs.forEach(tab => {
             tab.addEventListener('touchstart', function(e) {
@@ -165,57 +174,56 @@
                 const startX = startTouch.clientX;
                 const startY = startTouch.clientY;
                 let itemSpawned = false;
+                let isLongPressTriggered = false;
 
                 const name = itemElement.querySelector('span') ? itemElement.querySelector('span').innerText.replace(" •", "") : "";
                 const originalData = discoveredItems.find(i => i.name === name) || { name: name, img: "placeholder.png" };
 
-                // ФИКС ДОСТИЖЕНИЯ «БЕЗУМНО ЛИ?»: Симулируем десктопный счетчик спам-кликов по элементам в меню
+                // Спам-счетчики ачивок
                 if (typeof clickCounts !== 'undefined') {
                     clickCounts[originalData.name] = (clickCounts[originalData.name] || 0) + 1;
-                    
-                    if (clickCounts[originalData.name] >= 10) {
-                        checkQuests("spam_click"); // Вызываем оригинальный триггер ачивки «Безумно ли?»
-                    }
-                    
-                    setTimeout(() => {
-                        if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
-                    }, 2000);
+                    if (clickCounts[originalData.name] >= 10) checkQuests("spam_click");
+                    setTimeout(() => { if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0; }, 2000);
                 }
-
+                if (originalData.name === "Призрачность") {
+                    stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
+                    if (stats.scoobyClicksCount >= 25) checkQuests("scooby_doo_trigger");
+                }
                 if (originalData.name === "Ярость") {
                     stats.furyMaxVolumeClicks = (stats.furyMaxVolumeClicks || 0) + 1;
-                    if (stats.furyMaxVolumeClicks >= 20) {
-                        checkQuests("where_is_he_trigger"); // Вызываем оригинальный триггер Гнева
-                        if (navigator.vibrate) navigator.vibrate(100);
-                    }
+                    if (stats.furyMaxVolumeClicks >= 20) checkQuests("where_is_he_trigger");
                 }
-
-                // ФИКС ДОСТИЖЕНИЯ «МЕТРОИДВАНИЯ ИЛИ ЖЕ...»: По 1 нажатию при наличии Элемента (Пункт 1)
                 const dItemsOnDesk = Array.from(workspace.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
                 if (dItemsOnDesk.includes("Элемент")) {
-                    if (originalData.name === "Кровь") stats.metroidBloodCount = 5; // Сразу симулируем 5 десктопных нажатий
+                    if (originalData.name === "Кровь") stats.metroidBloodCount = 5;
                     if (originalData.name === "Луна") stats.metroidMoonCount = 5;
                     if (originalData.name === "Путь") stats.metroidPathCount = 5;
-                    
-                    if (stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) {
-                        checkQuests("metroid_trigger"); // Вызываем оригинальное Метроидвание
-                        if (navigator.vibrate) navigator.vibrate(100);
-                    }
+                    if (stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) checkQuests("metroid_trigger");
+                }
+
+                // ИСПРАВЛЕНИЕ ПУНКТА 1: Модалка художника только по долгому нажатию (0.7 сек)
+                if (itemElement.classList.contains('artist-card')) {
+                    clearTimeout(artistLongPressTimeout);
+                    artistLongPressTimeout = setTimeout(() => {
+                        isLongPressTriggered = true;
+                        showArtistModal(originalData); // Открываем портфолио перед глазами
+                        if (navigator.vibrate) navigator.vibrate(40); // Легкий виброотклик удержания
+                    }, 700);
                 }
 
                 function onTouchMove(moveEvent) {
-                    if (itemSpawned) return;
+                    // Если палец двинулся во время удержания — отменяем лонгпресс, так как пошел скролл или вынос
+                    clearTimeout(artistLongPressTimeout);
+                    if (itemSpawned || isLongPressTriggered) return;
 
                     const moveTouch = moveEvent.touches[0];
                     const diffX = Math.abs(moveTouch.clientX - startX);
                     const diffY = Math.abs(moveTouch.clientY - startY);
 
-                    // Если палец явно потянули по горизонтали на игровой стол
                     if (diffX > 20 && diffX > diffY) {
                         itemSpawned = true;
-                        moveEvent.preventDefault(); // Запрещаем вертикальный скролл списка, так как пошел вынос
+                        moveEvent.preventDefault();
 
-                        // ЗАЩИТА ОТ СЛЕМЫХ КРАФТОВ: Выталкиваем координаты спавна вправо за пределы ширины меню
                         const menuWidth = tab.clientWidth || 120;
                         const safeX = moveTouch.clientX + menuWidth;
 
@@ -225,24 +233,18 @@
                             clientY: moveTouch.clientY
                         };
 
-                        // Вызываем оригинальный метод создания предмета из script.js
                         spawnItemOnDesk(fakeEvent, originalData);
                         
-                        // Мгновенно подхватываем созданный элемент на воркспейсе
                         const deskItems = workspace.querySelectorAll('.item.on-desk');
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
                             cleanup();
-                            
-                            // СБРОС ЭФФЕКТА ТЕЛЕПОРТАЦИИ: Жестко центрируем палец на новом элементе
                             isDraggingNow = true;
                             activeDraggedElement = lastSpawned;
                             touchShiftX = 50;
                             touchShiftY = 55;
 
-                            if (lastSpawned.dataset.name === "Гнев") {
-                                window.isHoldingHulkNow = true;
-                            }
+                            if (lastSpawned.dataset.name === "Гнев") window.isHoldingHulkNow = true;
 
                             touchStartData = {
                                 lastX: moveTouch.clientX,
@@ -254,10 +256,7 @@
                 }
 
                 function onTouchEnd() {
-                    // Короткий быстрый тап по художнику открывает оригинальное окно портфолио
-                    if (!itemSpawned && itemElement.classList.contains('artist-card')) {
-                        showArtistModal(originalData);
-                    }
+                    clearTimeout(artistLongPressTimeout); // Сбрасываем таймер при отпускании
                     cleanup();
                 }
 
@@ -359,7 +358,18 @@
             checkCollisions(element);
             checkQuests();
         });
-
+        
+        const topTabsMenu = document.querySelector('.tabs') || document.body;
+        if (topTabsMenu) {
+            topTabsMenu.addEventListener('touchstart', function() {
+                // Полностью стираем память о таскании элементов, чтобы исключить телепортацию
+                activeDraggedElement = null;
+                isDraggingNow = false;
+                window.isHoldingHulkNow = false;
+                clearTimeout(longPressTimeout);
+            }, { passive: true });
+        }
+        
         // Мобильный поиск через Prompt с секретным кодом KONAMI (Защита от зума)
         const searchBox = document.getElementById('search-box');
         if (searchBox) {
