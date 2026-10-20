@@ -38,7 +38,7 @@
         #achievements-tab {
             touch-action: auto !important; 
             overflow-y: auto !important;
-            height: 90vh !important;
+            height: 89vh !important;
             padding-bottom: 240px !important;
             box-sizing: border-box;
         }
@@ -47,7 +47,7 @@
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 90vh !important; 
+            height: 89vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
@@ -55,7 +55,7 @@
 #items-tab, #artists-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 90vh !important;
+            height: 89vh !important;
             padding-bottom: 240px !important; 
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
@@ -235,14 +235,14 @@
 
                         spawnItemOnDesk(fakeEvent, originalData);
                         
+                        // Мгновенно подхватываем созданный элемент на воркспейсе
                         const deskItems = workspace.querySelectorAll('.item.on-desk');
                         const lastSpawned = deskItems[deskItems.length - 1];
                         if (lastSpawned) {
                             cleanup();
-                            isDraggingNow = true;
-                            activeDraggedElement = lastSpawned;
-                            touchShiftX = 50;
-                            touchShiftY = 55;
+                            // Просто передаем управление в базовую функцию
+                            startMobileDrag(moveTouch, lastSpawned, 50, 55);
+                        }
 
                             if (lastSpawned.dataset.name === "Гнев") window.isHoldingHulkNow = true;
 
@@ -271,7 +271,7 @@
         });
 
         // ПЕРЕМЕЩЕНИЕ НА СТОЛЕ: Перехват тачей на воркспейсе
-        workspace.addEventListener('touchstart', function(e) {
+       workspace.addEventListener('touchstart', function(e) {
             const searchBox = document.getElementById('search-box');
             if (searchBox && document.activeElement === searchBox) {
                 searchBox.blur(); // Сворачиваем поиск при клике на стол
@@ -281,15 +281,14 @@
             const targetItem = e.target.closest('.item.on-desk');
             if (!targetItem) return;
 
-            e.preventDefault(); // Полная изоляция от системных жестов браузера
+            e.preventDefault();
             
-            const touch = e.touches[0]; // Жестко берем координаты первого пальца
-
-            // ФИКС ТЕЛЕПОРТАЦИИ: Вместо кривого мобильного getBoundingClientRect()
-            // мы жестко центрируем палец на элементе (50px на 55px), как и при выносе из меню.
-            // Теперь элемент никогда не прыгнет и не телепортируется при подборе со стола!
-            const shiftX = 50;
-            const shiftY = 55;
+            const touch = e.touches;
+            const rect = targetItem.getBoundingClientRect();
+            
+            // Возвращаем нативный расчет смещения пальца из первого билда
+            const shiftX = touch.clientX - rect.left;
+            const shiftY = touch.clientY - rect.top;
 
             // Долгий тап (LongPress) заменяет щелчок колесиком для Императора
             if (targetItem.dataset.name === "Император") {
