@@ -38,16 +38,16 @@
         #workspace { 
             position: relative; 
             overflow: hidden; 
-            height: 80vh !important; /* Было 43vh. 62vh идеально садится на экран над кнопками телефона */
+            height: 85vh !important; 
             border: 2px dashed #ff007f;
             box-sizing: border-box;
         }
 
-#items-tab, #artists-tab {
+#items-tab, #artists-tab, #achievements-tab {
             touch-action: pan-y !important;
             overflow-y: auto !important;
-            height: 80vh !important; 
-            padding-bottom: 160px !important; /* Увеличенный отступ, чтобы нижние карточки не прятались */
+            height: 85vh !important;
+            padding-bottom: 240px !important; 
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
@@ -75,13 +75,13 @@
 
         // 1. ДИНАМИЧЕСКАЯ ПОДМЕНА НАЗВАНИЙ И ОПИСАНИЙ ДЛЯ СМАРТФОНОВ
         if (typeof ALL_ACHIEVEMENTS !== 'undefined') {
-            // Подмена для Конами-кода (Ироничное мобильное название)
+            // Подмена для Конами-кода
             const konamiAch = ALL_ACHIEVEMENTS.find(a => a.id === "konami_code");
             if (konamiAch) {
                 konamiAch.title = "Не KONAMIт";
                 konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
             }
-            // Подмена для Гендальфа («Ты не пройдешь!»)
+            // Подмена для Гендальфа
             const gandalfAch = ALL_ACHIEVEMENTS.find(a => a.id === "gandalf_wheel");
             if (gandalfAch) {
                 gandalfAch.desc = "Прокрутите список элементов от души";
@@ -89,49 +89,62 @@
             // Подмена для Робота XJ-9
             const xj9Ach = ALL_ACHIEVEMENTS.find(a => a.id === "xj9_robot");
             if (xj9Ach) {
-                xj9Ach.desc = "Вытащить на стол Кибернетику, Металл и Душу и покрутите список элементов";
+                xj9Ach.desc = "Вытащить на стол Кибернетику, Металл и Душу и просто активно двигать элементы по столу";
+            }
+            // РЕДАКТИРОВАНИЕ ОПИСАНИЯ: Скуби-Ду (Пункт 5)
+            const scoobyAch = ALL_ACHIEVEMENTS.find(a => a.id === "scooby_doo");
+            if (scoobyAch) {
+                scoobyAch.desc = "Зажмите пальцем элемент Призрачность во вкладке меню на 4 секунды";
+            }
+            // РЕДАКТИРОВАНИЕ ОПИСАНИЯ: За Императора (Пункт 5)
+            const emperorAch = ALL_ACHIEVEMENTS.find(a => a.id === "for_emperor");
+            if (emperorAch) {
+                emperorAch.desc = "Сделайте 10 долгих тапов (удержаний на 2 секунды) на элемент Император находящийся на столе";
+            }
+            // РЕДАКТИРОВАНИЕ ОПИСАНИЯ: Метроидвания
+            const metroidAch = ALL_ACHIEVEMENTS.find(a => a.id === "metroidvania");
+            if (metroidAch) {
+                metroidAch.desc = "Положите Элемент на стол и нажмите по 1 разу во вкладке элементы на Кровь, Луну и Путь";
+            }
+            // РЕДАКТИРОВАНИЕ ОПИСАНИЯ: Где он? Где?!
+            const whereIsHeAch = ALL_ACHIEVEMENTS.find(a => a.id === "where_is_he");
+            if (whereIsHeAch) {
+                whereIsHeAch.desc = "Быстро нажмите на элемент Ярость во вкладке элементов 20 раз подряд";
             }
         }
 
         // 2. БЕЗОПАСНЫЙ ФОНОВЫЙ ТРИГГЕР ДЛЯ АЧИВКИ «СКУБИ-ДУ»
-        // Каждые 150мс проверяем: если игрок взял пальцем Призрачность,
-        // мы плавно наполняем счетчик, симулируя быстрые клики мыши
         setInterval(() => {
             if (typeof isDraggingNow !== 'undefined' && isDraggingNow && activeDraggedElement) {
                 if (activeDraggedElement.dataset.name === "Призрачность") {
                     stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
                     if (stats.scoobyClicksCount >= 25) {
-                        checkQuests("scooby_doo_trigger"); // Вызываем оригинальный триггер
+                        checkQuests("scooby_doo_trigger");
                     }
                 }
             }
         }, 150);
 
         // 3. БЕЗОПАСНЫЙ ФОНОВЫЙ ТРИГГЕР ДЛЯ АЧИВКИ «XJ-9»
-        // Следим за движениями на столе: если на воркспейсе лежит нужная троица,
-        // любое перемещение элементов пальцем засчитывается в прогресс робота
         window.addEventListener('touchmove', () => {
             if (typeof isDraggingNow !== 'undefined' && isDraggingNow && activeDraggedElement) {
                 const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
-                
                 if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
-                    stats.volumeMoveCount = (stats.volumeMoveCount || 0) + 0.5; // Накапливаем шаги движения
-                    
+                    stats.volumeMoveCount = (stats.volumeMoveCount || 0) + 0.5;
                     if (stats.volumeMoveCount >= 30) {
-                        checkQuests("xj9_trigger"); // Вызываем оригинальный триггер робота
-                        if (navigator.vibrate) navigator.vibrate(60); // Виброотклик успеха
+                        checkQuests("xj9_trigger");
+                        if (navigator.vibrate) navigator.vibrate(60);
                     }
                 }
             }
         }, { passive: true });
 
         // 4. ЖЕЛЕЗНЫЙ ГЛУШИТЕЛЬ СИСТЕМНОГО ЗУМА БРАУЗЕРА
-        // Запрещает мобильному экрану приближаться при частых тапах и скрещиваниях элементов
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (e) {
             let now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                e.preventDefault(); // На корню режем системное приближение
+                e.preventDefault();
             }
             lastTouchEnd = now;
         }, { passive: false });
@@ -167,6 +180,27 @@
                     setTimeout(() => {
                         if (clickCounts[originalData.name]) clickCounts[originalData.name] = 0;
                     }, 2000);
+                }
+
+                if (originalData.name === "Ярость") {
+                    stats.furyMaxVolumeClicks = (stats.furyMaxVolumeClicks || 0) + 1;
+                    if (stats.furyMaxVolumeClicks >= 20) {
+                        checkQuests("where_is_he_trigger"); // Вызываем оригинальный триггер Гнева
+                        if (navigator.vibrate) navigator.vibrate(100);
+                    }
+                }
+
+                // ФИКС ДОСТИЖЕНИЯ «МЕТРОИДВАНИЯ ИЛИ ЖЕ...»: По 1 нажатию при наличии Элемента (Пункт 1)
+                const dItemsOnDesk = Array.from(workspace.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
+                if (dItemsOnDesk.includes("Элемент")) {
+                    if (originalData.name === "Кровь") stats.metroidBloodCount = 5; // Сразу симулируем 5 десктопных нажатий
+                    if (originalData.name === "Луна") stats.metroidMoonCount = 5;
+                    if (originalData.name === "Путь") stats.metroidPathCount = 5;
+                    
+                    if (stats.metroidBloodCount >= 5 && stats.metroidMoonCount >= 5 && stats.metroidPathCount >= 5) {
+                        checkQuests("metroid_trigger"); // Вызываем оригинальное Метроидвание
+                        if (navigator.vibrate) navigator.vibrate(100);
+                    }
                 }
 
                 function onTouchMove(moveEvent) {
