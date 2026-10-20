@@ -69,30 +69,69 @@
 
     // Защитный JavaScript-глушитель системного pinch-to-zoom и double-tap зума браузера
     window.addEventListener('DOMContentLoaded', () => {
+        // Запуск базового управления и акселерометра
         initMobileControls();
-        initMobileKonami();
         initMobileAccelerometer();
 
-        // Находим ачивку Конами в глобальном массиве игры и меняем её данные
+        // 1. ДИНАМИЧЕСКАЯ ПОДМЕНА НАЗВАНИЙ И ОПИСАНИЙ ДЛЯ СМАРТФОНОВ
         if (typeof ALL_ACHIEVEMENTS !== 'undefined') {
+            // Подмена для Конами-кода (Ироничное мобильное название)
             const konamiAch = ALL_ACHIEVEMENTS.find(a => a.id === "konami_code");
             if (konamiAch) {
-                konamiAch.title = "Не KONAMIт"; // Новое сочное название!
+                konamiAch.title = "Не KONAMIт";
                 konamiAch.desc = "Ввести секретное кодовое слово в поисковой строке";
             }
-
+            // Подмена для Гендальфа («Ты не пройдешь!»)
             const gandalfAch = ALL_ACHIEVEMENTS.find(a => a.id === "gandalf_wheel");
             if (gandalfAch) {
-                gandalfAch.desc = "Прокрутите мобильный список элементов от души";
+                gandalfAch.desc = "Прокрутите список элементов от души";
+            }
+            // Подмена для Робота XJ-9
+            const xj9Ach = ALL_ACHIEVEMENTS.find(a => a.id === "xj9_robot");
+            if (xj9Ach) {
+                xj9Ach.desc = "Вытащить на стол Кибернетику, Металл и Душу и покрутите список элементов";
             }
         }
 
-        // Защитный глушитель зума
+        // 2. БЕЗОПАСНЫЙ ФОНОВЫЙ ТРИГГЕР ДЛЯ АЧИВКИ «СКУБИ-ДУ»
+        // Каждые 150мс проверяем: если игрок взял пальцем Призрачность,
+        // мы плавно наполняем счетчик, симулируя быстрые клики мыши
+        setInterval(() => {
+            if (typeof isDraggingNow !== 'undefined' && isDraggingNow && activeDraggedElement) {
+                if (activeDraggedElement.dataset.name === "Призрачность") {
+                    stats.scoobyClicksCount = (stats.scoobyClicksCount || 0) + 1;
+                    if (stats.scoobyClicksCount >= 25) {
+                        checkQuests("scooby_doo_trigger"); // Вызываем оригинальный триггер
+                    }
+                }
+            }
+        }, 150);
+
+        // 3. БЕЗОПАСНЫЙ ФОНОВЫЙ ТРИГГЕР ДЛЯ АЧИВКИ «XJ-9»
+        // Следим за движениями на столе: если на воркспейсе лежит нужная троица,
+        // любое перемещение элементов пальцем засчитывается в прогресс робота
+        window.addEventListener('touchmove', () => {
+            if (typeof isDraggingNow !== 'undefined' && isDraggingNow && activeDraggedElement) {
+                const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
+                
+                if (dNames.includes("Кибернетика") && dNames.includes("Металл") && dNames.includes("Душа")) {
+                    stats.volumeMoveCount = (stats.volumeMoveCount || 0) + 0.5; // Накапливаем шаги движения
+                    
+                    if (stats.volumeMoveCount >= 30) {
+                        checkQuests("xj9_trigger"); // Вызываем оригинальный триггер робота
+                        if (navigator.vibrate) navigator.vibrate(60); // Виброотклик успеха
+                    }
+                }
+            }
+        }, { passive: true });
+
+        // 4. ЖЕЛЕЗНЫЙ ГЛУШИТЕЛЬ СИСТЕМНОГО ЗУМА БРАУЗЕРА
+        // Запрещает мобильному экрану приближаться при частых тапах и скрещиваниях элементов
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (e) {
             let now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
+                e.preventDefault(); // На корню режем системное приближение
             }
             lastTouchEnd = now;
         }, { passive: false });
