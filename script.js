@@ -871,48 +871,49 @@ function combineElements(el1, el2) {
         const y = (parseFloat(el1.style.top) + parseFloat(el2.style.top)) / 2;
         
         el1.remove(); el2.remove();
-        
         const newItemData = {
             name: match.result,
             img: match.result_img,
-            url: match.artist_url || match.url || "https://github.com", // Железный маркер художника
-            desc: match.artist_desc || match.desc || "Художник выставки"
+            url: match.artist_url || "",
+            desc: match.artist_desc || ""
         };
-        
-        const workspace = document.getElementById('workspace');
-        const resultEl = document.createElement('div');
-        const isDead = isElementDeadEnd(newItemData);
-        resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
-        resultEl.dataset.name = newItemData.name;
-        resultEl.dataset.img = newItemData.img;
-        if(newItemData.url) resultEl.dataset.url = newItemData.url;
-        if(newItemData.desc) resultEl.dataset.desc = newItemData.desc;
-        
-        const img = document.createElement('img');
-        img.src = "images/" + newItemData.img;
-        img.onerror = () => { 
-            if (img.src.indexOf("images2/") === -1) {
-                img.src = "images2/" + newItemData.img; 
-            } else {
-                img.src = 'images/placeholder.png'; 
-            }
-        };
-        
-        const text = document.createElement('span');
-        text.innerText = newItemData.name + (isDead ? " •" : "");
-        
-        resultEl.appendChild(img); resultEl.appendChild(text);
-        resultEl.style.left = `${x}px`; resultEl.style.top = `${y}px`;
-        workspace.appendChild(resultEl);
-        
+
         const alreadyOpened = discoveredItems.some(i => i.name === match.result);
+
+        // Спавним результат на стол только если это обычный элемент ИЛИ совершенно новый художник
+        if (!(newItemData.url && alreadyOpened)) {
+            const workspace = document.getElementById('workspace');
+            const resultEl = document.createElement('div');
+            const isDead = isElementDeadEnd(newItemData);
+            resultEl.className = 'item on-desk' + (newItemData.url ? ' artist-card' : '') + (isDead ? ' dead-end' : '');
+            resultEl.dataset.name = newItemData.name;
+            resultEl.dataset.img = newItemData.img;
+            if (newItemData.url) resultEl.dataset.url = newItemData.url;
+            if (newItemData.desc) resultEl.dataset.desc = newItemData.desc;
+
+            const img = document.createElement('img');
+            img.src = "images/" + newItemData.img;
+            img.onerror = () => {
+                if (img.src.indexOf("images2/") === -1) {
+                    img.src = "images2/" + newItemData.img;
+                } else {
+                    img.src = 'images/placeholder.png';
+                }
+            };
+
+            const text = document.createElement('span');
+            text.innerText = newItemData.name + (isDead ? " •" : "");
+            resultEl.appendChild(img);
+            resultEl.appendChild(text);
+            resultEl.style.left = `${x}px`;
+            resultEl.style.top = `${y}px`;
+            workspace.appendChild(resultEl);
+        }
+
         if (!alreadyOpened) {
             discoveredItems.push(newItemData);
             saveGame();
-            renderAllTabs(); 
-            
-            checkQuests();
-            
+            renderAllTabs();
             if (newItemData.url) {
                 showArtistModal(newItemData);
             }
