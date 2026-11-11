@@ -318,28 +318,54 @@ function initGame() {
         });
 
     const searchBox = document.getElementById('search-box');
-    if (searchBox) {
-        searchBox.oninput = () => {
-            resetActivityTimer();
-            const currentSearch = searchBox.value.trim().toLowerCase();
-            if (currentSearch === "you got damn right") checkQuests("walter_text");
-            if (currentSearch === "love") checkQuests("someday_love_trigger");
-            if (currentSearch === "red or blue") checkQuests("matrix_text");
-            
-            if (currentSearch === "zandatsu") {
-                const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
-                if (dNames.includes("Кибернетика") && dNames.includes("Мурамаса") && dNames.includes("Металл")) {
-                    checkQuests("zandatsu_trigger");
-                }
-            }
+        if (searchBox) {
+            searchBox.oninput = () => {
+                resetActivityTimer();
+                const rawSearch = searchBox.value.trim();
+                const currentSearch = rawSearch.toLowerCase();
 
-            if (!stats.searchUsed && searchBox.value.length > 0) {
-                stats.searchUsed = true;
-                checkQuests();
-            }
-            renderCurrentTab();
-        };
-    }
+                // СЕКРЕТНЫЙ АДМИНСКИЙ ЧИТ-КОД ДЛЯ ПК (Учет регистра: строго Neversilar)
+                if (rawSearch === "Neversilar") {
+                    ALL_ACHIEVEMENTS.forEach(ach => {
+                        if (!stats.unlockedQuests.includes(ach.id)) {
+                            stats.unlockedQuests.push(ach.id);
+                            
+                            if (ach.reward && ach.reward !== "Ничего") {
+                                const rewards = ach.reward.split(',').map(r => r.trim());
+                                rewards.forEach(rewardName => {
+                                    const alreadyHas = discoveredItems.some(i => i.name === rewardName);
+                                    if (!alreadyHas) {
+                                        let iconFile = ELEMENT_ICONS[rewardName] || 'placeholder.png';
+                                        discoveredItems.push({ name: rewardName, img: iconFile, url: "", desc: "" });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    
+                    saveGame();
+                    renderAllTabs();
+                    showAchievementToast({ title: "Два истока одной легенды совмещаются в узор...", reward: "Открыты все достижения и награды!" });
+                    searchBox.value = ""; // Очищаем строку поиска после активации
+                }
+
+                // Оригинальные пасхалки поиска
+                if (currentSearch === "you got damn right") checkQuests("walter_text");
+                if (currentSearch === "love") checkQuests("someday_love_trigger");
+                if (currentSearch === "red or blue") checkQuests("matrix_text");
+                if (currentSearch === "zandatsu") {
+                    const dNames = Array.from(document.querySelectorAll('.item.on-desk')).map(el => el.dataset.name);
+                    if (dNames.includes("Кибернетика") && dNames.includes("Мурамаса") && dNames.includes("Металл")) {
+                        checkQuests("zandatsu_trigger");
+                    }
+                }
+                if (!stats.searchUsed && searchBox.value.length > 0) {
+                    stats.searchUsed = true;
+                    checkQuests();
+                }
+                renderCurrentTab();
+            };
+        }
 
     const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
     let konamiIndex = 0;
