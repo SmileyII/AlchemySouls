@@ -268,13 +268,50 @@
             searchBox.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                
                 const userQuery = prompt("Поиск элементов и авторов:", searchBox.value);
                 if (userQuery !== null) {
                     searchBox.value = userQuery;
-                    if (userQuery.toLowerCase().trim() === 'konami') {
+                    const cleanQuery = userQuery.trim();
+                    
+                    // 1. СЕКРЕТНЫЙ ЧИТ-КОД НА ОТКРЫТИЕ ВСЕХ ДОСТИЖЕНИЙ
+                    if (cleanQuery === 'Neversilar') {
+                        if (typeof ALL_ACHIEVEMENTS !== 'undefined' && typeof stats !== 'undefined') {
+                            ALL_ACHIEVEMENTS.forEach(ach => {
+                                // Если ачивка еще не открыта — принудительно открываем её
+                                if (!stats.unlockedQuests.includes(ach.id)) {
+                                    stats.unlockedQuests.push(ach.id);
+                                    
+                                    // Если за ачивку положена награда — начисляем элементы игроку
+                                    if (ach.reward && ach.reward !== "Ничего") {
+                                        const rewards = ach.reward.split(',').map(r => r.trim());
+                                        rewards.forEach(rewardName => {
+                                            const alreadyHas = discoveredItems.some(i => i.name === rewardName);
+                                            if (!alreadyHas) {
+                                                let iconFile = (typeof ELEMENT_ICONS !== 'undefined' && ELEMENT_ICONS[rewardName]) || 'placeholder.png';
+                                                discoveredItems.push({ name: rewardName, img: iconFile, url: "", desc: "" });
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            
+                            // Сохраняем прогресс в базу данных и перерисовываем интерфейс
+                            if (typeof saveGame === 'function') saveGame();
+                            if (typeof renderAllTabs === 'function') renderAllTabs();
+                            
+                            // Мощный победный виброотклик
+                            if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+                            alert("⚡ Все достижения и секретные элементы успешно разблокированы чит-кодом!");
+                        }
+                    }
+                    
+                    // 2. Стандартное мобильное условие для получения достижения «Не KONAMIт»
+                    if (cleanQuery.toLowerCase() === 'konami') {
                         checkQuests("konami_trigger");
                         if (navigator.vibrate) navigator.vibrate(100);
                     }
+
                     if (typeof searchBox.oninput === 'function') {
                         searchBox.oninput();
                     }
